@@ -1,0 +1,3087 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<title>TIA Portal Text List Editor v5.14</title>
+<link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj4KICA8cmVjdCB4PSI4IiB5PSI3NCIgd2lkdGg9Ijg0IiBoZWlnaHQ9IjEwIiByeD0iNSIgZmlsbD0iIzBjNjQ3OCIvPgogIDxyZWN0IHg9IjE0IiB5PSIxMCIgd2lkdGg9IjcyIiBoZWlnaHQ9IjY1IiByeD0iNiIgZmlsbD0iIzBjNjQ3OCIvPgogIDxyZWN0IHg9IjE5IiB5PSIxNSIgd2lkdGg9IjYyIiBoZWlnaHQ9IjU2IiByeD0iNCIgZmlsbD0iI2ZmZmZmZiIvPgogIDxyZWN0IHg9IjE5IiB5PSIxNSIgd2lkdGg9IjYyIiBoZWlnaHQ9IjExIiByeD0iNCIgZmlsbD0iIzFlMWUyZSIvPgogIDxyZWN0IHg9IjE5IiB5PSIyMCIgd2lkdGg9IjYyIiBoZWlnaHQ9IjYiIGZpbGw9IiMxZTFlMmUiLz4KICA8Y2lyY2xlIGN4PSI3MiIgY3k9IjIwIiByPSIzIiBmaWxsPSIjZmY1ZjVmIi8+CiAgPGNpcmNsZSBjeD0iNjQiIGN5PSIyMCIgcj0iMyIgZmlsbD0iI2ZmNzljNiIvPgogIDxyZWN0IHg9IjE5IiB5PSIyNiIgd2lkdGg9IjYyIiBoZWlnaHQ9IjQ1IiBmaWxsPSIjZjViODAwIi8+CiAgPHJlY3QgeD0iMjYiIHk9IjM0IiB3aWR0aD0iNDgiIGhlaWdodD0iMTAiIHJ4PSIyIiBmaWxsPSIjMWUxZTJlIi8+CiAgPHJlY3QgeD0iNDMiIHk9IjM0IiB3aWR0aD0iMTQiIGhlaWdodD0iMjYiIHJ4PSIyIiBmaWxsPSIjMWUxZTJlIi8+CiAgPHJlY3QgeD0iMjYiIHk9IjYzIiB3aWR0aD0iNDgiIGhlaWdodD0iNSIgcng9IjIuNSIgZmlsbD0iIzFlMWUyZSIvPgo8L3N2Zz4K" type="image/svg+xml">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'IBM Plex Sans',sans-serif;background:#f8fafc;color:#1e293b;height:100vh;display:flex;flex-direction:column;overflow:hidden}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:10px 20px;background:#0f172a;color:#fff;gap:16px;flex-wrap:wrap}
+.topbar-left{display:flex;align-items:center;gap:12px}
+.topbar-title{font-weight:700;font-size:15px}
+.badge{font-size:11px;font-weight:700;padding:2px 8px;border-radius:10px}
+.badge-changes{background:#f59e0b;color:#0f172a}
+.badge-file{background:#334155;color:#94a3b8}
+.lang-buttons{display:flex;gap:6px}
+.lang-btn{padding:4px 10px;border-radius:6px;border:none;cursor:pointer;font-size:11px;font-weight:600;color:#fff;transition:.15s}
+.lang-btn.off{background:#334155;opacity:.55}
+.topbar-actions{display:flex;gap:8px;flex-wrap:wrap}
+.btn{padding:6px 14px;border-radius:6px;cursor:pointer;font-size:12px;font-weight:600;border:none;display:inline-flex;align-items:center;gap:6px;transition:.15s}
+.btn-load{background:#334155;color:#e2e8f0}.btn-load:hover{background:#475569}
+.btn-export{background:#16a34a;color:#fff}.btn-export:hover{background:#15803d}
+.btn-lists{background:#1d4ed8;color:#fff}.btn-lists:hover{background:#1e40af}
+.btn-compare{background:#7c3aed;color:#fff}.btn-compare:hover{background:#6d28d9}
+.btn-diff{background:#0891b2;color:#fff}.btn-diff:hover{background:#0e7490}
+.main{flex:1;display:flex;overflow:hidden}
+.sidebar{width:270px;background:#fff;border-right:1px solid #e2e8f0;display:flex;flex-direction:column;overflow:hidden;transition:width .2s}
+.sidebar.collapsed{width:44px}
+.sidebar-header{padding:12px 16px 8px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #f1f5f9}
+.sidebar-toggle{border:none;background:none;cursor:pointer;font-size:16px;color:#94a3b8}
+#sidebarBody{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.sidebar-search{padding:8px 12px}
+.sidebar-search input{width:100%;padding:6px 10px;border:1px solid #e2e8f0;border-radius:6px;font-size:12px;outline:none;background:#f8fafc}
+.sidebar-search input:focus{border-color:#93c5fd}
+.sidebar-list{flex:1;overflow:auto;padding:0 8px 8px}
+.group-item{padding:8px 10px;border-radius:6px;cursor:pointer;margin-bottom:2px;border:1px solid transparent}
+.group-item:hover{background:#f8fafc}
+.group-item.active{background:#eff6ff;border-color:#bfdbfe}
+.group-item-name{font-size:12px;color:#334155;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.group-item.active .group-item-name{font-weight:600;color:#1d4ed8}
+.group-item-meta{font-size:10px;color:#94a3b8;margin-top:2px}
+.group-item-multi{display:inline-block;background:#dbeafe;color:#2563eb;font-size:9px;font-weight:600;padding:1px 5px;border-radius:4px;margin-left:4px}
+.group-item-diff{display:inline-block;font-size:9px;font-weight:700;padding:1px 5px;border-radius:4px;margin-left:4px}
+.group-item-diff.has-diff{background:#fee2e2;color:#dc2626}
+.group-item-diff.no-diff{background:#dcfce7;color:#16a34a}
+.content{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.content-header{padding:16px 20px 8px;border-bottom:1px solid #e2e8f0}
+.content-header h2{font-size:18px;font-weight:700;color:#0f172a}
+.content-header .info{font-size:12px;color:#64748b;background:#f1f5f9;padding:2px 8px;border-radius:10px}
+.content-search{width:100%;padding:8px 12px;border:1px solid #e2e8f0;border-radius:8px;font-size:13px;outline:none;background:#f8fafc;margin-top:8px}
+.content-search:focus{border-color:#93c5fd}
+.content-table-wrap{flex:1;overflow:auto;min-height:0;min-width:0}
+table{width:max-content;min-width:100%;border-collapse:collapse}
+thead{position:sticky;top:0;z-index:10}
+th{padding:8px 6px;font-size:11px;font-weight:600;text-align:left;border-bottom:2px solid #e2e8f0;text-transform:uppercase;letter-spacing:.05em;color:#64748b;white-space:nowrap}
+th.val-col{width:75px;position:sticky;left:0;z-index:11}
+th.sep{border-left:2px solid #cbd5e1}
+td{padding:2px 4px;border-bottom:1px solid #f1f5f9;font-size:12px}
+td.val-col{font-weight:600;color:#475569;position:sticky;left:0;z-index:5;border-right:1px solid #e2e8f0}
+td.sep{border-left:2px solid #cbd5e1}
+tr:nth-child(even) td{background:#fff}
+tr:nth-child(odd) td{background:#fafbfc}
+thead tr th{background:#f8fafc}
+thead tr.sub th{background:#f1f5f9;font-size:10px}
+.cell{padding:3px 6px;cursor:text;height:28px;font-size:12px;font-family:'JetBrains Mono',monospace;border-radius:4px;border:1px solid transparent;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;user-select:none;display:flex;align-items:center}
+.cell:hover{border-color:#cbd5e1}
+.cell .nl{color:#94a3b8;font-size:10px;margin:0 1px}
+.cell.empty{color:#94a3b8}
+.cell.modified{background:#fef9c3 !important;border-left:3px solid #d97706 !important}
+.cell.sel{background:#dbeafe !important;border:1.5px solid #3b82f6 !important}
+.cell.sel.modified{background:#fde68a !important;border:1.5px solid #d97706 !important}
+.cell-input{width:100%;min-height:28px;max-height:90px;border-radius:4px;padding:3px 6px;font-size:12px;font-family:'JetBrains Mono',monospace;outline:none;background:#fff;resize:none;overflow-y:auto;line-height:1.4}
+.version-badge{display:inline-flex;align-items:center;gap:5px;background:#1e3a5f;border:1px solid #3b82f6;border-radius:6px;padding:3px 10px;font-size:11px;font-weight:700;color:#93c5fd;white-space:nowrap}
+.version-badge span{color:#60a5fa;font-family:'JetBrains Mono',monospace}
+.update-banner{display:none;position:fixed;top:0;left:0;right:0;z-index:99999;background:linear-gradient(135deg,#1e40af,#7c3aed);color:#fff;padding:10px 20px;font-size:13px;font-weight:600;text-align:center;box-shadow:0 4px 20px rgba(0,0,0,.3);animation:slideDown .4s ease}
+@keyframes slideDown{from{transform:translateY(-100%)}to{transform:translateY(0)}}
+.update-banner a{color:#fde68a;text-decoration:underline;cursor:pointer;margin-left:8px}
+.update-banner .update-close{position:absolute;right:16px;top:50%;transform:translateY(-50%);background:none;border:none;color:#fff;font-size:18px;cursor:pointer;opacity:.7}
+.update-banner .update-close:hover{opacity:1}
+.sel-toolbar{display:none;position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#1e293b;color:#fff;border-radius:10px;padding:8px 16px;gap:8px;align-items:center;box-shadow:0 8px 30px rgba(0,0,0,.5);z-index:9000;white-space:nowrap}
+.sel-toolbar.on{display:flex}
+.stb{padding:4px 12px;border-radius:6px;border:none;cursor:pointer;font-size:11px;font-weight:700}
+.sel-info{background:#334155;border-radius:4px;padding:2px 8px;font-size:11px;color:#94a3b8}
+.cell-diff-a{background:#fee2e2 !important}
+.cell-diff-b{background:#dcfce7 !important}
+.cell-only-a{background:#fff7ed !important}
+.cell-only-b{background:#f0fdf4 !important}
+.tr-only-a td{background:#fff7ed !important}
+.tr-only-b td{background:#f0fdf4 !important}
+/* ROW ACTIONS */
+.row-del-btn{border:none;background:none;cursor:pointer;color:#94a3b8;font-size:13px;padding:0 3px;border-radius:3px;opacity:0;transition:.15s;line-height:1}
+tr:hover .row-del-btn{opacity:1}
+.row-del-btn:hover{color:#ef4444;background:#fee2e2}
+.add-row-btn{display:block;width:100%;padding:6px;border:1px dashed #cbd5e1;background:#f8fafc;color:#64748b;font-size:11px;font-weight:600;cursor:pointer;border-radius:0 0 6px 6px;text-align:center;transition:.15s}
+.add-row-btn:hover{background:#eff6ff;border-color:#3b82f6;color:#2563eb}
+/* ADD ROW MODAL */
+.addrow-overlay{display:none;position:fixed;inset:0;background:rgba(15,23,42,.6);z-index:7000;align-items:center;justify-content:center}
+.addrow-overlay.open{display:flex}
+.addrow-modal{background:#fff;border-radius:14px;width:min(440px,94vw);box-shadow:0 20px 50px rgba(0,0,0,.25);overflow:hidden}
+.addrow-header{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid #e2e8f0}
+.addrow-header h3{font-size:14px;font-weight:700;color:#0f172a}
+.addrow-close{border:none;background:none;font-size:20px;cursor:pointer;color:#94a3b8}
+.addrow-body{padding:16px 18px;display:flex;flex-direction:column;gap:10px}
+.addrow-body label{font-size:11px;font-weight:600;color:#475569;margin-bottom:2px;display:block}
+.addrow-body input{width:100%;padding:7px 10px;border:1px solid #e2e8f0;border-radius:7px;font-size:13px;font-family:'JetBrains Mono',monospace;outline:none}
+.addrow-body input:focus{border-color:#3b82f6}
+.addrow-footer{display:flex;justify-content:flex-end;gap:8px;padding:10px 18px;border-top:1px solid #f1f5f9}
+.empty-state{flex:1;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px;color:#94a3b8}
+.empty-state .icon{font-size:48px;opacity:.3}
+.upload-zone,.selector-zone{background:#fff;border-radius:16px;padding:36px 42px;text-align:center;box-shadow:0 25px 50px rgba(0,0,0,.08);width:min(960px,92vw)}
+.upload-zone h1,.selector-zone h1{font-size:24px;font-weight:700;color:#0f172a;margin-bottom:8px}
+.upload-zone p,.selector-zone p{color:#64748b;font-size:14px;margin-bottom:22px;line-height:1.6}
+.upload-btn{display:inline-flex;align-items:center;gap:10px;padding:12px 28px;background:#2563eb;color:#fff;border-radius:10px;cursor:pointer;font-size:15px;font-weight:600;transition:.2s;box-shadow:0 4px 12px rgba(37,99,235,.35);border:none}
+.upload-btn:hover{background:#1d4ed8}
+.upload-zone.dragover{border:3px dashed #2563eb;background:#eff6ff}
+.selector-actions{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap}
+.selector-actions .left,.selector-actions .right{display:flex;gap:8px;align-items:center}
+.pill-btn{border:1px solid #cbd5e1;background:#fff;color:#334155;border-radius:8px;padding:6px 10px;font-size:12px;cursor:pointer}
+.pill-btn:hover{background:#f8fafc}
+.selector-search{padding:8px 10px;border:1px solid #dbe3ef;border-radius:8px;font-size:13px;min-width:220px}
+.selection-list{max-height:380px;overflow:auto;border:1px solid #e2e8f0;border-radius:10px;text-align:left;background:#f8fafc;padding:10px}
+.sel-item{display:flex;justify-content:space-between;gap:10px;align-items:center;background:#fff;border:1px solid #e2e8f0;border-radius:8px;padding:10px 12px;margin-bottom:8px}
+.sel-item label{display:flex;align-items:center;gap:10px;cursor:pointer;flex:1}
+.sel-meta{font-size:11px;color:#64748b}
+.selector-footer{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:14px}
+.primary-btn{background:#2563eb;color:#fff;border:none;border-radius:9px;padding:10px 16px;font-weight:600;cursor:pointer}
+.primary-btn:hover{background:#1d4ed8}
+.compare-layout{flex:1;display:flex;overflow:hidden;background:#f8fafc}
+.compare-panel{width:290px;border-right:1px solid #e2e8f0;background:#fff;display:flex;flex-direction:column}
+.compare-panel .selector-search{margin:10px}
+.compare-list{flex:1;overflow:auto;padding:0 10px 10px}
+.compare-actions{padding:10px;border-bottom:1px solid #f1f5f9;display:flex;gap:8px;flex-wrap:wrap}
+.compare-table-wrap{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.compare-hint{padding:10px 14px;font-size:12px;color:#64748b;background:#fff;border-bottom:1px solid #e2e8f0}
+/* DIFF SCREEN */
+.diff-layout{flex:1;display:flex;overflow:hidden}
+.diff-sidebar{width:280px;min-width:220px;background:#fff;border-right:1px solid #e2e8f0;display:flex;flex-direction:column;overflow:hidden}
+.diff-sidebar-hdr{padding:10px 14px;border-bottom:1px solid #f1f5f9;font-size:12px;font-weight:700;color:#475569}
+.diff-sidebar-search{padding:8px 12px}
+.diff-sidebar-search input{width:100%;padding:6px 10px;border:1px solid #e2e8f0;border-radius:6px;font-size:12px;outline:none;background:#f8fafc}
+.diff-list{flex:1;overflow:auto;padding:0 8px 8px}
+.diff-content{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.diff-filter-bar{padding:8px 14px;background:#fff;border-bottom:1px solid #e2e8f0;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.diff-filter-btn{padding:4px 10px;border-radius:6px;border:1px solid #e2e8f0;background:#f8fafc;font-size:11px;font-weight:600;cursor:pointer;color:#475569}
+.diff-filter-btn.active{background:#0891b2;color:#fff;border-color:#0891b2}
+.diff-legend{display:flex;gap:10px;font-size:11px;color:#64748b;align-items:center;margin-left:auto;flex-wrap:wrap}
+.diff-legend-item{display:flex;align-items:center;gap:4px}
+.diff-legend-dot{width:10px;height:10px;border-radius:2px;flex-shrink:0}
+/* DUAL UPLOAD */
+.dual-upload{display:flex;gap:20px;justify-content:center;align-items:stretch;flex-wrap:wrap;margin-bottom:24px}
+.dual-card{flex:1;min-width:200px;max-width:280px;background:#f8fafc;border:2px dashed #cbd5e1;border-radius:12px;padding:20px 16px;display:flex;flex-direction:column;align-items:center;gap:10px;transition:.2s}
+.dual-card.loaded{border-color:#16a34a;background:#f0fdf4}
+.dual-icon{font-size:28px;opacity:.5;transition:.2s}
+.dual-card.loaded .dual-icon{opacity:1}
+.dual-label{font-size:13px;font-weight:600;color:#334155}
+.dual-filename{font-size:11px;color:#16a34a;font-weight:600;text-align:center;word-break:break-all;min-height:16px}
+.dual-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:8px;cursor:pointer;font-size:12px;font-weight:600;border:none;transition:.2s;background:#2563eb;color:#fff}
+.dual-btn:hover{background:#1d4ed8}
+.dual-btn.loaded{background:#15803d}
+/* DIFF TABLE section header */
+.diff-section-hdr{padding:7px 14px;background:#f1f5f9;border-bottom:1px solid #e2e8f0;border-top:2px solid #cbd5e1;font-size:12px;font-weight:700;color:#334155;display:flex;gap:10px;align-items:center}
+.merge-file-item{display:flex;align-items:center;gap:10px;background:#fff;border:1px solid #e2e8f0;border-radius:8px;padding:10px 14px}
+.merge-file-item .mf-name{flex:1;font-size:13px;font-weight:600;color:#1e293b;font-family:'JetBrains Mono',monospace;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.merge-file-item .mf-meta{font-size:11px;color:#64748b;white-space:nowrap}
+.merge-file-item .mf-del{border:none;background:none;cursor:pointer;color:#94a3b8;font-size:16px;line-height:1;padding:0 2px;flex-shrink:0}
+.merge-file-item .mf-del:hover{color:#ef4444}
+.conflict-card{border:1px solid #e2e8f0;border-radius:10px;margin-bottom:14px;overflow:hidden}
+.conflict-card-hdr{padding:10px 14px;background:#f8fafc;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #f1f5f9}
+.conflict-card-hdr .cc-title{font-size:13px;font-weight:700;color:#0f172a}
+.conflict-card-hdr .cc-badge{font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px}
+.conflict-options{display:flex;gap:0;flex-wrap:wrap}
+.conflict-opt{flex:1;min-width:140px;padding:10px 12px;cursor:pointer;border:none;background:#fff;text-align:left;font-size:12px;border-right:1px solid #f1f5f9;border-top:1px solid #f1f5f9;transition:.15s;display:flex;flex-direction:column;gap:3px}
+.conflict-opt:last-child{border-right:none}
+.conflict-opt:hover{background:#f8fafc}
+.conflict-opt.chosen{background:#eff6ff;box-shadow:inset 0 -2px 0 #2563eb}
+.conflict-opt .co-file{font-size:10px;font-weight:700;color:#64748b}
+.conflict-opt .co-val{font-size:12px;color:#0f172a;font-family:'JetBrains Mono',monospace;word-break:break-all}
+.toast{position:fixed;bottom:20px;right:20px;background:#16a34a;color:#fff;padding:12px 20px;border-radius:8px;font-size:13px;font-weight:600;box-shadow:0 8px 24px rgba(0,0,0,.2);z-index:1000;transition:opacity .3s,transform .3s}
+.toast.hidden{opacity:0;transform:translateY(10px);pointer-events:none}
+.loading-overlay{position:fixed;inset:0;background:rgba(15,23,42,.7);display:flex;align-items:center;justify-content:center;z-index:9999;flex-direction:column;gap:16px;color:#fff;font-size:16px;font-weight:600}
+.spinner{width:40px;height:40px;border:4px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+/* HELP MODAL */
+.help-overlay{display:none;position:fixed;inset:0;background:rgba(15,23,42,.7);z-index:8000;align-items:center;justify-content:center}
+.help-overlay.open{display:flex}
+.help-modal{background:#fff;border-radius:16px;width:min(820px,95vw);max-height:88vh;display:flex;flex-direction:column;box-shadow:0 30px 60px rgba(0,0,0,.3);overflow:hidden}
+.help-header{display:flex;align-items:center;justify-content:space-between;padding:18px 24px 0;border-bottom:1px solid #e2e8f0;flex-shrink:0}
+.help-header h2{font-size:17px;font-weight:700;color:#0f172a}
+.help-close{border:none;background:none;font-size:22px;cursor:pointer;color:#94a3b8;line-height:1;padding:4px}
+.help-close:hover{color:#475569}
+.help-tabs{display:flex;gap:0;padding:0 24px;border-bottom:1px solid #e2e8f0;flex-shrink:0}
+.help-tab{padding:10px 18px;font-size:13px;font-weight:600;cursor:pointer;border:none;background:none;color:#64748b;border-bottom:2px solid transparent;margin-bottom:-1px}
+.help-tab.active{color:#2563eb;border-bottom-color:#2563eb}
+.help-body{flex:1;overflow-y:auto;padding:24px}
+.help-body h3{font-size:14px;font-weight:700;color:#0f172a;margin:18px 0 6px;display:flex;align-items:center;gap:6px}
+.help-body h3:first-child{margin-top:0}
+.help-body p,.help-body li{font-size:13px;color:#334155;line-height:1.7}
+.help-body ul{padding-left:20px;margin:4px 0 10px}
+.help-body .kbd{display:inline-block;background:#f1f5f9;border:1px solid #cbd5e1;border-radius:4px;padding:1px 6px;font-family:'JetBrains Mono',monospace;font-size:11px;color:#334155}
+.help-body .tip{background:#eff6ff;border-left:3px solid #2563eb;border-radius:0 6px 6px 0;padding:8px 12px;margin:8px 0;font-size:12px;color:#1e40af}
+.help-body .warn{background:#fef9c3;border-left:3px solid #eab308;border-radius:0 6px 6px 0;padding:8px 12px;margin:8px 0;font-size:12px;color:#713f12}
+/* Changelog */
+.cl-entry{margin-bottom:20px}
+.cl-ver{display:inline-flex;align-items:center;gap:8px;margin-bottom:6px}
+.cl-ver-num{background:#0f172a;color:#60a5fa;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;padding:2px 10px;border-radius:6px}
+.cl-ver-date{font-size:11px;color:#94a3b8}
+.cl-ver-cur{background:#16a34a;color:#fff;font-size:10px;font-weight:700;padding:1px 6px;border-radius:4px}
+.cl-item{font-size:12px;color:#475569;padding:2px 0 2px 16px;position:relative;line-height:1.6}
+.cl-item::before{content:'•';position:absolute;left:4px;color:#94a3b8}
+.app-ver-info{display:flex;align-items:center;gap:8px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:10px 14px;margin-bottom:16px}
+.app-ver-info span{font-size:12px;color:#475569}
+.app-ver-info strong{font-family:'JetBrains Mono',monospace;color:#0f172a;font-size:13px}
+</style>
+</head>
+<body>
+<div class="loading-overlay" id="loadingOverlay" style="display:none"><div class="spinner"></div><div id="loadingText">Caricamento...</div></div>
+
+<!-- UPLOAD SCREEN -->
+<div id="uploadScreen" style="height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#0f172a 0%,#1e293b 100%)">
+  <div class="upload-zone" id="dropZone">
+    <div style="font-size:40px;margin-bottom:16px">⚙️</div>
+    <h1>TIA Portal Text List Editor</h1>
+    <p style="margin-bottom:6px">Carica il file Excel esportato dal TIA Portal.<br>Dopo il caricamento puoi scegliere quali elenchi aprire.</p>
+    <p style="font-size:12px;color:#64748b;margin-bottom:18px">versione app: <span style="font-family:'JetBrains Mono',monospace;color:#60a5fa">v5.14</span> &nbsp;·&nbsp; <button onclick="openHelp()" style="background:none;border:none;color:#60a5fa;cursor:pointer;font-size:12px;text-decoration:underline">❓ Manuale & Changelog</button></p>
+    <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap">
+      <label class="upload-btn">📂 Carica Export.xlsx<input type="file" accept=".xlsx,.xls" id="fileInput" style="display:none"></label>
+      <button class="upload-btn" style="background:#0891b2;box-shadow:0 4px 12px rgba(8,145,178,.35)" onclick="showDiffUploadScreen()">🔀 Confronta due file</button>
+      <button class="upload-btn" style="background:#7c3aed;box-shadow:0 4px 12px rgba(124,58,237,.35)" onclick="showMergeScreen()">🔗 Unisci file</button>
+    </div>
+    <div id="resumeSessionBanner" style="display:none;margin-top:18px;background:#1e293b;border:1px solid #3b82f6;border-radius:10px;padding:12px 20px;display:none;align-items:center;gap:12px;justify-content:center;flex-wrap:wrap">
+      <span style="font-size:13px;color:#94a3b8">Sessione attiva:</span>
+      <span id="resumeFileName" style="font-family:'JetBrains Mono',monospace;color:#60a5fa;font-size:13px;font-weight:600"></span>
+      <button onclick="resumeSession()" style="padding:7px 18px;background:#2563eb;color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer">↩ Riprendi sessione</button>
+    </div>
+  </div>
+</div>
+
+<!-- DIFF UPLOAD SCREEN -->
+<div id="diffUploadScreen" style="display:none;height:100vh;align-items:center;justify-content:center;background:linear-gradient(135deg,#0c4a6e 0%,#0f172a 100%)">
+  <div class="upload-zone" style="max-width:680px">
+    <div style="font-size:36px;margin-bottom:12px">🔀</div>
+    <h1>Confronto tra due file Excel</h1>
+    <p>Carica i due file da confrontare. Verranno evidenziate tutte le differenze tra i testi.</p>
+    <div class="dual-upload">
+      <div class="dual-card" id="diffCardA"
+        ondragover="event.preventDefault();event.stopPropagation();this.style.borderColor='#0891b2'"
+        ondragleave="this.style.borderColor=''"
+        ondrop="event.preventDefault();event.stopPropagation();this.style.borderColor='';handleDiffFile(event.dataTransfer.files[0],'A')">
+        <div class="dual-icon">📄</div>
+        <div class="dual-label">File A (originale)</div>
+        <div class="dual-filename" id="diffNameA">Nessun file</div>
+        <label class="dual-btn" id="diffBtnLabelA">📂 Scegli file<input type="file" accept=".xlsx,.xls" id="diffInputA" style="display:none"></label>
+      </div>
+      <div style="display:flex;align-items:center;font-size:22px;color:#64748b;font-weight:700">vs</div>
+      <div class="dual-card" id="diffCardB"
+        ondragover="event.preventDefault();event.stopPropagation();this.style.borderColor='#059669'"
+        ondragleave="this.style.borderColor=''"
+        ondrop="event.preventDefault();event.stopPropagation();this.style.borderColor='';handleDiffFile(event.dataTransfer.files[0],'B')">
+        <div class="dual-icon">📄</div>
+        <div class="dual-label">File B (modificato)</div>
+        <div class="dual-filename" id="diffNameB">Nessun file</div>
+        <label class="dual-btn" id="diffBtnLabelB">📂 Scegli file<input type="file" accept=".xlsx,.xls" id="diffInputB" style="display:none"></label>
+      </div>
+    </div>
+    <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+      <button class="primary-btn" id="startDiffBtn" disabled onclick="startDiff()" style="background:#0891b2;padding:12px 28px;font-size:15px;border-radius:10px;opacity:.5;cursor:not-allowed">🔀 Avvia confronto</button>
+      <button class="primary-btn" onclick="showUploadScreen()" style="background:#475569;padding:12px 28px;font-size:15px;border-radius:10px">← Torna indietro</button>
+    </div>
+  </div>
+</div>
+
+<!-- MERGE SCREEN -->
+<div id="mergeScreen" style="display:none;height:100vh;align-items:center;justify-content:center;background:linear-gradient(135deg,#3b0764 0%,#0f172a 100%);overflow:auto">
+  <div class="upload-zone" style="max-width:780px;width:94vw">
+    <div style="font-size:36px;margin-bottom:12px">🔗</div>
+    <h1>Unisci file Excel</h1>
+    <p>Carica due o più file da unire in un unico Export. Puoi decidere come gestire i conflitti.</p>
+    <!-- Drop zone for multiple files -->
+    <div id="mergeDropZone" style="border:2px dashed #6d28d9;border-radius:12px;padding:28px 20px;margin-bottom:18px;background:#1e1b4b20;cursor:pointer;transition:.2s"
+      ondragover="event.preventDefault();this.style.borderColor='#a78bfa'"
+      ondragleave="this.style.borderColor='#6d28d9'"
+      ondrop="handleMergeDrop(event)">
+      <div style="font-size:28px;margin-bottom:8px">📂</div>
+      <div style="font-size:13px;color:#94a3b8">Trascina qui i file .xlsx oppure clicca per selezionarli</div>
+      <label style="display:inline-flex;align-items:center;gap:8px;margin-top:12px;padding:8px 18px;background:#7c3aed;color:#fff;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600">
+        📂 Seleziona file
+        <input type="file" accept=".xlsx,.xls" id="mergeFileInput" multiple style="display:none">
+      </label>
+    </div>
+    <!-- File list -->
+    <div id="mergeFileList" style="margin-bottom:16px;display:flex;flex-direction:column;gap:8px"></div>
+    <!-- Actions -->
+    <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+      <button class="primary-btn" id="startMergeBtn" disabled onclick="startMerge()" style="background:#7c3aed;padding:12px 28px;font-size:15px;border-radius:10px;opacity:.5;cursor:not-allowed">🔗 Avvia unione</button>
+      <button class="primary-btn" onclick="showUploadScreen()" style="background:#475569;padding:12px 28px;font-size:15px;border-radius:10px">← Torna indietro</button>
+    </div>
+  </div>
+</div>
+
+<!-- MERGE CONFLICT MODAL -->
+<div id="mergeConflictOverlay" style="display:none;position:fixed;inset:0;background:rgba(15,23,42,.85);z-index:8000;align-items:center;justify-content:center">
+  <div style="background:#fff;border-radius:16px;width:min(960px,96vw);max-height:90vh;display:flex;flex-direction:column;box-shadow:0 30px 60px rgba(0,0,0,.4);overflow:hidden">
+    <!-- Header -->
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 24px;border-bottom:1px solid #e2e8f0;flex-shrink:0;flex-wrap:wrap;gap:8px">
+      <div>
+        <div style="font-size:16px;font-weight:700;color:#0f172a">⚠️ Risoluzione conflitti</div>
+        <div style="font-size:12px;color:#64748b;margin-top:2px" id="conflictProgress"></div>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+        <button onclick="resolveAll('first')" style="padding:6px 12px;background:#2563eb;color:#fff;border:none;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer">Tieni tutti i primi</button>
+        <button onclick="resolveAll('last')" style="padding:6px 12px;background:#16a34a;color:#fff;border:none;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer">Tieni tutti gli ultimi</button>
+        <button onclick="collapseAllSections(true)" style="padding:6px 10px;background:#f1f5f9;color:#475569;border:1px solid #e2e8f0;border-radius:7px;font-size:12px;cursor:pointer" title="Chiudi tutti i gruppi">▶ Chiudi tutti</button>
+        <button onclick="collapseAllSections(false)" style="padding:6px 10px;background:#f1f5f9;color:#475569;border:1px solid #e2e8f0;border-radius:7px;font-size:12px;cursor:pointer" title="Apri tutti i gruppi">▼ Apri tutti</button>
+        <button onclick="closeMergeConflictModal()" style="padding:6px 10px;background:#f1f5f9;color:#475569;border:1px solid #e2e8f0;border-radius:7px;font-size:12px;cursor:pointer;margin-left:4px" title="Chiudi e torna indietro">✕ Chiudi</button>
+      </div>
+    </div>
+    <!-- Filter bar -->
+    <div style="display:flex;align-items:center;gap:12px;padding:10px 24px;border-bottom:1px solid #e2e8f0;flex-shrink:0;flex-wrap:wrap;background:#f8fafc">
+      <!-- View filter -->
+      <div style="display:flex;gap:4px;align-items:center">
+        <span style="font-size:11px;font-weight:600;color:#64748b;margin-right:2px">Vista:</span>
+        <button id="mfv-conflicts" onclick="setMergeViewFilter('conflicts')" style="padding:4px 10px;border-radius:6px;border:1px solid #e2e8f0;font-size:11px;font-weight:600;cursor:pointer;background:#7c3aed;color:#fff">Solo conflitti</button>
+        <button id="mfv-all" onclick="setMergeViewFilter('all')" style="padding:4px 10px;border-radius:6px;border:1px solid #e2e8f0;font-size:11px;font-weight:600;cursor:pointer;background:#fff;color:#475569">Tutte le voci</button>
+      </div>
+      <div style="width:1px;height:20px;background:#e2e8f0"></div>
+      <!-- Search by list name -->
+      <input id="mergeSearchList" type="text" placeholder="🔍 Filtra per elenco..." oninput="_mergeConflictPage=0;renderConflictBody()"
+        style="padding:4px 10px;border:1px solid #e2e8f0;border-radius:6px;font-size:11px;outline:none;min-width:180px;background:#fff">
+      <div style="display:flex;gap:4px;align-items:center">
+        <span style="font-size:11px;font-weight:600;color:#64748b;margin-right:2px">Lingua:</span>
+        <button id="mfl-all" onclick="setMergeLangFilter('all')" style="padding:4px 10px;border-radius:6px;border:1px solid #e2e8f0;font-size:11px;font-weight:600;cursor:pointer;background:#0f172a;color:#fff">Tutte</button>
+        <button id="mfl-it-IT" onclick="setMergeLangFilter('it-IT')" style="padding:4px 10px;border-radius:6px;border:1px solid #e2e8f0;font-size:11px;font-weight:600;cursor:pointer;background:#fff;color:#2563eb">IT</button>
+        <button id="mfl-en-US" onclick="setMergeLangFilter('en-US')" style="padding:4px 10px;border-radius:6px;border:1px solid #e2e8f0;font-size:11px;font-weight:600;cursor:pointer;background:#fff;color:#dc2626">EN</button>
+        <button id="mfl-en-GB" onclick="setMergeLangFilter('en-GB')" style="padding:4px 10px;border-radius:6px;border:1px solid #e2e8f0;font-size:11px;font-weight:600;cursor:pointer;background:#fff;color:#7c3aed">GB</button>
+        <button id="mfl-de-DE" onclick="setMergeLangFilter('de-DE')" style="padding:4px 10px;border-radius:6px;border:1px solid #e2e8f0;font-size:11px;font-weight:600;cursor:pointer;background:#fff;color:#ca8a04">DE</button>
+      </div>
+    </div>
+    <div style="flex:1;overflow-y:auto;padding:20px 24px" id="conflictBody"></div>
+    <div style="padding:14px 24px;border-top:1px solid #f1f5f9;display:flex;justify-content:space-between;align-items:center;flex-shrink:0">
+      <div style="font-size:12px;color:#64748b" id="conflictSummary"></div>
+      <button onclick="confirmMerge()" style="padding:10px 24px;background:#7c3aed;color:#fff;border:none;border-radius:9px;font-size:14px;font-weight:700;cursor:pointer">✅ Conferma e scarica</button>
+    </div>
+  </div>
+</div>
+
+<!-- SELECTION SCREEN -->
+<div id="selectionScreen" style="display:none;height:100vh;align-items:center;justify-content:center;background:linear-gradient(135deg,#e2e8f0 0%,#f8fafc 100%)">
+  <div class="selector-zone">
+    <h1>Seleziona gli elenchi da caricare</h1>
+    <p>Questa selezione definisce l'insieme su cui lavorare.</p>
+    <div class="selector-actions">
+      <div class="left">
+        <button class="pill-btn" onclick="selectAllLists(true)">Seleziona tutto</button>
+        <button class="pill-btn" onclick="selectAllLists(false)">Deseleziona tutto</button>
+      </div>
+      <div class="right"><input class="selector-search" id="selectionSearch" placeholder="Filtra elenchi..." oninput="renderSelectionList()"></div>
+    </div>
+    <div class="selection-list" id="selectionList"></div>
+    <div class="selector-footer">
+      <div style="display:flex;align-items:center;gap:10px">
+        <button id="selBackBtn" class="pill-btn" style="display:none" onclick="goBackFromSelection()">← Torna all'editor</button>
+        <div id="selectionInfo" class="sel-meta"></div>
+      </div>
+      <button class="primary-btn" onclick="startEditingSelected()">Apri editor gruppi</button>
+    </div>
+  </div>
+</div>
+
+<!-- COMPARE SCREEN (stesso file) -->
+<div id="compareScreen" style="display:none;height:100vh;flex-direction:column">
+  <div class="topbar">
+    <div class="topbar-left">
+      <span style="font-size:20px">📊</span><span class="topbar-title">Vista insieme</span>
+      <span class="badge badge-file" id="compareFileLabel"></span>
+      <span class="badge badge-changes" id="compareChangesBadge" style="display:none"></span>
+      <div class="version-badge">🏷 <span id="versionDisplayC">—</span></div>
+    </div>
+    <div class="lang-buttons" id="compareLangButtons"></div>
+    <div class="topbar-actions">
+      <button class="btn undo-btn" style="background:#f59e0b;color:#0f172a;opacity:0.45" disabled onclick="doUndo()" title="Annulla ultima modifica (Ctrl+Z)">↩ Annulla</button>
+      <button class="btn" style="background:#ef4444;color:#fff" onclick="doResetAll('editor')" title="Ripristina tutto">🔄 Ripristina tutto</button>
+      <button class="btn btn-diff" onclick="showDiffUploadScreen()">🔀 Confronta file</button>
+      <button class="btn btn-lists" onclick="showSelectionScreen()">📑 Cambia insieme</button>
+      <button class="btn btn-load" onclick="showEditor()">🧭 Editor gruppi</button>
+      <button class="btn btn-export" onclick="doExport()">💾 Scarica Export_modified.xlsx</button>
+      <button class="btn btn-load" onclick="showUploadScreen()">🏠 Home</button>
+      <button class="btn" style="background:#334155;color:#e2e8f0" onclick="openHelp()">❓ Aiuto</button>
+      <button class="btn update-check-btn" style="background:#1e3a5f;color:#93c5fd;border:1px solid #3b82f6" onclick="manualCheckForUpdate()" title="Controlla aggiornamenti">↑ Aggiornamenti</button>
+    </div>
+  </div>
+  <div class="compare-layout">
+    <div class="compare-panel">
+      <div class="compare-actions">
+        <button class="pill-btn" onclick="selectAllCompareLists(true)">Seleziona tutti</button>
+        <button class="pill-btn" onclick="selectAllCompareLists(false)">Deseleziona tutti</button>
+      </div>
+      <input class="selector-search" id="compareSearch" placeholder="Filtra elenchi..." oninput="renderCompareList()">
+      <div class="compare-list" id="compareList"></div>
+    </div>
+    <div class="compare-table-wrap">
+      <div class="compare-hint" id="compareInfo"></div>
+      <div class="content-table-wrap" id="compareTableWrap"></div>
+    </div>
+  </div>
+</div>
+
+<!-- EDITOR SCREEN -->
+<div id="editorScreen" style="display:none;height:100vh;flex-direction:column">
+  <div class="topbar">
+    <div class="topbar-left">
+      <span style="font-size:20px">⚙️</span>
+      <span class="topbar-title">TIA Text Editor</span>
+      <span class="badge badge-file" id="fileLabel"></span>
+      <span class="badge badge-changes" id="changesBadge" style="display:none"></span>
+      <div class="version-badge">🏷 <span id="versionDisplay">—</span></div>
+    </div>
+    <div class="lang-buttons" id="langButtons"></div>
+    <div class="topbar-actions">
+      <button class="btn undo-btn" style="background:#f59e0b;color:#0f172a;opacity:0.45" disabled onclick="doUndo()" title="Annulla ultima modifica (Ctrl+Z)">↩ Annulla</button>
+      <button class="btn" style="background:#ef4444;color:#fff" onclick="doResetAll('editor')" title="Ripristina tutto al file originale">🔄 Ripristina tutto</button>
+      <button class="btn btn-diff" onclick="showDiffUploadScreen()">🔀 Confronta file</button>
+      <button class="btn btn-compare" onclick="showCompareScreen()">📊 Vista insieme</button>
+      <button class="btn btn-lists" onclick="showSelectionScreen()">📑 Seleziona elenchi</button>
+      <label class="btn btn-load">📂 Carica altro<input type="file" accept=".xlsx,.xls" id="fileInputAlt" style="display:none"></label>
+      <button class="btn btn-export" onclick="doExport()">💾 Scarica Export_modified.xlsx</button>
+      <button class="btn btn-load" onclick="showUploadScreen()">🏠 Home</button>
+      <button class="btn" style="background:#334155;color:#e2e8f0" onclick="openHelp()" title="Manuale e Changelog">❓ Aiuto</button>
+      <button class="btn update-check-btn" style="background:#1e3a5f;color:#93c5fd;border:1px solid #3b82f6" onclick="manualCheckForUpdate()" title="Controlla aggiornamenti">↑ Aggiornamenti</button>
+    </div>
+  </div>
+  <div class="main">
+    <div class="sidebar" id="sidebar">
+      <div class="sidebar-header"><span id="sidebarTitle" style="font-weight:600;font-size:13px;color:#475569"></span><button class="sidebar-toggle" onclick="toggleSidebar()">◀</button></div>
+      <div id="sidebarBody"><div class="sidebar-search"><input type="text" placeholder="Filtra gruppi..." id="sidebarSearch" oninput="filterGroups()"></div><div class="sidebar-list" id="sidebarList"></div></div>
+    </div>
+    <div class="content" id="content">
+      <div class="empty-state" id="emptyState"><div class="icon">📋</div><div style="font-size:15px;font-weight:500">Seleziona un gruppo dalla barra laterale</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- DIFF SCREEN (due file) -->
+<div id="diffScreen" style="display:none;height:100vh;flex-direction:column">
+  <div class="topbar">
+    <div class="topbar-left">
+      <span style="font-size:20px">🔀</span>
+      <span class="topbar-title">Confronto file</span>
+      <span class="badge" style="background:#0891b2;color:#fff;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" id="diffBadgeA"></span>
+      <span style="color:#64748b;font-size:12px">vs</span>
+      <span class="badge" style="background:#059669;color:#fff;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" id="diffBadgeB"></span>
+      <span class="badge badge-changes" id="diffDiffBadge" style="display:none"></span>
+      <span class="badge" style="background:#f59e0b;color:#0f172a;display:none" id="diffChangesBadge"></span>
+      <div class="version-badge">🏷 <span id="versionDisplayD">—</span></div>
+    </div>
+    <div class="lang-buttons" id="diffLangButtons"></div>
+    <div class="topbar-actions">
+      <button class="btn undo-btn" style="background:#f59e0b;color:#0f172a;opacity:0.45" disabled onclick="doUndo()" title="Annulla ultima modifica (Ctrl+Z)">↩ Annulla</button>
+      <button class="btn" style="background:#ef4444;color:#fff" onclick="doResetAll('diff')" title="Ripristina entrambi i file originali">🔄 Ripristina tutto</button>
+      <button class="btn btn-export" onclick="exportDiffB()">💾 Esporta B modificato</button>
+      <button class="btn btn-export" style="background:#0891b2" onclick="exportDiffA()">💾 Esporta A modificato</button>
+      <button class="btn btn-diff" onclick="showDiffUploadScreen()">🔀 Cambia file</button>
+      <button class="btn btn-load" onclick="showUploadScreen()">🏠 Home</button>
+      <button class="btn" style="background:#334155;color:#e2e8f0" onclick="openHelp()">❓ Aiuto</button>
+      <button class="btn update-check-btn" style="background:#1e3a5f;color:#93c5fd;border:1px solid #3b82f6" onclick="manualCheckForUpdate()" title="Controlla aggiornamenti">↑ Aggiornamenti</button>
+    </div>
+  </div>
+  <div class="diff-layout">
+    <div class="diff-sidebar">
+      <div class="diff-sidebar-hdr" id="diffSidebarHdr">Elenchi</div>
+      <div class="diff-sidebar-search"><input type="text" placeholder="Filtra elenchi..." id="diffSidebarSearch" oninput="filterDiffSidebar()"></div>
+      <div class="diff-list" id="diffList"></div>
+    </div>
+    <div class="diff-content">
+      <div class="diff-filter-bar">
+        <button class="diff-filter-btn active" id="filterAll" onclick="setDiffFilter('all')">Tutti</button>
+        <button class="diff-filter-btn" id="filterDiff" onclick="setDiffFilter('diff')">Solo differenze</button>
+        <button class="diff-filter-btn" id="filterOnlyA" onclick="setDiffFilter('onlyA')">Solo in A</button>
+        <button class="diff-filter-btn" id="filterOnlyB" onclick="setDiffFilter('onlyB')">Solo in B</button>
+        <div class="diff-legend">
+          <div class="diff-legend-item"><div class="diff-legend-dot" style="background:#fca5a5"></div>Testo diverso (A)</div>
+          <div class="diff-legend-item"><div class="diff-legend-dot" style="background:#86efac"></div>Testo diverso (B)</div>
+          <div class="diff-legend-item"><div class="diff-legend-dot" style="background:#fed7aa"></div>Solo in A</div>
+          <div class="diff-legend-item"><div class="diff-legend-dot" style="background:#bbf7d0"></div>Solo in B</div>
+        </div>
+      </div>
+      <div class="content-table-wrap" id="diffTableWrap">
+        <div class="empty-state"><div class="icon">🔍</div><div style="font-size:15px;font-weight:500">Seleziona un elenco dalla barra laterale</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ADD ROW MODAL -->
+<div class="addrow-overlay" id="addRowOverlay" onclick="if(event.target===this)closeAddRow()">
+  <div class="addrow-modal">
+    <div class="addrow-header">
+      <h3>➕ Aggiungi voce</h3>
+      <button class="addrow-close" onclick="closeAddRow()">✕</button>
+    </div>
+    <div class="addrow-body">
+      <div><label>Valore (numerico o testo)</label><input id="arVal" type="text" placeholder="es. 10"></div>
+      <div><label>Testo IT</label><input id="arIT" type="text" placeholder="Testo in italiano"></div>
+      <div><label>Testo EN</label><input id="arEN" type="text" placeholder="English text"></div>
+      <div><label>Testo GB</label><input id="arGB" type="text" placeholder="British English"></div>
+      <div><label>Testo DE</label><input id="arDE" type="text" placeholder="Deutscher Text"></div>
+    </div>
+    <div class="addrow-footer">
+      <button class="btn btn-load" onclick="closeAddRow()">Annulla</button>
+      <button class="btn btn-export" onclick="confirmAddRow()">➕ Aggiungi</button>
+    </div>
+  </div>
+</div>
+
+<!-- HELP MODAL -->
+<div class="help-overlay" id="helpOverlay" onclick="if(event.target===this)closeHelp()">
+  <div class="help-modal">
+    <div class="help-header">
+      <h2>📖 TIA Portal Text List Editor</h2>
+      <button class="help-close" onclick="closeHelp()">✕</button>
+    </div>
+    <div class="help-tabs">
+      <button class="help-tab active" onclick="switchHelpTab('manual',this)">📘 Manuale</button>
+      <button class="help-tab" onclick="switchHelpTab('changelog',this)">📋 Changelog</button>
+    </div>
+    <div class="help-body" id="helpBody"></div>
+  </div>
+</div>
+
+<!-- SELECTION TOOLBAR -->
+<div class="sel-toolbar" id="selToolbar">
+  <span class="sel-info" id="selInfo">0 celle</span>
+  <button class="stb" style="background:#3b82f6;color:#fff" onclick="selCopy()">📋 Copia (Ctrl+C)</button>
+  <button class="stb" style="background:#16a34a;color:#fff" onclick="selPaste()">📥 Incolla (Ctrl+V)</button>
+  <button class="stb" style="background:#ef4444;color:#fff" onclick="selDelete()">🗑 Svuota (Canc)</button>
+  <button class="stb" style="background:#f59e0b;color:#0f172a" onclick="doUndo()">↩ Annulla (Ctrl+Z)</button>
+  <button class="stb" style="background:#475569;color:#fff" onclick="clearSel()">✕ Esc</button>
+</div>
+<div class="toast hidden" id="toast"></div>
+
+<script>
+const LANGS=["it-IT","en-US","en-GB","de-DE"];
+const LANG_LABELS={"it-IT":"IT","en-US":"EN","en-GB":"GB","de-DE":"DE"};
+const LANG_COLORS={"it-IT":"#2563eb","en-US":"#dc2626","en-GB":"#7c3aed","de-DE":"#ca8a04"};
+
+// Single-file state
+let allTextLists=[],allEntries=[];
+let textLists=[],entries=[],groups={};
+let selectedListNames=[],compareSelectedLists=[];
+let activeLangs=[...LANGS];
+let selectedGroup=null,sidebarCollapsed=false,changeCount=0,fileName="";
+
+// Dual-file diff state
+let diffDataA=null,diffDataB=null,diffFileNameA="",diffFileNameB="";
+let diffActiveLangs=[...LANGS],diffFilter='all',selectedDiffList=null,diffGroups={};
+let diffChangeCount=0;
+
+/* ========== VERSION ========== */
+let projectVersion='';
+function setVersion(v){
+  projectVersion=v.trim();
+  const d=projectVersion||'—';
+  ['versionDisplay','versionDisplayC','versionDisplayD'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=d;});
+}
+
+/* ========== CELL HELPERS ========== */
+function renderCellContent(div, text){
+  div.innerHTML='';
+  if(!text){div.classList.add('empty'); div.textContent='—'; return;}
+  div.classList.remove('empty');
+  // split on \n and show ↵ symbol between lines
+  const parts=text.split('\n');
+  parts.forEach((part,i)=>{
+    if(part) div.appendChild(document.createTextNode(part));
+    if(i<parts.length-1){
+      const sym=document.createElement('span');
+      sym.className='nl'; sym.textContent='↵';
+      div.appendChild(sym);
+    }
+  });
+}
+
+function makeCellTextarea(currentVal, borderColor, onDone){
+  const ta=document.createElement('textarea');
+  ta.className='cell-input';
+  ta.style.border='2px solid '+borderColor;
+  ta.value=currentVal;
+  // auto-resize height up to max-height
+  const resize=()=>{ta.style.height='28px'; ta.style.height=Math.min(ta.scrollHeight,90)+'px';};
+  ta.addEventListener('input',resize);
+  setTimeout(resize,0);
+  ta.onkeydown=ev=>{
+    if(ev.key==='Enter'&&!ev.shiftKey){ev.preventDefault(); onDone(ta.value);}
+    if(ev.key==='Escape'){onDone(null);}
+    // Shift+Enter = newline (default textarea behaviour, no override needed)
+  };
+  return ta;
+}
+// Two separate caches: one for editor, one for diff
+const _origEditor={};
+const _origDiff={};
+// Explicit set of keys modified by user in diff (includes copies)
+const _diffModified=new Set();
+
+function origKey(entry,lang){return entry.parent+'§'+entry.value+'§'+lang;}
+
+function recordOrig(entry,lang,ctx){
+  const cache=ctx==='diff'?_origDiff:_origEditor;
+  const k=origKey(entry,lang);
+  // If already explicitly marked as modified (e.g. by copyRow), don't overwrite the original
+  if(ctx==='diff'&&_diffModified.has(k)) return;
+  if(!(k in cache)) cache[k]=entry.texts[lang]||'';
+}
+
+function isModified(entry,lang,ctx){
+  if(ctx==='diff'){
+    // A cell is modified if it's in the explicit set OR if its value differs from original
+    const k=origKey(entry,lang);
+    if(_diffModified.has(k)) return true;
+    return (k in _origDiff)&&_origDiff[k]!==(entry.texts[lang]||'');
+  }
+  const cache=_origEditor;
+  const k=origKey(entry,lang);
+  return (k in cache)&&cache[k]!==(entry.texts[lang]||'');
+}
+
+function markDiffModified(entry,lang){
+  _diffModified.add(origKey(entry,lang));
+}
+
+function clearOrigCache(ctx){
+  if(ctx==='diff'){
+    for(const k in _origDiff) delete _origDiff[k];
+    _diffModified.clear();
+  } else {
+    for(const k in _origEditor) delete _origEditor[k];
+  }
+}
+
+/* ========== MULTI-CELL SELECTION (Excel style) ========== */
+const selMap=new Map();  // key -> {entry,lang,el,context,rowIdx,colIdx}
+let _clipboard='';
+let _clipboardCellCount=0;
+// Structured grid: array of rows, each row is array of {value, rowIdx, colIdx}
+// Used for internal paste — preserves \n inside cell values exactly
+let _clipboardGrid=null; // null = no internal copy available
+let _lastSelKey=null; // key of anchor cell for Shift+click range
+let _cellRegistry=[];  // [{key,entry,lang,el,rowIdx,colIdx,context,isEmpty}]
+
+function selKey(entry,lang,slot){
+  if(!entry) return null;
+  const base=entry.parent+'|'+entry.value+'|'+lang;
+  return slot?base+'|'+slot:base;
+}
+function selKeyPos(rowIdx,colIdx,ctx){return '__pos__'+ctx+'_'+rowIdx+'_'+colIdx;}
+
+function registerCell(entry,lang,el,rowIdx,colIdx,context,precomputedKey){
+  const k=precomputedKey||(entry&&lang?selKey(entry,lang):selKeyPos(rowIdx,colIdx,context||''));
+  // Remove any stale entry with the same key (handles re-renders after edit)
+  const existing=_cellRegistry.findIndex(c=>c.key===k);
+  if(existing>=0) _cellRegistry.splice(existing,1);
+  _cellRegistry.push({key:k,entry,lang,el,rowIdx,colIdx,context:context||'editor',isEmpty:!entry});
+  if(k&&selMap.has(k)) el.classList.add('sel');
+}
+function clearCellRegistry(){_cellRegistry=[];}
+
+function _selectRange(fromKey,toKey){
+  const fromIdx=_cellRegistry.findIndex(c=>c.key===fromKey);
+  const toIdx=_cellRegistry.findIndex(c=>c.key===toKey);
+  if(fromIdx<0||toIdx<0) return;
+  const from=Math.min(fromIdx,toIdx), to=Math.max(fromIdx,toIdx);
+  const anchor=_cellRegistry[fromIdx];
+  const anchorCtx=anchor?.context||'editor';
+  // Extract lang from key (index 2 after split on |) — always reliable
+  // Key formats: "parent|value|lang" (editor) or "parent|value|lang|slot" (diff)
+  const keyParts=fromKey.split('|');
+  const anchorLang=keyParts[2]||anchor?.lang||null;
+  for(let i=from;i<=to;i++){
+    const c=_cellRegistry[i];
+    if(!c||c.isEmpty) continue;
+    // Always filter by same language — applies to both editor and diff
+    if(!anchorLang||c.lang!==anchorLang) continue;
+    // In diff mode: also filter by same slot (A or B)
+    if((anchorCtx==='diffA'||anchorCtx==='diffB')&&c.context!==anchorCtx) continue;
+    if(!selMap.has(c.key)){
+      selMap.set(c.key,{...c});
+      c.el.classList.add('sel');
+    }
+  }
+}
+
+function addSel(key,el,entry,lang,context,ev,cellIdx){
+  if(ev&&ev.shiftKey&&_lastSelKey){
+    _selectRange(_lastSelKey,key);
+    _lastSelKey=key;
+    _updateSelToolbar();
+    return;
+  }
+  // Ctrl+click (no shift) or Ctrl+Shift with no existing anchor: toggle cell
+  if(selMap.has(key)){
+    selMap.delete(key); el.classList.remove('sel');
+    _lastSelKey=null;
+  } else {
+    selMap.set(key,{key,entry,lang,el,context:context||'editor'});
+    el.classList.add('sel');
+    _lastSelKey=key;  // this cell becomes the anchor for future Shift+click
+  }
+  _updateSelToolbar();
+}
+
+function clearSel(){
+  selMap.forEach(c=>{if(c.el) c.el.classList.remove('sel');});
+  selMap.clear();
+  _lastSelKey=null;
+  _updateSelToolbar();
+}
+
+function _updateSelToolbar(){
+  const tb=document.getElementById('selToolbar');
+  const info=document.getElementById('selInfo');
+  if(!tb) return;
+  if(selMap.size>0){
+    tb.classList.add('on');
+    info.textContent=selMap.size+' cell'+(selMap.size===1?'a':'e');
+  } else {
+    tb.classList.remove('on');
+  }
+}
+
+function selCopy(){
+  if(!selMap.size) return;
+  const cells=[...selMap.values()].filter(c=>c.entry);
+  if(!cells.length) return;
+  const withPos=cells.map(c=>{
+    const reg=_cellRegistry.find(r=>r.key===c.key);
+    return {...c, rowIdx:reg?.rowIdx??0, colIdx:reg?.colIdx??0};
+  });
+  withPos.sort((a,b)=>a.rowIdx!==b.rowIdx?a.rowIdx-b.rowIdx:a.colIdx-b.colIdx);
+  // Build structured grid (preserves \n inside values)
+  const rowMap=new Map();
+  withPos.forEach(c=>{
+    if(!rowMap.has(c.rowIdx)) rowMap.set(c.rowIdx,[]);
+    rowMap.get(c.rowIdx).push({value:c.entry.texts[c.lang]||'', rowIdx:c.rowIdx, colIdx:c.colIdx});
+  });
+  const sortedRows=[...rowMap.entries()].sort((a,b)=>a[0]-b[0]).map(([,cols])=>{
+    cols.sort((a,b)=>a.colIdx-b.colIdx); return cols;
+  });
+  _clipboardGrid=sortedRows;
+  _clipboardCellCount=cells.length;
+  // For system clipboard: use \t between cols, \n between rows, quote cells with \n inside
+  const sysText=sortedRows.map(row=>row.map(c=>{
+    // If value contains \t or \n, wrap in quotes (Excel convention)
+    const v=c.value;
+    return (v.includes('\t')||v.includes('\n'))?'"'+v.replace(/"/g,'""')+'"':v;
+  }).join('\t')).join('\n');
+  _clipboard=sysText;
+  navigator.clipboard.writeText(sysText).catch(()=>{});
+  showToast('📋 '+cells.length+' celle copiate ('+sortedRows.length+' righe)');
+}
+
+function selPaste(){
+  if(!selMap.size) return;
+  // Always use internal grid if available — it preserves \n inside cells perfectly
+  if(_clipboardGrid){
+    _applyPasteGrid(_clipboardGrid);
+  } else if(_clipboard!==''){
+    _applyPasteText(_clipboard);
+  }
+}
+
+function _applyPaste(text, fromInternal){
+  // Entry point from browser paste event
+  if(!selMap.size) return;
+  if(fromInternal&&_clipboardGrid){
+    _applyPasteGrid(_clipboardGrid);
+  } else {
+    _applyPasteText(text);
+  }
+}
+
+function _applyPasteGrid(grid){
+  // grid = [[{value, rowIdx, colIdx}, ...], ...]
+  const cells=[...selMap.values()].filter(c=>c.entry);
+  if(!cells.length) return;
+  const isDiff=cells.some(c=>c.context==='diff'||c.context==='diffA'||c.context==='diffB');
+  const snap=cells.map(c=>({entry:c.entry,lang:c.lang,oldVal:c.entry.texts[c.lang]||''}));
+  pushUndo({type:'multi',targets:snap,context:isDiff?'diff':'editor'});
+
+  const applyVal=(c,v)=>{
+    const isDiffCtx=c.context==='diff'||c.context==='diffA'||c.context==='diffB';
+    if(isDiffCtx){ markDiffModified(c.entry,c.lang); }
+    else { const k=c.entry.parent+'§'+c.entry.value+'§'+c.lang; if(!(k in _origEditor)) _origEditor[k]=c.entry.texts[c.lang]||''; }
+    c.entry.texts[c.lang]=v;
+    renderCellContent(c.el,v);
+    if(isDiffCtx){ c.el.classList.add('modified'); }
+    else { c.el.classList.toggle('modified',isModified(c.entry,c.lang,c.context)); }
+  };
+
+  const isSingle=(_clipboardCellCount===1);
+  if(isSingle){
+    // Single cell: paste same value to all selected
+    const v=grid[0]?.[0]?.value??'';
+    cells.forEach(c=>applyVal(c,v));
+  } else {
+    // Multi-cell grid: map by relative row/col position
+    const withPos=cells.map(c=>{
+      const reg=_cellRegistry.find(r=>r.key===c.key);
+      return {...c, rowIdx:reg?.rowIdx??0, colIdx:reg?.colIdx??0};
+    });
+    withPos.sort((a,b)=>a.rowIdx!==b.rowIdx?a.rowIdx-b.rowIdx:a.colIdx-b.colIdx);
+    const minRow=Math.min(...withPos.map(c=>c.rowIdx));
+    const minCol=Math.min(...withPos.map(c=>c.colIdx));
+    const selGrid=new Map();
+    withPos.forEach(c=>selGrid.set((c.rowIdx-minRow)+','+(c.colIdx-minCol),c));
+    grid.forEach((row,ri)=>{
+      row.forEach((src,ci)=>{
+        const target=selGrid.get(ri+','+ci);
+        if(target) applyVal(target,src.value);
+      });
+    });
+  }
+  if(isDiff){diffChangeCount+=cells.length;updateDiffChangesBadge();}
+  else{changeCount+=cells.length;updateChangesBadge();}
+  showToast('📥 Incollato in '+cells.length+' celle');
+}
+
+function _applyPasteText(text){
+  // Fallback: paste from external clipboard (e.g. from Excel)
+  if(!text) return;
+  const cells=[...selMap.values()].filter(c=>c.entry);
+  if(!cells.length) return;
+  const isDiff=cells.some(c=>c.context==='diff'||c.context==='diffA'||c.context==='diffB');
+  const snap=cells.map(c=>({entry:c.entry,lang:c.lang,oldVal:c.entry.texts[c.lang]||''}));
+  pushUndo({type:'multi',targets:snap,context:isDiff?'diff':'editor'});
+
+  const applyVal=(c,v)=>{
+    const isDiffCtx=c.context==='diff'||c.context==='diffA'||c.context==='diffB';
+    if(isDiffCtx){ markDiffModified(c.entry,c.lang); }
+    else { const k=c.entry.parent+'§'+c.entry.value+'§'+c.lang; if(!(k in _origEditor)) _origEditor[k]=c.entry.texts[c.lang]||''; }
+    c.entry.texts[c.lang]=v;
+    renderCellContent(c.el,v);
+    if(isDiffCtx){ c.el.classList.add('modified'); }
+    else { c.el.classList.toggle('modified',isModified(c.entry,c.lang,c.context)); }
+  };
+
+  // Parse Excel-style: no \t = single value (even if has \n)
+  if(!text.includes('\t')){
+    cells.forEach(c=>applyVal(c,text));
+  } else {
+    // Parse tab/newline grid, handling quoted cells (RFC 4180)
+    const srcRows=_parseExcelText(text);
+    const withPos=cells.map(c=>{
+      const reg=_cellRegistry.find(r=>r.key===c.key);
+      return {...c, rowIdx:reg?.rowIdx??0, colIdx:reg?.colIdx??0};
+    });
+    withPos.sort((a,b)=>a.rowIdx!==b.rowIdx?a.rowIdx-b.rowIdx:a.colIdx-b.colIdx);
+    if(srcRows.length===1&&srcRows[0].length===1){
+      withPos.forEach(c=>applyVal(c,srcRows[0][0]));
+    } else {
+      const minRow=Math.min(...withPos.map(c=>c.rowIdx));
+      const minCol=Math.min(...withPos.map(c=>c.colIdx));
+      const selGrid=new Map();
+      withPos.forEach(c=>selGrid.set((c.rowIdx-minRow)+','+(c.colIdx-minCol),c));
+      srcRows.forEach((row,ri)=>row.forEach((v,ci)=>{
+        const target=selGrid.get(ri+','+ci);
+        if(target) applyVal(target,v);
+      }));
+    }
+  }
+  if(isDiff){diffChangeCount+=cells.length;updateDiffChangesBadge();}
+  else{changeCount+=cells.length;updateChangesBadge();}
+  showToast('📥 Incollato in '+cells.length+' celle');
+}
+
+function _parseExcelText(text){
+  // Parse Excel tab-separated text with optional quoted cells (RFC 4180)
+  // Quoted cells can contain \n and \t
+  const rows=[];
+  let row=[], cell='', inQuote=false;
+  const s=text.replace(/\r\n/g,'\n').replace(/\r/g,'\n');
+  for(let i=0;i<s.length;i++){
+    const ch=s[i];
+    if(inQuote){
+      if(ch==='"'&&s[i+1]==='"'){cell+='"';i++;}  // escaped quote
+      else if(ch==='"'){inQuote=false;}
+      else{cell+=ch;}
+    } else {
+      if(ch==='"'&&cell===''){inQuote=true;}
+      else if(ch==='\t'){row.push(cell);cell='';}
+      else if(ch==='\n'){row.push(cell);rows.push(row);row=[];cell='';}
+      else{cell+=ch;}
+    }
+  }
+  row.push(cell); if(row.some(c=>c!=='')||rows.length===0) rows.push(row);
+  return rows;
+}
+
+function selDelete(){
+  if(!selMap.size) return;
+  const cells=[...selMap.values()].filter(c=>c.entry);
+  if(!cells.length) return;
+  const isDiff=cells.some(c=>c.context==='diff'||c.context==='diffA'||c.context==='diffB');
+  const snap=cells.map(c=>({entry:c.entry,lang:c.lang,oldVal:c.entry.texts[c.lang]||''}));
+  pushUndo({type:'multi',targets:snap,context:isDiff?'diff':'editor'});
+  cells.forEach(c=>{
+    const isDiffCtx=c.context==='diff'||c.context==='diffA'||c.context==='diffB';
+    if(isDiffCtx){markDiffModified(c.entry,c.lang);}
+    else{const k=c.entry.parent+'§'+c.entry.value+'§'+c.lang;if(!(k in _origEditor))_origEditor[k]=c.entry.texts[c.lang]||'';}
+    c.entry.texts[c.lang]='';
+    renderCellContent(c.el,'');
+    if(isDiffCtx){c.el.classList.add('modified');}
+    else{c.el.classList.toggle('modified',isModified(c.entry,c.lang,c.context));}
+  });
+  if(isDiff){diffChangeCount+=cells.length;updateDiffChangesBadge();}
+  else{changeCount+=cells.length;updateChangesBadge();}
+  showToast('🗑 '+cells.length+' celle svuotate');
+}
+
+/* ========== UNDO SYSTEM ========== */
+// Each entry: {type:'cell'|'copy', entry, lang, oldVal, newVal, context:'editor'|'diff'}
+// For 'copy': {type:'copy', targets:[{entry,lang,oldVal}], context}
+const undoStack=[];
+const MAX_UNDO=100;
+
+function pushUndo(action){
+  undoStack.push(action);
+  if(undoStack.length>MAX_UNDO) undoStack.shift();
+  refreshUndoButtons();
+}
+
+function refreshUndoButtons(){
+  const has=undoStack.length>0;
+  document.querySelectorAll('.undo-btn').forEach(b=>{b.disabled=!has;b.style.opacity=has?'1':'0.45';});
+}
+
+function doUndo(){
+  if(!undoStack.length){showToast('Niente da annullare');return;}
+  const action=undoStack.pop();
+  if(action.type==='cell'){
+    action.entry.texts[action.lang]=action.oldVal;
+    if(action.context==='editor'){changeCount=Math.max(0,changeCount-1);updateChangesBadge();}
+    else{diffChangeCount=Math.max(0,diffChangeCount-1);updateDiffChangesBadge();}
+  } else if(action.type==='copy'){
+    action.targets.forEach(t=>{t.entry.texts[t.lang]=t.oldVal;});
+    if(action.context==='editor'){changeCount=Math.max(0,changeCount-1);updateChangesBadge();}
+    else{diffChangeCount=Math.max(0,diffChangeCount-1);updateDiffChangesBadge();}
+  } else if(action.type==='multi'){
+    action.targets.forEach(t=>{t.entry.texts[t.lang]=t.oldVal;});
+    if(action.context==='diff'){diffChangeCount=Math.max(0,diffChangeCount-action.targets.length);updateDiffChangesBadge();}
+    else{changeCount=Math.max(0,changeCount-action.targets.length);updateChangesBadge();}
+  } else if(action.type==='addRow'){
+    action.entries.forEach(e=>{const i=action.entsArr.indexOf(e);if(i>=0)action.entsArr.splice(i,1);});
+    if(action.context==='editor'){changeCount=Math.max(0,changeCount-1);updateChangesBadge();applySelectedScope();}
+    else{diffChangeCount=Math.max(0,diffChangeCount-1);updateDiffChangesBadge();}
+  } else if(action.type==='addRowMulti'){
+    action.added.forEach(({entries,entsArr})=>{
+      entries.forEach(e=>{const i=entsArr.indexOf(e);if(i>=0)entsArr.splice(i,1);});
+    });
+    diffChangeCount=Math.max(0,diffChangeCount-1);updateDiffChangesBadge();
+  } else if(action.type==='deleteRow'){
+    action.entries.forEach(e=>action.entsArr.push(e));
+    if(action.context==='editor'){changeCount=Math.max(0,changeCount-1);updateChangesBadge();applySelectedScope();}
+    else{diffChangeCount=Math.max(0,diffChangeCount-1);updateDiffChangesBadge();}
+  } else if(action.type==='deleteRowBoth'){
+    action.removedA.forEach(e=>diffDataA.entries.push(e));
+    action.removedB.forEach(e=>diffDataB.entries.push(e));
+    diffChangeCount=Math.max(0,diffChangeCount-1);updateDiffChangesBadge();
+  } else if(action.type==='deleteDiffSection'){
+    action.removedTlA.forEach(t=>diffDataA.textLists.push(t));
+    action.removedTlB.forEach(t=>diffDataB.textLists.push(t));
+    const allNames=new Set([...diffDataA.textLists.map(t=>t.name),...diffDataB.textLists.map(t=>t.name)]);
+    diffGroups=buildGroups([...allNames]);
+    diffChangeCount=Math.max(0,diffChangeCount-1);updateDiffChangesBadge();
+  }
+  const es=document.getElementById('editorScreen'),ds=document.getElementById('diffScreen'),cs=document.getElementById('compareScreen');
+  if(es.style.display==='flex'&&selectedGroup) renderGroup(selectedGroup);
+  if(cs.style.display==='flex') renderCompareTable();
+  if(ds.style.display==='flex'&&selectedDiffList) renderDiffTable(selectedDiffList);
+  clearSel();
+  refreshUndoButtons();
+  showToast('↩ Modifica annullata');
+}
+
+function doResetAll(context){
+  if(context==='editor'){
+    if(!allEntries.length){showToast('Nessun file caricato');return;}
+    if(!confirm('Ripristinare TUTTE le modifiche al file originale? L\'operazione non è annullabile.')) return;
+    if(!_rawBackupMain){showToast('Backup non disponibile');return;}
+    const data=parseFileData(_rawBackupMain);
+    allEntries.forEach(e=>{
+      const orig=data.entries.find(o=>o.parent===e.parent&&o.value===e.value);
+      if(orig) LANGS.forEach(l=>{e.texts[l]=orig.texts[l];});
+    });
+    changeCount=0; updateChangesBadge();
+    undoStack.length=0; refreshUndoButtons();
+    clearOrigCache('editor'); clearSel();
+    if(selectedGroup) renderGroup(selectedGroup);
+    if(document.getElementById('compareScreen').style.display==='flex') renderCompareTable();
+    showToast('✅ Ripristinato al file originale');
+  } else {
+    if(!confirm('Ripristinare TUTTE le modifiche ai file originali? L\'operazione non è annullabile.')) return;
+    if(!_rawBackupA||!_rawBackupB){showToast('Backup non disponibile');return;}
+    diffDataA=parseFileData(_rawBackupA);
+    diffDataB=parseFileData(_rawBackupB);
+    diffChangeCount=0; updateDiffChangesBadge();
+    undoStack.length=0; refreshUndoButtons();
+    clearOrigCache('diff'); clearSel();
+    if(selectedDiffList) renderDiffTable(selectedDiffList);
+    filterDiffSidebar();
+    showToast('✅ Ripristinati i file originali');
+  }
+}
+
+// Raw backups (ArrayBuffer stored at load time)
+let _rawBackupMain=null,_rawBackupA=null,_rawBackupB=null;
+
+const noVal=v=>{if(v===null||v===undefined||String(v).trim()===""||String(v)==="<No value>") return ""; return String(v).replace(/\r\n/g,"\n").replace(/\r/g,"\n");};
+const showLoading=msg=>{document.getElementById('loadingText').textContent=msg||'Caricamento...';document.getElementById('loadingOverlay').style.display='flex';};
+const hideLoading=()=>document.getElementById('loadingOverlay').style.display='none';
+const showToast=msg=>{const t=document.getElementById('toast');t.textContent=msg;t.classList.remove('hidden');setTimeout(()=>t.classList.add('hidden'),2400);};
+
+function hideAll(){['uploadScreen','selectionScreen','compareScreen','editorScreen','diffUploadScreen','diffScreen','mergeScreen'].forEach(id=>document.getElementById(id).style.display='none');clearSel();}
+function showUploadScreen(){
+  hideAll();
+  document.getElementById('uploadScreen').style.display='flex';
+  const banner=document.getElementById('resumeSessionBanner');
+  if(!banner) return;
+  if(allEntries.length>0){
+    document.getElementById('resumeFileName').textContent=fileName||'sessione precedente';
+    banner.style.display='flex';
+  } else {
+    banner.style.display='none';
+  }
+}
+function resumeSession(){
+  if(!allEntries.length) return;
+  if(selectedGroup) showEditor();
+  else showSelectionScreen();
+}
+function showDiffUploadScreen(){hideAll();document.getElementById('diffUploadScreen').style.display='flex';}
+function showMergeScreen(){hideAll();document.getElementById('mergeScreen').style.display='flex';renderMergeFileList();}
+function showSelectionScreen(){
+  hideAll();
+  document.getElementById('selectionScreen').style.display='flex';
+  renderSelectionList();
+  const backBtn=document.getElementById('selBackBtn');
+  if(backBtn) backBtn.style.display=selectedGroup?'':'none';
+}
+function goBackFromSelection(){
+  if(allEntries.length>0&&selectedGroup) showEditor();
+  else showUploadScreen();
+}
+
+function buildGroups(names){
+  const map={};
+  names.forEach(name=>{const m=name.match(/^(.*?)(_\d+)$/);const base=m?m[1]:name;(map[base]??=[]).push(name);});
+  Object.keys(map).forEach(k=>map[k].sort((a,b)=>parseInt((a.match(/_(\d+)$/)||[,0])[1])-parseInt((b.match(/_(\d+)$/)||[,0])[1])));
+  const out={};
+  Object.keys(map).sort((a,b)=>{const ma=map[a].length>1?0:1;const mb=map[b].length>1?0:1;return ma!==mb?ma-mb:a.localeCompare(b);}).forEach(k=>out[k]=map[k]);
+  return out;
+}
+
+/* ========== PARSE ========== */
+function parseFileData(arrayBuffer){
+  const wb=XLSX.read(arrayBuffer,{type:'array'});
+  const ws1=wb.Sheets['TextList']; if(!ws1) throw new Error("Foglio 'TextList' non trovato");
+  const tls=XLSX.utils.sheet_to_json(ws1,{defval:""}).map(r=>({name:r['Name']||"",listRange:r['ListRange']||"",comments:{"it-IT":noVal(r['Comment [it-IT]']),"en-US":noVal(r['Comment [en-US]']),"en-GB":noVal(r['Comment [en-GB]']),"de-DE":noVal(r['Comment [de-DE]'])}}));
+  const ws2=wb.Sheets['TextListEntry']; if(!ws2) throw new Error("Foglio 'TextListEntry' non trovato");
+  const ents=XLSX.utils.sheet_to_json(ws2,{defval:""}).map(r=>({name:r['Name']||"",parent:r['Parent']||"",defaultEntry:r['DefaultEntry']||"",value:String(r['Value']??""),texts:{"it-IT":noVal(r['Text [it-IT]']),"en-US":noVal(r['Text [en-US]']),"en-GB":noVal(r['Text [en-GB]']),"de-DE":noVal(r['Text [de-DE]'])},fieldInfos:r['FieldInfos']||""}));
+  return {textLists:tls,entries:ents};
+}
+
+function parseFile(arrayBuffer,name){
+  showLoading('Elaborazione '+name+'...'); fileName=name;
+  try{
+    _rawBackupMain=arrayBuffer.slice(0);
+    clearOrigCache('editor');
+    const data=parseFileData(arrayBuffer);
+    allTextLists=data.textLists; allEntries=data.entries;
+    selectedListNames=allTextLists.map(t=>t.name);
+    changeCount=0; selectedGroup=null;
+    hideLoading(); showSelectionScreen();
+  }catch(err){hideLoading();alert('Errore: '+err.message);}
+}
+
+function handleFile(file){if(!file) return; const r=new FileReader(); r.onload=e=>parseFile(new Uint8Array(e.target.result),file.name); r.readAsArrayBuffer(file);}
+document.getElementById('fileInput').addEventListener('change',function(){handleFile(this.files[0]);this.value='';});
+document.getElementById('fileInputAlt').addEventListener('change',function(){handleFile(this.files[0]);this.value='';});
+const dropZone=document.getElementById('dropZone');
+['dragenter','dragover'].forEach(evt=>dropZone.addEventListener(evt,e=>{e.preventDefault();e.stopPropagation();dropZone.classList.add('dragover');}));
+['dragleave','drop'].forEach(evt=>dropZone.addEventListener(evt,e=>{e.preventDefault();e.stopPropagation();dropZone.classList.remove('dragover');}));
+dropZone.addEventListener('drop',e=>{const file=e.dataTransfer.files[0];if(file) handleFile(file);});
+
+/* ========== DUAL FILE LOAD ========== */
+function handleDiffFile(file,slot){
+  if(!file) return;
+  showLoading('Caricamento '+file.name+'...');
+  const r=new FileReader();
+  r.onload=ev=>{
+    try{
+      const data=parseFileData(new Uint8Array(ev.target.result));
+      if(slot==='A'){
+        _rawBackupA=ev.target.result.slice(0);
+        diffDataA=data; diffFileNameA=file.name;
+        document.getElementById('diffNameA').textContent=file.name;
+        document.getElementById('diffCardA').classList.add('loaded');
+        const lbl=document.getElementById('diffBtnLabelA');
+        lbl.childNodes[0].textContent='✅ Cambia A';
+        lbl.classList.add('loaded');
+      } else {
+        _rawBackupB=ev.target.result.slice(0);
+        diffDataB=data; diffFileNameB=file.name;
+        document.getElementById('diffNameB').textContent=file.name;
+        document.getElementById('diffCardB').classList.add('loaded');
+        const lbl=document.getElementById('diffBtnLabelB');
+        lbl.childNodes[0].textContent='✅ Cambia B';
+        lbl.classList.add('loaded');
+      }
+      const btn=document.getElementById('startDiffBtn');
+      const ready=!!(diffDataA&&diffDataB);
+      btn.disabled=!ready;
+      btn.style.opacity=ready?'1':'0.5';
+      btn.style.cursor=ready?'pointer':'not-allowed';
+      hideLoading();
+    }catch(err){hideLoading();alert('Errore nel file '+file.name+': '+err.message);}
+  };
+  r.readAsArrayBuffer(file);
+}
+document.getElementById('diffInputA').addEventListener('change',function(){handleDiffFile(this.files[0],'A');this.value='';});
+document.getElementById('diffInputB').addEventListener('change',function(){handleDiffFile(this.files[0],'B');this.value='';});
+document.getElementById('mergeFileInput').addEventListener('change',function(){addMergeFiles([...this.files]);this.value='';});
+
+/* ========== DIFF LOGIC ========== */
+function getDiffForList(listName){
+  const mapA={},mapB={};
+  diffDataA.entries.filter(e=>e.parent===listName).forEach(e=>{mapA[e.value]=e;});
+  diffDataB.entries.filter(e=>e.parent===listName).forEach(e=>{mapB[e.value]=e;});
+  const allVals=[...new Set([...Object.keys(mapA),...Object.keys(mapB)])].sort((a,b)=>{const na=Number(a),nb=Number(b);if(!isNaN(na)&&!isNaN(nb))return na-nb;return a.localeCompare(b);});
+  let diffs=0,onlyA=0,onlyB=0,changed=0;
+  allVals.forEach(v=>{
+    const ia=!!mapA[v],ib=!!mapB[v];
+    if(ia&&!ib){diffs++;onlyA++;}
+    else if(!ia&&ib){diffs++;onlyB++;}
+    else if(LANGS.some(l=>(mapA[v].texts[l]||'')!==(mapB[v].texts[l]||''))){diffs++;changed++;}
+  });
+  return{diffs,onlyA,onlyB,changed,mapA,mapB,allVals};
+}
+
+function countAllDiffs(){
+  const names=new Set([...diffDataA.entries.map(e=>e.parent),...diffDataB.entries.map(e=>e.parent)]);
+  let tot=0; names.forEach(n=>{tot+=getDiffForList(n).diffs;}); return tot;
+}
+
+function startDiff(){
+  if(!diffDataA||!diffDataB){showToast('Carica entrambi i file prima');return;}
+  const allNames=new Set([...diffDataA.textLists.map(t=>t.name),...diffDataB.textLists.map(t=>t.name)]);
+  diffGroups=buildGroups([...allNames]);
+  diffActiveLangs=[...LANGS]; diffFilter='all'; selectedDiffList=null; diffChangeCount=0;
+  clearOrigCache('diff');
+  const tot=countAllDiffs();
+  hideAll();
+  document.getElementById('diffScreen').style.display='flex';
+  document.getElementById('diffBadgeA').textContent=diffFileNameA;
+  document.getElementById('diffBadgeB').textContent=diffFileNameB;
+  const badge=document.getElementById('diffDiffBadge');
+  if(tot>0){badge.style.display='';badge.textContent=tot+' differenze';}else badge.style.display='none';
+  buildLangButtons('diffLangButtons',diffActiveLangs,l=>toggleDiffLang(l));
+  filterDiffSidebar();
+}
+
+function filterDiffSidebar(){
+  const q=(document.getElementById('diffSidebarSearch').value||'').toLowerCase();
+  const inA=new Set(diffDataA.textLists.map(t=>t.name));
+  const inB=new Set(diffDataB.textLists.map(t=>t.name));
+  document.getElementById('diffSidebarHdr').textContent='Elenchi ('+Object.keys(diffGroups).length+')';
+  const list=document.getElementById('diffList'); list.innerHTML='';
+  Object.keys(diffGroups).filter(gk=>!q||gk.toLowerCase().includes(q)).forEach(gk=>{
+    const names=diffGroups[gk];
+    let tot=0; names.forEach(n=>{tot+=getDiffForList(n).diffs;});
+    const div=document.createElement('div');
+    div.className='group-item'+(selectedDiffList===gk?' active':'');
+    const avail=names.map(n=>(inA.has(n)?'A':'-')+'/'+(inB.has(n)?'B':'-')).join(', ');
+    const badge=tot>0?'<span class="group-item-diff has-diff">'+tot+' diff</span>':'<span class="group-item-diff no-diff">✓ uguale</span>';
+    div.innerHTML='<div class="group-item-name">'+gk.replace('Z2000_','')+badge+'</div><div class="group-item-meta">'+avail+'</div>';
+    div.onclick=()=>{selectedDiffList=gk;filterDiffSidebar();renderDiffTable(gk);};
+    list.appendChild(div);
+  });
+}
+
+function setDiffFilter(f){
+  diffFilter=f;
+  ['all','diff','onlyA','onlyB'].forEach(x=>{
+    const id='filter'+x.charAt(0).toUpperCase()+x.slice(1);
+    document.getElementById(id).classList.toggle('active',x===f);
+  });
+  if(selectedDiffList) renderDiffTable(selectedDiffList);
+}
+
+function updateDiffChangesBadge(){
+  const b=document.getElementById('diffChangesBadge');
+  if(diffChangeCount>0){b.style.display='';b.textContent=diffChangeCount+' modifiche';}
+  else b.style.display='none';
+}
+
+function refreshTdDiffColor(tdEl,eA,eB,lang){
+  if(!tdEl) return;
+  // Remove all diff color classes
+  tdEl.classList.remove('cell-diff-a','cell-diff-b','cell-only-a','cell-only-b');
+  if(!eA&&eB){tdEl.classList.add('cell-only-a');}        // solo in B → td A è arancio
+  else if(eA&&!eB){tdEl.classList.add('cell-only-a');}   // solo in A → td A è arancio
+  else if(eA&&eB){
+    const tA=eA.texts[lang]||'', tB=eB.texts[lang]||'';
+    if(tA!==tB){tdEl.classList.add(tdEl.dataset.slot==='A'?'cell-diff-a':'cell-diff-b');}
+  }
+}
+
+function makeDiffCell(entry,lang,slot,tdEl,peerEntry,rowIdx,colIdx){
+  if(!entry){
+    const div=document.createElement('div');
+    div.className='cell empty'; div.textContent='—';
+    registerCell(null,null,div,rowIdx??0,colIdx??0,'diff'+slot);
+    return div;
+  }
+  if(tdEl) tdEl.dataset.slot=slot;
+  recordOrig(entry,lang,'diff');
+  const val=entry.texts[lang]||'';
+  const mod=isModified(entry,lang,'diff');
+  const k=selKey(entry,lang,slot);  // include slot so A and B have distinct keys
+  const isSel=selMap.has(k);
+  const div=document.createElement('div');
+  div.className='cell'+(mod?' modified':'')+(isSel?' sel':'');
+  renderCellContent(div,val);
+  div.title=(mod?'✏️ Modificata  ':'')+'Clic=seleziona  DblClic=modifica  Ctrl+Shift+Clic=range ('+slot+')';
+  const ri=rowIdx??0, ci=colIdx??0;
+  registerCell(entry,lang,div,ri,ci,'diff'+slot,k);
+  div.onclick=ev=>{
+    if(ev.ctrlKey||ev.metaKey){ev.preventDefault();addSel(k,div,entry,lang,'diff'+slot,ev);return;}
+    if(selMap.size>0){clearSel();return;}
+  };
+  div.ondblclick=ev=>{
+    ev.preventDefault(); clearSel();
+    const refreshColors=()=>{
+      const eA=slot==='A'?entry:peerEntry, eB=slot==='B'?entry:peerEntry;
+      refreshTdDiffColor(tdEl,eA,eB,lang);
+      if(tdEl){
+        const allTds=[...tdEl.parentElement.children];
+        const myIdx=allTds.indexOf(tdEl);
+        const peerTd=slot==='A'?allTds[myIdx+1]:allTds[myIdx-1];
+        if(peerTd) refreshTdDiffColor(peerTd,eA,eB,lang);
+      }
+    };
+    const commit=nv=>{
+      if(nv===null){ta.replaceWith(makeDiffCell(entry,lang,slot,tdEl,peerEntry,ri,ci));refreshColors();return;}
+      if(nv!==(entry.texts[lang]||'')){
+        pushUndo({type:'cell',entry,lang,oldVal:entry.texts[lang]||'',newVal:nv,context:'diff'});
+        entry.texts[lang]=nv; diffChangeCount++; updateDiffChangesBadge();
+        markDiffModified(entry,lang);
+      }
+      ta.replaceWith(makeDiffCell(entry,lang,slot,tdEl,peerEntry,ri,ci));
+      refreshColors();
+    };
+    const ta=makeCellTextarea(entry.texts[lang]||'',slot==='A'?'#0891b2':'#059669',commit);
+    ta.onblur=()=>commit(ta.value);
+    div.replaceWith(ta); ta.focus(); ta.select();
+  };
+  return div;
+}
+
+function copyRow(mapA,mapB,val,listName,fromSlot){
+  // fromSlot = 'A' (copy A→B) or 'B' (copy B→A)
+  const eSrc=fromSlot==='A'?mapA[val]:mapB[val];
+  const eDstMap=fromSlot==='A'?mapB:mapA;
+  const dstData=fromSlot==='A'?diffDataB:diffDataA;
+  const srcData=fromSlot==='A'?diffDataA:diffDataB;
+  if(!eSrc) return;
+  let eDst=eDstMap[val];
+  const oldTexts=eDst?{...eDst.texts}:null;
+  if(!eDst){
+    eDst={name:eSrc.name,parent:listName,defaultEntry:eSrc.defaultEntry,value:val,texts:{...eSrc.texts},fieldInfos:eSrc.fieldInfos};
+    dstData.entries.push(eDst);
+    if(!dstData.textLists.find(t=>t.name===listName)){
+      const tlSrc=srcData.textLists.find(t=>t.name===listName);
+      if(tlSrc) dstData.textLists.push({...tlSrc,comments:{...tlSrc.comments}});
+    }
+    eDstMap[val]=eDst;
+  } else {
+    LANGS.forEach(l=>{eDst.texts[l]=eSrc.texts[l]||'';});
+  }
+  // Mark all langs of destination as explicitly modified by user
+  LANGS.forEach(l=>markDiffModified(eDst,l));
+  const targets=LANGS.map(l=>({entry:eDst,lang:l,oldVal:oldTexts?oldTexts[l]||'':''}));
+  pushUndo({type:'copy',targets,context:'diff'});
+  diffChangeCount++;
+  updateDiffChangesBadge();
+  if(selectedDiffList) renderDiffTable(selectedDiffList);
+  filterDiffSidebar();
+}
+
+function renderDiffTable(gk){
+  const names=diffGroups[gk];
+  const wrap=document.getElementById('diffTableWrap'); wrap.innerHTML='';
+  clearCellRegistry();
+  clearSel();
+  const inA=new Set(diffDataA.textLists.map(t=>t.name));
+  const inB=new Set(diffDataB.textLists.map(t=>t.name));
+
+  names.forEach(listName=>{
+    const {diffs,onlyA,onlyB,changed,mapA,mapB,allVals}=getDiffForList(listName);
+    let vals=allVals;
+    if(diffFilter==='diff') vals=vals.filter(v=>{
+      if((mapA[v]&&!mapB[v])||(!mapA[v]&&mapB[v])) return true;
+      return LANGS.some(l=>(mapA[v]?.texts[l]||'')!==(mapB[v]?.texts[l]||''));
+    });
+    if(diffFilter==='onlyA') vals=vals.filter(v=>mapA[v]&&!mapB[v]);
+    if(diffFilter==='onlyB') vals=vals.filter(v=>!mapA[v]&&mapB[v]);
+
+    const sec=document.createElement('div'); sec.className='diff-section-hdr';
+    const sA=inA.has(listName)?'<span style="background:#dbeafe;color:#2563eb;padding:1px 6px;border-radius:4px;font-size:10px;font-weight:700">A</span>':'<span style="background:#f1f5f9;color:#94a3b8;padding:1px 6px;border-radius:4px;font-size:10px">–</span>';
+    const sB=inB.has(listName)?'<span style="background:#dcfce7;color:#059669;padding:1px 6px;border-radius:4px;font-size:10px;font-weight:700">B</span>':'<span style="background:#f1f5f9;color:#94a3b8;padding:1px 6px;border-radius:4px;font-size:10px">–</span>';
+    const diffInfo=diffs>0?'<span style="color:#dc2626;font-weight:600">'+diffs+' diff</span>':'<span style="color:#16a34a">✓ identico</span>';
+    const totalEntries=getDiffForList(listName).allVals.length;
+    sec.innerHTML='<span style="font-size:13px">'+listName.replace('Z2000_','')+'</span>'+sA+sB+'<span style="font-weight:400;color:#64748b;font-size:11px;margin-left:4px">'+diffInfo+' · '+vals.length+' voci</span>';
+    // Add delete-section button when the section has 0 entries total
+    if(totalEntries===0){
+      const delSec=document.createElement('button');
+      delSec.title='Elimina questa sezione vuota';
+      delSec.style.cssText='margin-left:auto;border:none;background:#fee2e2;color:#dc2626;border-radius:5px;padding:2px 8px;font-size:11px;font-weight:700;cursor:pointer';
+      delSec.textContent='🗑 Elimina sezione';
+      delSec.onclick=()=>deleteDiffSection(listName);
+      sec.appendChild(delSec);
+    }
+    wrap.appendChild(sec);
+
+    if(vals.length===0){
+      const em=document.createElement('div'); em.style.cssText='padding:12px 16px;font-size:12px;color:#94a3b8;font-style:italic';
+      em.textContent='Nessuna voce con il filtro selezionato.'; wrap.appendChild(em); return;
+    }
+
+    const table=document.createElement('table');
+    const thead=document.createElement('thead');
+    const tr1=document.createElement('tr');
+    // header: due pulsanti globali A→B e B→A
+    const thCopy=document.createElement('th'); thCopy.style.cssText='width:64px;text-align:center';
+    const btnAllAB=document.createElement('button');
+    btnAllAB.title='Copia tutte le righe da A a B';
+    btnAllAB.style.cssText='border:none;background:#e0f2fe;color:#0369a1;border-radius:4px;padding:2px 5px;cursor:pointer;font-size:10px;font-weight:700;margin-right:2px';
+    btnAllAB.textContent='A→B';
+    btnAllAB.onclick=()=>{vals.forEach(v=>{if(mapA[v]) copyRow(mapA,mapB,v,listName,'A');});};
+    const btnAllBA=document.createElement('button');
+    btnAllBA.title='Copia tutte le righe da B a A';
+    btnAllBA.style.cssText='border:none;background:#dcfce7;color:#166534;border-radius:4px;padding:2px 5px;cursor:pointer;font-size:10px;font-weight:700';
+    btnAllBA.textContent='B→A';
+    btnAllBA.onclick=()=>{vals.forEach(v=>{if(mapB[v]) copyRow(mapA,mapB,v,listName,'B');});};
+    thCopy.appendChild(btnAllAB); thCopy.appendChild(btnAllBA); tr1.appendChild(thCopy);
+    const thVal=document.createElement('th'); thVal.className='val-col'; thVal.textContent='Valore'; tr1.appendChild(thVal);
+    diffActiveLangs.forEach((lang,i)=>{
+      const thA=document.createElement('th'); if(i===0) thA.className='sep';
+      thA.innerHTML='<span style="color:'+LANG_COLORS[lang]+'">'+LANG_LABELS[lang]+'</span> <span style="color:#0891b2;font-size:9px;font-weight:700">(A)</span>';
+      const thB=document.createElement('th');
+      thB.innerHTML='<span style="color:'+LANG_COLORS[lang]+'">'+LANG_LABELS[lang]+'</span> <span style="color:#059669;font-size:9px;font-weight:700">(B) ✏️</span>';
+      tr1.appendChild(thA); tr1.appendChild(thB);
+    });
+    thead.appendChild(tr1); table.appendChild(thead);
+
+    const tbody=document.createElement('tbody');
+    vals.forEach((val,rowIdx)=>{
+      const eA=mapA[val],eB=mapB[val];
+      const tr=document.createElement('tr');
+      if(eA&&!eB) tr.classList.add('tr-only-a');
+      if(!eA&&eB) tr.classList.add('tr-only-b');
+
+      // copy buttons per riga: →B e ←A + 🗑A 🗑B
+      const tdCopy=document.createElement('td'); tdCopy.style.cssText='text-align:center;width:90px;white-space:nowrap';
+      if(eA){
+        const btnAB=document.createElement('button');
+        btnAB.title='Copia da A a B';
+        btnAB.style.cssText='border:none;background:#e0f2fe;color:#0369a1;border-radius:4px;padding:1px 4px;cursor:pointer;font-size:9px;font-weight:700;margin-right:2px';
+        btnAB.textContent='→B';
+        btnAB.onclick=()=>copyRow(mapA,mapB,val,listName,'A');
+        tdCopy.appendChild(btnAB);
+      }
+      if(eB){
+        const btnBA=document.createElement('button');
+        btnBA.title='Copia da B a A';
+        btnBA.style.cssText='border:none;background:#dcfce7;color:#166534;border-radius:4px;padding:1px 4px;cursor:pointer;font-size:9px;font-weight:700;margin-right:2px';
+        btnBA.textContent='←A';
+        btnBA.onclick=()=>copyRow(mapA,mapB,val,listName,'B');
+        tdCopy.appendChild(btnBA);
+      }
+      if(eA||eB){
+        const btnD=document.createElement('button');
+        btnD.title='Elimina da A e B'; btnD.className='row-del-btn';
+        btnD.textContent='🗑';
+        btnD.onclick=e=>{e.stopPropagation();deleteRowBoth(val,listName);};
+        tdCopy.appendChild(btnD);
+      }
+      tr.appendChild(tdCopy);
+
+      const tdVal=document.createElement('td'); tdVal.className='val-col'; tdVal.textContent=val; tr.appendChild(tdVal);
+
+      diffActiveLangs.forEach((lang,i)=>{
+        const tA=eA?(eA.texts[lang]||''):'';
+        const tB=eB?(eB.texts[lang]||''):'';
+        const isDiff=tA!==tB;
+        const tdA=document.createElement('td'); if(i===0) tdA.classList.add('sep');
+        const tdB=document.createElement('td');
+        if(!eA&&eB){tdA.classList.add('cell-only-a');tdB.classList.add('cell-only-b');}
+        else if(eA&&!eB){tdA.classList.add('cell-only-a');tdB.classList.add('cell-only-b');}
+        else if(isDiff){tdA.classList.add('cell-diff-a');tdB.classList.add('cell-diff-b');}
+
+        const dA=makeDiffCell(eA,lang,'A',tdA,eB,rowIdx,i*2);
+        const dB=makeDiffCell(eB,lang,'B',tdB,eA,rowIdx,i*2+1);
+        tdA.appendChild(dA); tdB.appendChild(dB);
+        tr.appendChild(tdA); tr.appendChild(tdB);
+      });
+      tbody.appendChild(tr);
+    });
+    table.appendChild(tbody); wrap.appendChild(table);
+    // Single add button — adds to both A and B
+    const addBtn=document.createElement('button'); addBtn.className='add-row-btn';
+    addBtn.textContent='➕ Aggiungi voce (in A e B)';
+    addBtn.onclick=()=>openAddRow([listName],'diffAB');
+    wrap.appendChild(addBtn);
+  });
+}
+
+function toggleDiffLang(lang){
+  if(diffActiveLangs.includes(lang)){if(diffActiveLangs.length===1)return;diffActiveLangs=diffActiveLangs.filter(l=>l!==lang);}
+  else diffActiveLangs.push(lang);
+  buildLangButtons('diffLangButtons',diffActiveLangs,l=>toggleDiffLang(l));
+  if(selectedDiffList) renderDiffTable(selectedDiffList);
+}
+
+function exportDiffB(){
+  if(!diffDataB){showToast('Nessun file B caricato');return;}
+  exportDiffData(diffDataB, diffFileNameB, 'B');
+}
+
+function exportDiffA(){
+  if(!diffDataA){showToast('Nessun file A caricato');return;}
+  exportDiffData(diffDataA, diffFileNameA, 'A');
+}
+
+function exportDiffData(data, origName, slot){
+  const wb=XLSX.utils.book_new();
+  const tlRows=data.textLists.map(tl=>({"Name":tl.name,"ListRange":tl.listRange,"Comment [it-IT]":cleanCr(tl.comments['it-IT'])||'<No value>',"Comment [en-US]":cleanCr(tl.comments['en-US'])||'<No value>',"Comment [en-GB]":cleanCr(tl.comments['en-GB'])||'<No value>',"Comment [de-DE]":cleanCr(tl.comments['de-DE'])||'<No value>'}));
+  const eRows=data.entries.map(e=>{let val=e.value;const num=Number(val);if(!isNaN(num)&&val.trim()!=='') val=num; return{"Name":e.name,"Parent":e.parent,"DefaultEntry":e.defaultEntry,"Value":val,"Text [it-IT]":cleanCr(e.texts['it-IT'])||'<No value>',"Text [en-US]":cleanCr(e.texts['en-US'])||'<No value>',"Text [en-GB]":cleanCr(e.texts['en-GB'])||'<No value>',"Text [de-DE]":cleanCr(e.texts['de-DE'])||'<No value>',"FieldInfos":e.fieldInfos};});
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(tlRows),'TextList');
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(eRows),'TextListEntry');
+  const now=new Date();
+  const ts=now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0')+'-'+String(now.getDate()).padStart(2,'0')+'_'+String(now.getHours()).padStart(2,'0')+String(now.getMinutes()).padStart(2,'0');
+  const vp=projectVersion?'_'+projectVersion.replace(/[^a-zA-Z0-9.\-]/g,''):'';
+  const outName=(origName.replace(/\.xlsx?$/i,'')||'File'+slot)+'_modified'+vp+'_'+ts+'.xlsx';
+  XLSX.writeFile(wb,outName);
+  showToast('✅ Esportato: '+outName);
+}
+
+/* ========== SINGLE FILE FLOW ========== */
+function applySelectedScope(){
+  const set=new Set(selectedListNames);
+  textLists=allTextLists.filter(t=>set.has(t.name));
+  entries=allEntries.filter(e=>set.has(e.parent));
+  groups=buildGroups(textLists.map(t=>t.name));
+  compareSelectedLists=[...textLists.map(t=>t.name)];
+}
+
+function renderSelectionList(){
+  const q=(document.getElementById('selectionSearch').value||'').toLowerCase();
+  const list=document.getElementById('selectionList'); list.innerHTML='';
+  const selectedSet=new Set(selectedListNames);
+  const filtered=allTextLists.filter(t=>!q||t.name.toLowerCase().includes(q));
+  filtered.forEach(t=>{
+    const cnt=allEntries.filter(e=>e.parent===t.name).length;
+    const row=document.createElement('div'); row.className='sel-item';
+    row.innerHTML='<label><input type="checkbox" data-name="'+t.name+'" '+(selectedSet.has(t.name)?'checked':'')+'><span>'+t.name+'</span></label><span class="sel-meta">'+cnt+' voci</span>';
+    list.appendChild(row);
+  });
+  list.querySelectorAll('input[type="checkbox"]').forEach(cb=>cb.onchange=()=>{
+    const n=cb.getAttribute('data-name');
+    if(cb.checked&&!selectedSet.has(n)) selectedListNames.push(n);
+    if(!cb.checked) selectedListNames=selectedListNames.filter(x=>x!==n);
+    updateSelectionInfo(filtered.length);
+  });
+  updateSelectionInfo(filtered.length);
+}
+
+function updateSelectionInfo(shown){document.getElementById('selectionInfo').textContent='Selezionati '+selectedListNames.length+' di '+allTextLists.length+' elenchi · mostrati '+shown;}
+function selectAllLists(yes){selectedListNames=yes?allTextLists.map(t=>t.name):[];renderSelectionList();}
+function startEditingSelected(){if(!selectedListNames.length){showToast('Seleziona almeno un elenco');return;}applySelectedScope();showEditor();}
+
+function showCompareScreen(){
+  if(!textLists.length&&selectedListNames.length) applySelectedScope();
+  hideAll(); document.getElementById('compareScreen').style.display='flex';
+  document.getElementById('compareFileLabel').textContent=fileName;
+  buildLangButtons('compareLangButtons',activeLangs,l=>toggleLang(l));
+  updateChangesBadge(); renderCompareList(); renderCompareTable();
+}
+
+function renderCompareList(){
+  const q=(document.getElementById('compareSearch').value||'').toLowerCase();
+  const wrap=document.getElementById('compareList'); wrap.innerHTML='';
+  const set=new Set(compareSelectedLists);
+  textLists.filter(t=>!q||t.name.toLowerCase().includes(q)).forEach(t=>{
+    const cnt=entries.filter(e=>e.parent===t.name).length;
+    const row=document.createElement('div'); row.className='sel-item';
+    row.innerHTML='<label><input type="checkbox" data-name="'+t.name+'" '+(set.has(t.name)?'checked':'')+'><span>'+t.name+'</span></label><span class="sel-meta">'+cnt+' voci</span>';
+    wrap.appendChild(row);
+  });
+  wrap.querySelectorAll('input[type="checkbox"]').forEach(cb=>cb.onchange=()=>{
+    const n=cb.getAttribute('data-name');
+    if(cb.checked&&!compareSelectedLists.includes(n)) compareSelectedLists.push(n);
+    if(!cb.checked) compareSelectedLists=compareSelectedLists.filter(x=>x!==n);
+    renderCompareTable();
+  });
+}
+
+function selectAllCompareLists(yes){compareSelectedLists=yes?textLists.map(t=>t.name):[];renderCompareList();renderCompareTable();}
+
+function renderCompareTable(){
+  const names=compareSelectedLists;
+  const info=document.getElementById('compareInfo'); const wrap=document.getElementById('compareTableWrap');
+  if(!names.length){info.textContent='Seleziona almeno un elenco dalla colonna sinistra.';wrap.innerHTML='';return;}
+  const eMap={}; entries.forEach(e=>{if(names.includes(e.parent)) eMap[e.parent+'|'+e.value]=e;});
+  const vals=[...new Set(entries.filter(e=>names.includes(e.parent)).map(e=>e.value))].sort((a,b)=>{const na=Number(a),nb=Number(b);if(!isNaN(na)&&!isNaN(nb)) return na-nb;return a.localeCompare(b);});
+  info.textContent='Visualizzazione insieme: '+names.length+' elenchi · '+vals.length+' valori';
+  const table=document.createElement('table');
+  const thead=document.createElement('thead');
+  const tr1=document.createElement('tr');
+  const thVal=document.createElement('th'); thVal.className='val-col'; thVal.textContent='Valore'; tr1.appendChild(thVal);
+  names.forEach((n,i)=>{const th=document.createElement('th'); th.colSpan=activeLangs.length; if(i>0) th.className='sep'; th.innerHTML='<div style="font-size:12px;font-weight:700;color:#334155">'+n.replace('Z2000_','')+'</div>'; tr1.appendChild(th);});
+  thead.appendChild(tr1);
+  const tr2=document.createElement('tr'); tr2.className='sub'; const thE=document.createElement('th'); thE.className='val-col'; tr2.appendChild(thE);
+  names.forEach((n,li)=>activeLangs.forEach((lang,idx)=>{const th=document.createElement('th'); if(idx===0&&li>0) th.className='sep'; th.style.color=LANG_COLORS[lang]; th.textContent=LANG_LABELS[lang]; tr2.appendChild(th);}));
+  thead.appendChild(tr2); table.appendChild(thead);
+  const tbody=document.createElement('tbody');
+  vals.forEach((val,rowIdx)=>{
+    const tr=document.createElement('tr');
+    const tdVal=document.createElement('td'); tdVal.className='val-col'; tdVal.textContent=val; tr.appendChild(tdVal);
+    let colIdx=0;
+    names.forEach((n,li)=>activeLangs.forEach((lang,idx)=>{const td=document.createElement('td'); if(idx===0&&li>0) td.className='sep'; const e=eMap[n+'|'+val]; if(e) td.appendChild(mkCell(e,lang,rowIdx,colIdx++)); else{td.innerHTML='<span style="color:#e2e8f0;font-size:11px">—</span>';colIdx++;} tr.appendChild(td);}));
+    tbody.appendChild(tr);
+  });
+  table.appendChild(tbody); wrap.innerHTML=''; wrap.appendChild(table);
+}
+
+function showEditor(){
+  hideAll(); document.getElementById('editorScreen').style.display='flex';
+  document.getElementById('fileLabel').textContent=fileName;
+  buildLangButtons('langButtons',activeLangs,l=>toggleLang(l));
+  updateChangesBadge(); buildSidebar();
+  const old=document.getElementById('groupView'); if(old) old.remove();
+  document.getElementById('emptyState').style.display='';
+}
+
+function buildLangButtons(containerId,active,toggle){
+  const c=document.getElementById(containerId); c.innerHTML='';
+  LANGS.forEach(lang=>{const b=document.createElement('button'); b.className='lang-btn'+(active.includes(lang)?'':' off'); b.style.background=active.includes(lang)?LANG_COLORS[lang]:''; b.textContent=LANG_LABELS[lang]; b.onclick=()=>toggle(lang); c.appendChild(b);});
+}
+
+function toggleLang(lang){
+  if(activeLangs.includes(lang)){if(activeLangs.length===1)return;activeLangs=activeLangs.filter(l=>l!==lang);}else activeLangs.push(lang);
+  buildLangButtons('langButtons',activeLangs,l=>toggleLang(l));
+  buildLangButtons('compareLangButtons',activeLangs,l=>toggleLang(l));
+  if(document.getElementById('editorScreen').style.display==='flex'&&selectedGroup) renderGroup(selectedGroup);
+  if(document.getElementById('compareScreen').style.display==='flex') renderCompareTable();
+}
+
+function updateChangesBadge(){
+  const txt=changeCount>0?changeCount+' modifiche':'';
+  const b1=document.getElementById('changesBadge'),b2=document.getElementById('compareChangesBadge');
+  if(changeCount>0){b1.style.display='';b2.style.display='';b1.textContent=txt;b2.textContent=txt;}else{b1.style.display='none';b2.style.display='none';}
+}
+
+function cleanCr(s){return s?String(s).replace(/\r\n/g,"\n").replace(/\r/g,"\n"):s;}
+function doExport(){
+  const wb=XLSX.utils.book_new();
+  const tlRows=allTextLists.map(tl=>({"Name":tl.name,"ListRange":tl.listRange,"Comment [it-IT]":cleanCr(tl.comments['it-IT'])||'<No value>',"Comment [en-US]":cleanCr(tl.comments['en-US'])||'<No value>',"Comment [en-GB]":cleanCr(tl.comments['en-GB'])||'<No value>',"Comment [de-DE]":cleanCr(tl.comments['de-DE'])||'<No value>'}));
+  const eRows=allEntries.map(e=>{let val=e.value;const num=Number(val);if(!isNaN(num)&&val.trim()!=='') val=num; return{"Name":e.name,"Parent":e.parent,"DefaultEntry":e.defaultEntry,"Value":val,"Text [it-IT]":cleanCr(e.texts['it-IT'])||'<No value>',"Text [en-US]":cleanCr(e.texts['en-US'])||'<No value>',"Text [en-GB]":cleanCr(e.texts['en-GB'])||'<No value>',"Text [de-DE]":cleanCr(e.texts['de-DE'])||'<No value>',"FieldInfos":e.fieldInfos};});
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(tlRows),'TextList');
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(eRows),'TextListEntry');
+  const now=new Date();
+  const ts=now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0')+'-'+String(now.getDate()).padStart(2,'0')+'_'+String(now.getHours()).padStart(2,'0')+String(now.getMinutes()).padStart(2,'0');
+  const vp=projectVersion?'_'+projectVersion.replace(/[^a-zA-Z0-9.\-]/g,''):'';
+  XLSX.writeFile(wb,'Export_modified'+vp+'_'+ts+'.xlsx');
+  showToast('✅ Export_modified'+vp+'_'+ts+'.xlsx');
+}
+
+function toggleSidebar(){sidebarCollapsed=!sidebarCollapsed;document.getElementById('sidebar').classList.toggle('collapsed',sidebarCollapsed);document.getElementById('sidebarBody').style.display=sidebarCollapsed?'none':'';document.getElementById('sidebarTitle').style.display=sidebarCollapsed?'none':'';}
+function buildSidebar(){document.getElementById('sidebarTitle').textContent='Gruppi ('+Object.keys(groups).length+')';filterGroups();}
+function filterGroups(){
+  const search=(document.getElementById('sidebarSearch').value||'').toLowerCase();
+  const list=document.getElementById('sidebarList'); list.innerHTML='';
+  Object.keys(groups).filter(k=>!search||k.toLowerCase().includes(search)).forEach(gk=>{
+    const names=groups[gk],isMulti=names.length>1,entryCount=entries.filter(e=>names.includes(e.parent)).length;
+    const div=document.createElement('div');
+    div.className='group-item'+(selectedGroup===gk?' active':'');
+    div.innerHTML='<div class="group-item-name">'+gk.replace('Z2000_','')+(isMulti?'<span class="group-item-multi">×'+names.length+'</span>':'')+'</div><div class="group-item-meta">'+(isMulti?names.length+' elenchi':'1 elenco')+' · '+entryCount+' voci</div>';
+    div.onclick=()=>{selectedGroup=gk;filterGroups();renderGroup(gk);};
+    list.appendChild(div);
+  });
+}
+
+function renderGroup(gk){
+  const names=groups[gk]; if(!names) return;
+  clearCellRegistry();
+  clearSel();
+  document.getElementById('emptyState').style.display='none';
+  const old=document.getElementById('groupView'); if(old) old.remove();
+  const content=document.getElementById('content');
+  const wrap=document.createElement('div'); wrap.id='groupView'; wrap.style.cssText='flex:1;display:flex;flex-direction:column;overflow:hidden';
+  const valSet=new Set(); entries.forEach(e=>{if(names.includes(e.parent)) valSet.add(e.value);});
+  const allVals=[...valSet].sort((a,b)=>{const na=Number(a),nb=Number(b);if(!isNaN(na)&&!isNaN(nb)) return na-nb;return a.localeCompare(b);});
+  const eMap={}; entries.forEach(e=>{if(names.includes(e.parent)) eMap[e.parent+'|'+e.value]=e;});
+  const isMulti=names.length>1;
+  const hdr=document.createElement('div'); hdr.className='content-header';
+  hdr.innerHTML='<div style="display:flex;align-items:center;gap:12px;margin-bottom:8px"><h2>'+gk.replace('Z2000_','')+'</h2><span class="info">'+(isMulti?names.length+' elenchi · ':'')+allVals.length+' valori</span></div><input type="text" class="content-search" placeholder="Cerca per valore o testo..." id="contentSearch">';
+  wrap.appendChild(hdr);
+  const tableWrap=document.createElement('div'); tableWrap.className='content-table-wrap';
+  function buildTable(vals){
+    const table=document.createElement('table'); const thead=document.createElement('thead');
+    const tr1=document.createElement('tr');
+    // delete column header
+    const thDel=document.createElement('th'); thDel.style.cssText='width:24px;padding:4px 2px'; tr1.appendChild(thDel);
+    const thVal=document.createElement('th'); thVal.className='val-col'; thVal.textContent='Valore'; tr1.appendChild(thVal);
+    if(isMulti){
+      const shortNames=names.map(n=>{const m=n.match(/_(\d+)$/);return m?('#'+m[1]):n.replace('Z2000_','');});
+      names.forEach((n,i)=>{const th=document.createElement('th'); th.colSpan=activeLangs.length; if(i>0) th.className='sep'; th.innerHTML='<div style="font-size:12px;font-weight:700;color:#334155">'+shortNames[i]+'</div>'; tr1.appendChild(th);});
+      thead.appendChild(tr1);
+      const tr2=document.createElement('tr'); tr2.className='sub';
+      const thE=document.createElement('th'); tr2.appendChild(thE);
+      const thE2=document.createElement('th'); thE2.className='val-col'; tr2.appendChild(thE2);
+      names.forEach((n,li)=>activeLangs.forEach((lang,idx)=>{const th=document.createElement('th'); if(idx===0&&li>0) th.className='sep'; th.style.color=LANG_COLORS[lang]; th.textContent=LANG_LABELS[lang]; tr2.appendChild(th);}));
+      thead.appendChild(tr2);
+    }else{activeLangs.forEach(lang=>{const th=document.createElement('th'); th.style.color=LANG_COLORS[lang]; th.textContent=LANG_LABELS[lang]; tr1.appendChild(th);}); thead.appendChild(tr1);}
+    table.appendChild(thead);
+    const tbody=document.createElement('tbody');
+    vals.forEach((val,rowIdx)=>{
+      const tr=document.createElement('tr');
+      // delete button cell
+      const tdDel=document.createElement('td'); tdDel.style.cssText='padding:0 2px;text-align:center';
+      const delBtn=document.createElement('button'); delBtn.className='row-del-btn'; delBtn.textContent='🗑'; delBtn.title='Elimina voce "'+val+'"';
+      delBtn.onclick=e=>{e.stopPropagation();deleteRow(val,names,'editor');};
+      tdDel.appendChild(delBtn); tr.appendChild(tdDel);
+      const tdVal=document.createElement('td'); tdVal.className='val-col'; tdVal.textContent=val; tr.appendChild(tdVal);
+      let colIdx=0;
+      (isMulti?names:[names[0]]).forEach((n,li)=>activeLangs.forEach((lang,idx)=>{const td=document.createElement('td'); if(isMulti&&idx===0&&li>0) td.className='sep'; const e=eMap[n+'|'+val]; if(e) td.appendChild(mkCell(e,lang,rowIdx,colIdx++)); else td.innerHTML='<span style="color:#e2e8f0;font-size:11px">—</span>'; tr.appendChild(td);}));
+      tbody.appendChild(tr);
+    });
+    table.appendChild(tbody); return table;
+  }
+  const addBtn=document.createElement('button'); addBtn.className='add-row-btn';
+  addBtn.textContent='➕ Aggiungi voce';
+  addBtn.onclick=()=>openAddRow(names,'editor');
+  tableWrap.appendChild(buildTable(allVals));
+  tableWrap.appendChild(addBtn);
+  wrap.appendChild(tableWrap); content.appendChild(wrap);
+  document.getElementById('contentSearch').oninput=function(){const s=this.value.toLowerCase(); const filtered=!s?allVals:allVals.filter(v=>v.toLowerCase().includes(s)||names.some(n=>{const e=eMap[n+'|'+v];return e&&activeLangs.some(l=>(e.texts[l]||'').toLowerCase().includes(s));})); clearCellRegistry(); clearSel(); tableWrap.innerHTML=''; tableWrap.appendChild(buildTable(filtered)); tableWrap.appendChild(addBtn);};
+}
+
+function mkCell(entry,lang,rowIdx,colIdx){
+  recordOrig(entry,lang,'editor');
+  const val=entry.texts[lang]||'';
+  const mod=isModified(entry,lang,'editor');
+  const k=selKey(entry,lang);
+  const isSel=selMap.has(k);
+  const div=document.createElement('div');
+  div.className='cell'+(mod?' modified':'')+(isSel?' sel':'');
+  renderCellContent(div,val);
+  div.title=(mod?'✏️ Modificata  ':'')+'Clic=seleziona  DblClic=modifica  Ctrl+Shift+Clic=range';
+  const ri=rowIdx??0, ci=colIdx??0;
+  registerCell(entry,lang,div,ri,ci,'editor');
+  const cellIdx=_cellRegistry.length-1;
+  div.onclick=ev=>{
+    if(ev.ctrlKey||ev.metaKey){ev.preventDefault();addSel(k,div,entry,lang,'editor',ev);return;}
+    if(selMap.size>0){clearSel();return;}
+  };
+  div.ondblclick=ev=>{
+    ev.preventDefault();
+    clearSel();
+    const commit=nv=>{
+      if(nv===null){ta.replaceWith(mkCell(entry,lang,ri,ci));return;}
+      if(nv!==(entry.texts[lang]||'')){
+        pushUndo({type:'cell',entry,lang,oldVal:entry.texts[lang]||'',newVal:nv,context:'editor'});
+        entry.texts[lang]=nv; changeCount++; updateChangesBadge();
+      }
+      ta.replaceWith(mkCell(entry,lang,ri,ci));
+    };
+    const ta=makeCellTextarea(entry.texts[lang]||'',LANG_COLORS[lang]||'#3b82f6',commit);
+    ta.onblur=()=>commit(ta.value);
+    div.replaceWith(ta); ta.focus(); ta.select();
+  };
+  return div;
+}
+
+/* ========== ROW ADD / DELETE ========== */
+let _addRowTarget=null; // {parentNames:[], context:'editor'|'diffA'|'diffB'}
+
+function openAddRow(parentNames, context){
+  _addRowTarget={parentNames, context};
+  ['arVal','arIT','arEN','arGB','arDE'].forEach(id=>{document.getElementById(id).value='';});
+  document.getElementById('addRowOverlay').classList.add('open');
+  setTimeout(()=>document.getElementById('arVal').focus(),60);
+}
+function closeAddRow(){
+  document.getElementById('addRowOverlay').classList.remove('open');
+  _addRowTarget=null;
+}
+function confirmAddRow(){
+  if(!_addRowTarget) return;
+  const val=document.getElementById('arVal').value.trim();
+  if(!val){showToast('Inserisci un valore');return;}
+  const texts={'it-IT':document.getElementById('arIT').value,
+               'en-US':document.getElementById('arEN').value,
+               'en-GB':document.getElementById('arGB').value,
+               'de-DE':document.getElementById('arDE').value};
+  const {parentNames, context}=_addRowTarget;
+  const isEditor=(context==='editor');
+  const isDiffAB=(context==='diffAB');
+
+  if(isEditor){
+    const entsArr=allEntries;
+    if(entsArr.some(e=>e.parent===parentNames[0]&&e.value===val)){
+      showToast('Valore "'+val+'" già presente'); return;
+    }
+    const newEntries=parentNames.map(pn=>({
+      name:pn+'_'+val,parent:pn,defaultEntry:'False',value:val,texts:{...texts},fieldInfos:''
+    }));
+    newEntries.forEach(ne=>entsArr.push(ne));
+    pushUndo({type:'addRow',entries:newEntries,entsArr,context:'editor'});
+    applySelectedScope(); changeCount++; updateChangesBadge();
+    closeAddRow();
+    if(selectedGroup) renderGroup(selectedGroup);
+    showToast('✅ Voce "'+val+'" aggiunta');
+  } else if(isDiffAB){
+    // Add to both A and B
+    const allAdded=[];
+    [diffDataA.entries, diffDataB.entries].forEach((entsArr,i)=>{
+      if(entsArr.some(e=>e.parent===parentNames[0]&&e.value===val)) return;
+      const newEntries=parentNames.map(pn=>({
+        name:pn+'_'+val,parent:pn,defaultEntry:'False',value:val,texts:{...texts},fieldInfos:''
+      }));
+      newEntries.forEach(ne=>entsArr.push(ne));
+      allAdded.push({entries:newEntries,entsArr});
+    });
+    if(!allAdded.length){showToast('Valore "'+val+'" già presente in entrambi i file');return;}
+    pushUndo({type:'addRowMulti',added:allAdded,context:'diff'});
+    diffChangeCount++; updateDiffChangesBadge();
+    closeAddRow();
+    if(selectedDiffList) renderDiffTable(selectedDiffList);
+    showToast('✅ Voce "'+val+'" aggiunta in A e B');
+  } else {
+    // single diff slot (diffA or diffB)
+    const entsArr=context==='diffA'?diffDataA.entries:diffDataB.entries;
+    if(entsArr.some(e=>e.parent===parentNames[0]&&e.value===val)){
+      showToast('Valore "'+val+'" già presente'); return;
+    }
+    const newEntries=parentNames.map(pn=>({
+      name:pn+'_'+val,parent:pn,defaultEntry:'False',value:val,texts:{...texts},fieldInfos:''
+    }));
+    newEntries.forEach(ne=>entsArr.push(ne));
+    pushUndo({type:'addRow',entries:newEntries,entsArr,context:'diff'});
+    diffChangeCount++; updateDiffChangesBadge();
+    closeAddRow();
+    if(selectedDiffList) renderDiffTable(selectedDiffList);
+    showToast('✅ Voce "'+val+'" aggiunta');
+  }
+}
+
+function deleteRow(val, parentNames, context){
+  const isEditor=(context==='editor');
+  const entsArr=isEditor?allEntries:(context==='diffA'?diffDataA.entries:diffDataB.entries);
+  const removed=[];
+  parentNames.forEach(pn=>{
+    const idx=entsArr.findIndex(e=>e.parent===pn&&e.value===val);
+    if(idx>=0) removed.push(...entsArr.splice(idx,1));
+  });
+  if(!removed.length) return;
+  pushUndo({type:'deleteRow', entries:removed, entsArr, context:isEditor?'editor':'diff'});
+  if(isEditor){applySelectedScope(); changeCount++; updateChangesBadge();}
+  else{diffChangeCount++; updateDiffChangesBadge();}
+  if(isEditor&&selectedGroup) renderGroup(selectedGroup);
+  else if(!isEditor&&selectedDiffList) renderDiffTable(selectedDiffList);
+  showToast('🗑 Voce "'+val+'" eliminata');
+}
+
+function deleteRowBoth(val, listName){
+  // Delete from both A and B simultaneously
+  const removedA=[],removedB=[];
+  const idxA=diffDataA.entries.findIndex(e=>e.parent===listName&&e.value===val);
+  if(idxA>=0) removedA.push(...diffDataA.entries.splice(idxA,1));
+  const idxB=diffDataB.entries.findIndex(e=>e.parent===listName&&e.value===val);
+  if(idxB>=0) removedB.push(...diffDataB.entries.splice(idxB,1));
+  if(!removedA.length&&!removedB.length) return;
+  pushUndo({type:'deleteRowBoth',removedA,removedB,listName,context:'diff'});
+  diffChangeCount++; updateDiffChangesBadge();
+  if(selectedDiffList) renderDiffTable(selectedDiffList);
+  filterDiffSidebar();
+  showToast('🗑 Voce "'+val+'" eliminata da A e B');
+}
+
+function deleteDiffSection(listName){
+  // Remove the textList entry from both A and B (entries already 0)
+  const removedTlA=[], removedTlB=[];
+  const iA=diffDataA.textLists.findIndex(t=>t.name===listName);
+  if(iA>=0) removedTlA.push(...diffDataA.textLists.splice(iA,1));
+  const iB=diffDataB.textLists.findIndex(t=>t.name===listName);
+  if(iB>=0) removedTlB.push(...diffDataB.textLists.splice(iB,1));
+  pushUndo({type:'deleteDiffSection',removedTlA,removedTlB,listName,context:'diff'});
+  // Rebuild diff groups
+  const allNames=new Set([...diffDataA.textLists.map(t=>t.name),...diffDataB.textLists.map(t=>t.name)]);
+  diffGroups=buildGroups([...allNames]);
+  if(selectedDiffList===listName||(diffGroups[selectedDiffList]===undefined)) selectedDiffList=null;
+  diffChangeCount++; updateDiffChangesBadge();
+  filterDiffSidebar();
+  if(selectedDiffList) renderDiffTable(selectedDiffList);
+  else document.getElementById('diffTableWrap').innerHTML='<div class="empty-state"><div class="icon">🔍</div><div style="font-size:15px;font-weight:500">Seleziona un elenco dalla barra laterale</div></div>';
+  showToast('🗑 Sezione "'+listName.replace('Z2000_','')+'" eliminata');
+}
+
+/* ========== MERGE (UNISCI FILE) ========== */
+let _mergeFiles=[]; // [{name, data:{textLists,entries}}]
+let _mergeConflicts=[]; // [{type:'list'|'entry', key, versions:[{fileIdx,fileN,tl|entry}], chosen:idx}]
+
+function handleMergeDrop(ev){
+  ev.preventDefault();
+  ev.currentTarget.style.borderColor='#6d28d9';
+  const files=[...ev.dataTransfer.files].filter(f=>f.name.match(/\.xlsx?$/i));
+  if(files.length) addMergeFiles(files);
+}
+
+function addMergeFiles(files){
+  if(!files.length) return;
+  const arr=[...files];
+  document.getElementById('loadingText').textContent='Caricamento 0/'+arr.length+'...';
+  document.getElementById('loadingOverlay').style.display='flex';
+  function loadNext(i){
+    if(i>=arr.length){hideLoading();renderMergeFileList();return;}
+    const file=arr[i];
+    document.getElementById('loadingText').textContent='Caricamento '+(i+1)+'/'+arr.length+': '+file.name;
+    const r=new FileReader();
+    r.onload=ev=>{
+      try{
+        const data=parseFileData(new Uint8Array(ev.target.result));
+        _mergeFiles.push({name:file.name,data});
+      }catch(e){showToast('❌ '+file.name+': '+e.message);}
+      requestAnimationFrame(()=>loadNext(i+1));
+    };
+    r.readAsArrayBuffer(file);
+  }
+  loadNext(0);
+}
+
+function removeMergeFile(idx){
+  _mergeFiles.splice(idx,1);
+  renderMergeFileList();
+}
+
+function moveMergeFile(idx,dir){
+  const ni=idx+dir;
+  if(ni<0||ni>=_mergeFiles.length) return;
+  [_mergeFiles[idx],_mergeFiles[ni]]=[_mergeFiles[ni],_mergeFiles[idx]];
+  renderMergeFileList();
+}
+
+function renderMergeFileList(){
+  const list=document.getElementById('mergeFileList');
+  const btn=document.getElementById('startMergeBtn');
+  if(!list) return;
+  list.innerHTML='';
+  _mergeFiles.forEach((f,i)=>{
+    const item=document.createElement('div'); item.className='merge-file-item';
+    const tlCount=f.data.textLists.length, eCount=f.data.entries.length;
+    item.innerHTML=`
+      <span style="font-size:18px">📄</span>
+      <span class="mf-name" title="${f.name}">${f.name}</span>
+      <span class="mf-meta">${tlCount} elenchi · ${eCount} voci</span>
+      <button class="mf-del" title="Sposta su" onclick="moveMergeFile(${i},-1)" style="font-size:13px" ${i===0?'disabled':''}>▲</button>
+      <button class="mf-del" title="Sposta giù" onclick="moveMergeFile(${i},1)" style="font-size:13px" ${i===_mergeFiles.length-1?'disabled':''}>▼</button>
+      <button class="mf-del" title="Rimuovi" onclick="removeMergeFile(${i})">✕</button>`;
+    list.appendChild(item);
+  });
+  const ready=_mergeFiles.length>=2;
+  btn.disabled=!ready;
+  btn.style.opacity=ready?'1':'0.5';
+  btn.style.cursor=ready?'pointer':'not-allowed';
+}
+
+let _mergeConflictPage=0;
+const MERGE_CONFLICT_PAGE_SIZE=50;
+let _mergeViewFilter='conflicts';
+let _mergeLangFilter='all';
+
+function setMergeViewFilter(f){
+  _mergeViewFilter=f; _mergeConflictPage=0;
+  ['conflicts','all'].forEach(function(k){
+    const btn=document.getElementById('mfv-'+k);
+    if(btn){btn.style.background=k===f?'#7c3aed':'#fff';btn.style.color=k===f?'#fff':'#475569';btn.style.borderColor=k===f?'#7c3aed':'#e2e8f0';}
+  });
+  renderConflictBody();
+}
+
+function setMergeLangFilter(l){
+  _mergeLangFilter=l; _mergeConflictPage=0;
+  const cols={'all':'#0f172a','it-IT':'#2563eb','en-US':'#dc2626','en-GB':'#7c3aed','de-DE':'#ca8a04'};
+  Object.keys(cols).forEach(function(k){
+    const btn=document.getElementById('mfl-'+k);
+    if(!btn) return;
+    const active=k===l;
+    btn.style.background=active?cols[k]:'#fff';
+    btn.style.color=active?'#fff':cols[k];
+    btn.style.borderColor=active?cols[k]:'#e2e8f0';
+  });
+  renderConflictBody();
+}
+
+let _mergeAllEntries=[];
+function _buildMergeAllEntries(){
+  const entryMap=new Map();
+  const conflictKeys=new Set(_mergeConflicts.filter(function(c){return c.type==='entry';}).map(function(c){return c.key;}));
+  _mergeFiles.forEach(function(f,fi){
+    f.data.entries.forEach(function(e){
+      if(!e||!e.texts) return;
+      const k=e.parent+'||'+e.value;
+      if(!entryMap.has(k)) entryMap.set(k,{key:k,versions:[],isConflict:conflictKeys.has(k)});
+      entryMap.get(k).versions.push({fileIdx:fi,fileN:f.name,entry:e});
+    });
+  });
+  _mergeAllEntries=[...entryMap.values()];
+}
+
+function closeMergeConflictModal(){
+  document.getElementById('mergeConflictOverlay').style.display='none';
+  showMergeScreen();
+}
+
+function startMerge(){
+  if(_mergeFiles.length<2){showToast('Carica almeno 2 file');return;}
+  showLoading('Analisi conflitti...');
+  // Use requestAnimationFrame to let the loading overlay paint first
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{
+    _mergeConflicts=detectConflicts();
+    hideLoading();
+    if(_mergeConflicts.length===0){
+      const merged=buildMerged();
+      exportMergedFile(merged);
+    } else {
+      _mergeConflictPage=0;
+      openConflictModal();
+    }
+  }));
+}
+
+function detectConflicts(){
+  const conflicts=[];
+  const tlMap=new Map();
+  const entryMap=new Map();
+
+  _mergeFiles.forEach((f,fi)=>{
+    f.data.textLists.forEach(tl=>{
+      if(!tlMap.has(tl.name)) tlMap.set(tl.name,[]);
+      tlMap.get(tl.name).push({fileIdx:fi, fileN:f.name, tl});
+    });
+    f.data.entries.forEach(e=>{
+      const k=e.parent+'||'+e.value;
+      if(!entryMap.has(k)) entryMap.set(k,[]);
+      entryMap.get(k).push({fileIdx:fi, fileN:f.name, entry:e});
+    });
+  });
+
+  // TextList conflicts: same name, different content in ANY pair of files
+  tlMap.forEach((versions,name)=>{
+    if(versions.length<2) return;
+    // N-way: check if all versions are identical
+    const first=versions[0].tl;
+    const different=versions.some(v=>
+      v.tl.listRange!==first.listRange||
+      LANGS.some(l=>(v.tl.comments[l]||'')!==(first.comments[l]||''))
+    );
+    if(different) conflicts.push({type:'list', key:name, versions, chosen:versions.length-1});
+  });
+
+  // Entry conflicts — TWO cases:
+  // 1. Same key in multiple files but with different texts
+  // 2. Key present in some files but not all (missing entries)
+  const totalFiles=_mergeFiles.length;
+
+  entryMap.forEach((versions,k)=>{
+    // Case 1: present in multiple files with different texts
+    if(versions.length>=2){
+      const first=versions[0].entry;
+      if(!first||!first.texts) return;
+      // N-way: any version different from any other
+      const allTexts=versions.map(v=>LANGS.map(l=>v.entry&&v.entry.texts?v.entry.texts[l]||'':'').join('|'));
+      const different=allTexts.some(t=>t!==allTexts[0]);
+      if(different){
+        conflicts.push({type:'entry', key:k, versions, chosen:versions.length-1});
+        return;
+      }
+    }
+    // Case 2: present in fewer files than total (missing in some)
+    if(versions.length<totalFiles){
+      // Build full versions array including placeholders for missing files
+      const fullVersions=_mergeFiles.map((f,fi)=>{
+        const found=versions.find(v=>v.fileIdx===fi);
+        return found||{fileIdx:fi, fileN:f.name, entry:null}; // null = missing
+      });
+      const hasSome=fullVersions.some(v=>v.entry!==null);
+      if(hasSome){
+        conflicts.push({type:'entry', key:k, versions:fullVersions, chosen:versions.length-1, hasMissing:true});
+      }
+    }
+  });
+
+  return conflicts;
+}
+
+function openConflictModal(){
+  _buildMergeAllEntries();
+  _mergeConflictPage=0;
+  document.getElementById('mergeConflictOverlay').style.display='flex';
+  // triggers renderConflictBody via setMergeViewFilter
+  setMergeViewFilter('conflicts');
+  setMergeLangFilter('all');
+}
+
+function renderConflictBody(){
+  const body=document.getElementById('conflictBody');
+  const progress=document.getElementById('conflictProgress');
+  const summary=document.getElementById('conflictSummary');
+  const listConf=_mergeConflicts.filter(c=>c.type==='list').length;
+  const entryConf=_mergeConflicts.filter(c=>c.type==='entry').length;
+  const totalConflicts=_mergeConflicts.length;
+  progress.textContent=totalConflicts+' conflitti: '+listConf+' elenchi, '+entryConf+' voci';
+  body.innerHTML='';
+
+  // Build all entries map: parent -> [{key, versions[], isConflict, conf?}]
+  const conflictEntryMap=new Map(); // key -> conflict obj
+  _mergeConflicts.filter(c=>c.type==='entry').forEach(c=>conflictEntryMap.set(c.key,c));
+
+  // Collect all list names across all files
+  const allListNames=new Set();
+  _mergeFiles.forEach(f=>f.data.textLists.forEach(tl=>allListNames.add(tl.name)));
+  // Add list names from conflicts (in case of missing TLs)
+  _mergeConflicts.filter(c=>c.type==='list').forEach(c=>allListNames.add(c.key));
+
+  // Apply search filter
+  const searchQ=(document.getElementById('mergeSearchList')?.value||'').toLowerCase().trim();
+
+  // Group list names using buildGroups
+  const filteredNames=[...allListNames].filter(n=>!searchQ||n.toLowerCase().includes(searchQ));
+  const groups=buildGroups(filteredNames);
+
+  // Build entry map per list: listName -> [{key, value, versions[], isConflict, conf?}]
+  const listEntryMap=new Map(); // listName -> Map(value -> {key,versions[],isConflict,conf?})
+  _mergeFiles.forEach((f,fi)=>{
+    f.data.entries.forEach(e=>{
+      if(!e||!e.texts) return;
+      const listName=e.parent;
+      if(!listEntryMap.has(listName)) listEntryMap.set(listName,new Map());
+      const valMap=listEntryMap.get(listName);
+      if(!valMap.has(e.value)) valMap.set(e.value,{key:e.parent+'||'+e.value, value:e.value, versions:_mergeFiles.map((_,i)=>({fileIdx:i,fileN:_mergeFiles[i].name,entry:null}))});
+      valMap.get(e.value).versions[fi]={fileIdx:fi,fileN:f.name,entry:e};
+    });
+  });
+  // Also add missing-only conflicts (entries not in any file's listEntryMap but in conflicts)
+  _mergeConflicts.filter(c=>c.type==='entry').forEach(c=>{
+    const firstValid=c.versions.find(v=>v.entry!==null);
+    if(!firstValid) return;
+    const listName=firstValid.entry.parent;
+    const val=firstValid.entry.value;
+    if(!listEntryMap.has(listName)) listEntryMap.set(listName,new Map());
+    const valMap=listEntryMap.get(listName);
+    if(!valMap.has(val)) valMap.set(val,{key:c.key,value:val,versions:c.versions});
+  });
+
+  const fileCount=_mergeFiles.length;
+  const langFilter=_mergeLangFilter;
+  const langsToShow=langFilter==='all'?LANGS:[langFilter];
+
+  // Render each group
+  Object.keys(groups).forEach(gk=>{
+    const listNames=groups[gk];
+
+    // Collect all values across lists in this group
+    const allValMap=new Map(); // value -> merged entry info
+    listNames.forEach(listName=>{
+      const vm=listEntryMap.get(listName);
+      if(!vm) return;
+      vm.forEach((info,val)=>{
+        if(!allValMap.has(val)) allValMap.set(val,{key:info.key,value:val,versions:info.versions});
+      });
+    });
+
+    if(allValMap.size===0) return;
+
+    // Apply view filter
+    let entries=[...allValMap.values()];
+
+    // Count conflicts in group
+    const groupConflicts=entries.filter(e=>{
+      if(conflictEntryMap.has(e.key)) return true;
+      // missing in some files = conflict
+      return e.versions.some(v=>v.entry===null)&&e.versions.some(v=>v.entry!==null);
+    }).length;
+
+    if(_mergeViewFilter==='conflicts'&&groupConflicts===0) return;
+
+    // Filter to only conflicts if needed
+    if(_mergeViewFilter==='conflicts'){
+      entries=entries.filter(e=>{
+        if(conflictEntryMap.has(e.key)) return true;
+        return e.versions.some(v=>v.entry===null)&&e.versions.some(v=>v.entry!==null);
+      });
+    }
+
+    // Apply language filter
+    if(langFilter!=='all'){
+      entries=entries.filter(e=>{
+        const texts=e.versions.map(v=>v.entry&&v.entry.texts?v.entry.texts[langFilter]||'':'');
+        return texts.some(t=>t!=='');
+      });
+    }
+
+    if(entries.length===0) return;
+
+    // Sort entries by numeric value
+    entries.sort((a,b)=>{const na=Number(a.value),nb=Number(b.value);return (!isNaN(na)&&!isNaN(nb))?(na-nb):a.value.localeCompare(b.value);});
+
+    // Section header with collapse button
+    const secHdr=document.createElement('div');
+    secHdr.style.cssText='padding:7px 14px;background:#f1f5f9;border-bottom:1px solid #e2e8f0;border-top:2px solid #cbd5e1;font-size:12px;font-weight:700;color:#334155;margin-top:8px;display:flex;align-items:center;gap:8px;cursor:pointer;user-select:none';
+    const badge=groupConflicts>0?
+      '<span style="background:#fee2e2;color:#dc2626;padding:1px 6px;border-radius:4px;font-size:10px;font-weight:700">'+groupConflicts+' diff</span>':
+      '<span style="background:#dcfce7;color:#16a34a;padding:1px 6px;border-radius:4px;font-size:10px">✓ uguale</span>';
+    // Auto-collapse identical groups when view is "all"
+    const startCollapsed=(_mergeViewFilter==='all'&&groupConflicts===0);
+    const arrow=document.createElement('span');
+    arrow.textContent=startCollapsed?'▶':'▼';
+    arrow.style.cssText='font-size:10px;color:#94a3b8;flex-shrink:0;transition:transform .15s';
+    secHdr.appendChild(arrow);
+    const titleSpan=document.createElement('span');
+    titleSpan.innerHTML=gk.replace('Z2000_','').replace('Z1000_','')+badge+'<span style="font-weight:400;color:#64748b;font-size:11px;margin-left:4px">'+entries.length+' voci</span>';
+    secHdr.appendChild(titleSpan);
+    // Collapse all / expand all buttons
+    const actSpan=document.createElement('span');
+    actSpan.style.cssText='margin-left:auto;display:flex;gap:4px';
+    body.appendChild(secHdr);
+
+    // Collapsible container
+    const tableWrap=document.createElement('div');
+    tableWrap.style.cssText='overflow:hidden;transition:max-height .2s ease';
+    tableWrap.style.maxHeight=startCollapsed?'0':'9999px';
+    // Build table: rows = values, columns = files, sub-rows per lang
+    const table=document.createElement('table');
+    table.style.cssText='width:100%;border-collapse:collapse;margin-bottom:2px';
+
+    // Header: VALORE | file1 | file2 | ... | fileN
+    const thead=document.createElement('thead');
+    const trh=document.createElement('tr');
+    const thVal=document.createElement('th');
+    thVal.style.cssText='padding:5px 8px;font-size:10px;font-weight:700;color:#64748b;text-align:left;border-bottom:2px solid #e2e8f0;background:#f8fafc;width:70px;white-space:nowrap';
+    thVal.textContent='VALORE';
+    trh.appendChild(thVal);
+    // Quick resolve buttons header
+    const thActions=document.createElement('th');
+    thActions.style.cssText='padding:5px 4px;font-size:10px;font-weight:700;color:#64748b;text-align:center;border-bottom:2px solid #e2e8f0;background:#f8fafc;width:50px';
+    thActions.textContent='';
+    trh.appendChild(thActions);
+    _mergeFiles.forEach((f,fi)=>{
+      const th=document.createElement('th');
+      th.style.cssText='padding:5px 8px;font-size:10px;font-weight:600;color:#334155;text-align:left;border-bottom:2px solid #e2e8f0;background:#f8fafc;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap';
+      th.title=f.name;
+      const shortName=f.name.replace(/\.xlsx?$/i,'').replace(/HMITextLists/i,'').replace(/Export/i,'');
+      th.textContent=shortName||f.name;
+      trh.appendChild(th);
+    });
+    // Custom text column header
+    const thCust=document.createElement('th');
+    thCust.style.cssText='padding:5px 4px;font-size:10px;font-weight:700;color:#7c3aed;text-align:center;border-bottom:2px solid #e2e8f0;background:#f8fafc;width:32px';
+    thCust.textContent='✏';
+    thCust.title='Scrivi testo personalizzato';
+    trh.appendChild(thCust);
+    thead.appendChild(trh); table.appendChild(thead);
+
+    const tbody=document.createElement('tbody');
+    entries.forEach((entryInfo,rowIdx)=>{
+      const val=entryInfo.value;
+      const versions=entryInfo.versions; // array of length fileCount
+      const conf=conflictEntryMap.get(entryInfo.key);
+      const isMissingConflict=!conf&&versions.some(v=>v.entry===null)&&versions.some(v=>v.entry!==null);
+      const isConflict=!!conf||isMissingConflict;
+
+      // Init chosenLangs if needed
+      if(conf&&!conf.chosenLangs){
+        conf.chosenLangs={};
+        LANGS.forEach(l=>{conf.chosenLangs[l]=versions.length-1;});
+      }
+      if(conf&&!conf.customTexts) conf.customTexts={};
+
+      // One row per language
+      langsToShow.forEach((lang,li)=>{
+        const langTexts=versions.map(v=>v.entry&&v.entry.texts?v.entry.texts[lang]||'':'');
+        const allSame=langTexts.every(t=>t===langTexts[0]);
+        const hasAny=langTexts.some(t=>t!=='');
+
+        // Skip if filtering by conflict and this lang row is identical
+        if(_mergeViewFilter==='conflicts'&&allSame&&!isMissingConflict) return;
+        if(!hasAny&&!versions.some(v=>v.entry===null&&versions.some(v2=>v2.entry!==null))) return;
+
+        const tr=document.createElement('tr');
+        const isDiff=!allSame||isMissingConflict;
+        if(isDiff) tr.style.background='#fffbeb';
+
+        // Value cell (only on first lang row)
+        const tdVal=document.createElement('td');
+        tdVal.style.cssText='padding:4px 8px;font-size:11px;font-weight:600;color:#475569;border-bottom:1px solid #f1f5f9;vertical-align:top;white-space:nowrap';
+        if(li===0){
+          tdVal.textContent=val;
+          if(isConflict){
+            const dot=document.createElement('span');
+            dot.style.cssText='display:inline-block;width:6px;height:6px;border-radius:50%;background:#dc2626;margin-left:4px;vertical-align:middle';
+            tdVal.appendChild(dot);
+          }
+        }
+        tr.appendChild(tdVal);
+
+        // Actions cell (resolve all for this row on first lang)
+        const tdAct=document.createElement('td');
+        tdAct.style.cssText='padding:2px 4px;text-align:center;border-bottom:1px solid #f1f5f9;vertical-align:top;white-space:nowrap';
+        if(li===0&&conf&&isDiff){
+          // Language label
+          const langLbl=document.createElement('span');
+          langLbl.style.cssText='font-size:9px;font-weight:700;color:'+LANG_COLORS[lang];
+          langLbl.textContent=LANG_LABELS[lang];
+          tdAct.appendChild(langLbl);
+        } else if(li>0&&conf){
+          const langLbl=document.createElement('span');
+          langLbl.style.cssText='font-size:9px;font-weight:700;color:'+LANG_COLORS[lang];
+          langLbl.textContent=LANG_LABELS[lang];
+          tdAct.appendChild(langLbl);
+        }
+        tr.appendChild(tdAct);
+
+        // One cell per file
+        const fileTds=[];
+        versions.forEach((v,vi)=>{
+          const td=document.createElement('td');
+          td.style.cssText='padding:3px 8px;font-size:12px;border-bottom:1px solid #f1f5f9;vertical-align:top;font-family:monospace;max-width:200px';
+          const txt=v.entry&&v.entry.texts?v.entry.texts[lang]||'':'';
+          const isMissing=v.entry===null;
+
+          if(!conf){
+            // No conflict: read-only display
+            if(isMissing){
+              td.innerHTML='<span style="color:#e2e8f0;font-size:11px">—</span>';
+            } else {
+              td.textContent=txt;
+              if(allSame) td.style.color='#64748b';
+            }
+          } else {
+            // Conflict: ALL cells are clickable (including missing = choose empty/absent)
+            const isChosen=conf.chosenLangs[lang]===vi;
+            const isCustom=conf.chosenLangs[lang]===-1;
+            td.style.cursor='pointer';
+            td.style.borderRadius='4px';
+            if(isChosen) td.style.background='#dbeafe';
+            else if(isMissing) td.style.background='#fff7ed';
+            else if(isDiff&&!isCustom){
+              if(txt!==langTexts[Math.max(0,conf.chosenLangs[lang]??0)]) td.style.background='#fef2f2';
+            }
+            if(isMissing){
+              td.innerHTML='<span style="color:#f97316;font-style:italic;font-size:11px">— assente</span>';
+              td.title='Clic per scegliere: voce assente in questo file';
+            } else {
+              td.textContent=txt||'—';
+              td.title='Clic per scegliere questo testo per '+LANG_LABELS[lang];
+            }
+            td._langVi={lang,vi,conf};
+            fileTds.push(td);
+          }
+          tr.appendChild(td);
+        });
+
+        // Custom text cell — show for ALL conflict rows (including missing-only conflicts)
+        if(conf&&(isDiff||isMissingConflict)){
+          const tdCust=document.createElement('td');
+          const isCustom=conf.chosenLangs[lang]===-1;
+          tdCust.style.cssText='padding:2px 6px;border-bottom:1px solid #f1f5f9;vertical-align:top;width:32px';
+          const custBtn=document.createElement('button');
+          custBtn.title='Scrivi testo personalizzato per '+LANG_LABELS[lang];
+          custBtn.style.cssText='border:1px solid '+(isCustom?'#7c3aed':'#e2e8f0')+';background:'+(isCustom?'#ede9fe':'#f8fafc')+';color:'+(isCustom?'#7c3aed':'#94a3b8')+';border-radius:4px;padding:2px 5px;font-size:11px;cursor:pointer;white-space:nowrap';
+          custBtn.textContent='✏';
+          custBtn.onclick=(function(lg,entConf,trow,tbl){return function(e){
+            e.stopPropagation();
+            // Toggle custom row
+            const existingRow=tbl.querySelector('.custom-row-'+lg.replace('-','_'));
+            if(existingRow){
+              existingRow.remove();
+              if(entConf.chosenLangs[lg]===-1){
+                entConf.chosenLangs[lg]=entConf.versions.length-1;
+                delete entConf.customTexts[lg];
+              }
+              custBtn.style.background='#f8fafc'; custBtn.style.color='#94a3b8'; custBtn.style.borderColor='#e2e8f0';
+              return;
+            }
+            // Create custom text row
+            entConf.chosenLangs[lg]=-1;
+            if(!entConf.customTexts[lg]) entConf.customTexts[lg]='';
+            custBtn.style.background='#ede9fe'; custBtn.style.color='#7c3aed'; custBtn.style.borderColor='#7c3aed';
+            // Deselect file cells
+            fileTds.forEach(t=>{t.style.background='';});
+            const custRow=document.createElement('tr');
+            custRow.className='custom-row-'+lg.replace('-','_');
+            custRow.style.background='#f5f3ff';
+            const tdSpan=document.createElement('td');
+            tdSpan.colSpan=2+entConf.versions.length+1;
+            tdSpan.style.cssText='padding:6px 10px;border-bottom:1px solid #e2e8f0';
+            tdSpan.innerHTML='<span style="font-size:10px;font-weight:700;color:'+LANG_COLORS[lg]+'">'+LANG_LABELS[lg]+'</span><span style="font-size:10px;color:#7c3aed;margin-left:6px">Testo personalizzato:</span>';
+            const ta=document.createElement('textarea');
+            ta.style.cssText='display:block;width:100%;margin-top:4px;padding:6px 10px;border:2px solid #7c3aed;border-radius:6px;font-size:13px;font-family:monospace;resize:vertical;min-height:38px;outline:none;box-sizing:border-box';
+            ta.placeholder='Scrivi il testo personalizzato per '+LANG_LABELS[lg]+'...';
+            ta.value=entConf.customTexts[lg];
+            ta.oninput=(function(l2){return function(){entConf.customTexts[l2]=this.value;};})(lg);
+            tdSpan.appendChild(ta);
+            custRow.appendChild(tdSpan);
+            // Insert after current row
+            trow.parentNode.insertBefore(custRow, trow.nextSibling);
+            setTimeout(()=>ta.focus(),0);
+          };})(lang,conf,tr,tbody);
+          tdCust.appendChild(custBtn);
+          tr.appendChild(tdCust);
+        }
+
+        // Wire up click handlers now that fileTds is complete
+        fileTds.forEach((td,vi)=>{
+          const lv=td._langVi;
+          if(!lv) return;
+          td.onclick=(function(lg,idx,entConf,allTds){return function(){
+            entConf.chosenLangs[lg]=idx;
+            delete entConf.customTexts[lg];
+            allTds.forEach(function(t){t.style.background='';});
+            td.style.background='#dbeafe';
+            // Remove custom row if open
+            const custRow=tbody.querySelector('.custom-row-'+lg.replace('-','_'));
+            if(custRow) custRow.remove();
+          };})(lv.lang,vi,lv.conf,fileTds);
+        });
+
+        tbody.appendChild(tr);
+      });
+    });
+    table.appendChild(tbody);
+    tableWrap.appendChild(table);
+    body.appendChild(tableWrap);
+    // Wire up collapse click
+    secHdr.onclick=function(){
+      const collapsed=tableWrap.style.maxHeight==='0px'||tableWrap.style.maxHeight==='0';
+      tableWrap.style.maxHeight=collapsed?'9999px':'0';
+      arrow.textContent=collapsed?'▼':'▶';
+    };
+  });
+
+  // Show list conflicts separately at the top if any
+  const listConflicts=_mergeConflicts.filter(c=>c.type==='list');
+  if(listConflicts.length>0){
+    const lHdr=document.createElement('div');
+    lHdr.style.cssText='padding:7px 14px;background:#fef9c3;border-bottom:1px solid #e2e8f0;font-size:12px;font-weight:700;color:#713f12;margin-bottom:4px';
+    lHdr.textContent='⚠️ Conflitti su elenchi ('+listConflicts.length+')';
+    body.insertBefore(lHdr,body.firstChild);
+  }
+
+  if(body.children.length===0||body.innerHTML.trim()===''){
+    body.innerHTML='<div style="padding:40px;text-align:center;color:#94a3b8;font-size:13px">Nessuna voce corrisponde ai filtri selezionati.</div>';
+  }
+
+  const langLabel=_mergeLangFilter!=='all'?(' · lingua: '+LANG_LABELS[_mergeLangFilter]):'';
+  const viewLabel=_mergeViewFilter==='all'?'Tutte le voci':'Solo conflitti';
+  summary.textContent=viewLabel+langLabel+(searchQ?' · ricerca: "'+searchQ+'"':'');
+}
+
+
+function collapseAllSections(collapse){
+  const body=document.getElementById('conflictBody');
+  if(!body) return;
+  // Find all tableWrap divs (direct children that are divs with overflow:hidden)
+  [...body.children].forEach(el=>{
+    if(el.tagName==='DIV'&&el.style.overflow==='hidden'){
+      el.style.maxHeight=collapse?'0':'9999px';
+    }
+    // Update arrows in headers
+    if(el.tagName==='DIV'&&el.style.cursor==='pointer'){
+      const arrow=el.querySelector('span');
+      if(arrow) arrow.textContent=collapse?'▶':'▼';
+    }
+  });
+}
+
+function resolveAll(strategy){
+  _mergeConflicts.forEach(function(c){
+    const idx=strategy==='first'?0:c.versions.length-1;
+    if(c.type==='list'){
+      c.chosen=idx;
+    } else {
+      if(!c.chosenLangs) c.chosenLangs={};
+      if(!c.customTexts) c.customTexts={};
+      LANGS.forEach(function(l){
+        c.chosenLangs[l]=idx;
+        delete c.customTexts[l]; // clear any custom text
+      });
+    }
+  });
+  renderConflictBody();
+  showToast(strategy==='first'?'✅ Tutti i primi file selezionati':'✅ Tutti gli ultimi file selezionati');
+}
+
+
+function confirmMerge(){
+  document.getElementById('mergeConflictOverlay').style.display='none';
+  showLoading('Creazione file unito...');
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{
+    const merged=buildMerged();
+    exportMergedFile(merged);
+  }));
+}
+
+function buildMerged(){
+  const chosenTl=new Map();
+  // For entry conflicts: key → {lang: entry} map built from chosenLangs
+  const chosenEntryLangs=new Map(); // key → {lang: entry object}
+
+  _mergeConflicts.forEach(c=>{
+    if(c.type==='list'){
+      const v=c.versions[c.chosen];
+      if(v&&v.tl) chosenTl.set(c.key, v.tl);
+    } else {
+      // Per-language: build a merged texts object from chosenLangs / customTexts
+      const langMap=c.chosenLangs||{};
+      const customTexts=c.customTexts||{};
+      const resolved={};
+      LANGS.forEach(lang=>{
+        const fi=langMap[lang]??c.versions.length-1;
+        if(fi===-1){
+          resolved[lang]=customTexts[lang]||'';
+        } else {
+          const v=c.versions[fi];
+          // v.entry may be null if that file doesn't have this entry
+          resolved[lang]=(v&&v.entry&&v.entry.texts?v.entry.texts[lang]||'':'');
+        }
+      });
+      // Use the base entry from first non-null version
+      const base=(c.versions.find(v=>v.entry!==null))?.entry;
+      if(base){
+        chosenEntryLangs.set(c.key, {...base, texts:{...resolved}});
+      }
+    }
+  });
+
+  const mergedTls=[];
+  const mergedEntries=[];
+  const seenTl=new Set();
+  const seenEntry=new Set();
+
+  // First: add chosen conflict resolutions
+  chosenTl.forEach((tl,name)=>{
+    if(!seenTl.has(name)){
+      mergedTls.push({...tl, comments:{...(tl.comments||{})}});
+      seenTl.add(name);
+    }
+  });
+  chosenEntryLangs.forEach((e,k)=>{
+    if(!seenEntry.has(k)&&e&&e.texts){
+      mergedEntries.push({...e, texts:{...e.texts}});
+      seenEntry.add(k);
+    }
+  });
+
+  // Second: add all non-conflicting items from each file in order
+  _mergeFiles.forEach(f=>{
+    f.data.textLists.forEach(tl=>{
+      if(seenTl.has(tl.name)) return;
+      mergedTls.push({...tl, comments:{...(tl.comments||{})}});
+      seenTl.add(tl.name);
+    });
+    f.data.entries.forEach(e=>{
+      if(!e||!e.texts) return;
+      const k=e.parent+'||'+e.value;
+      if(seenEntry.has(k)) return;
+      mergedEntries.push({...e, texts:{...e.texts}});
+      seenEntry.add(k);
+    });
+  });
+
+  return {textLists:mergedTls, entries:mergedEntries};
+}
+
+function exportMergedFile(data){
+  showLoading('Esportazione...');
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{
+    try{
+      const wb=XLSX.utils.book_new();
+      const tlRows=data.textLists.map(tl=>({
+        'Name':tl.name,
+        'ListRange':tl.listRange||'',
+        'Comment [it-IT]':cleanCr((tl.comments||{})['it-IT'])||'<No value>',
+        'Comment [en-US]':cleanCr((tl.comments||{})['en-US'])||'<No value>',
+        'Comment [en-GB]':cleanCr((tl.comments||{})['en-GB'])||'<No value>',
+        'Comment [de-DE]':cleanCr((tl.comments||{})['de-DE'])||'<No value>'
+      }));
+      const eRows=data.entries.map(e=>{
+        if(!e) return null;
+        const t=e.texts||{};
+        let val=e.value; const num=Number(val); if(!isNaN(num)&&String(val).trim()!=='') val=num;
+        return{
+          'Name':e.name||'',
+          'Parent':e.parent||'',
+          'DefaultEntry':e.defaultEntry||'False',
+          'Value':val,
+          'Text [it-IT]':cleanCr(t['it-IT'])||'<No value>',
+          'Text [en-US]':cleanCr(t['en-US'])||'<No value>',
+          'Text [en-GB]':cleanCr(t['en-GB'])||'<No value>',
+          'Text [de-DE]':cleanCr(t['de-DE'])||'<No value>',
+          'FieldInfos':e.fieldInfos||''
+        };
+      }).filter(Boolean);
+      XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(tlRows),'TextList');
+      XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(eRows),'TextListEntry');
+      const now=new Date();
+      const ts=now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0')+'-'+String(now.getDate()).padStart(2,'0')+'_'+String(now.getHours()).padStart(2,'0')+String(now.getMinutes()).padStart(2,'0');
+      const vp=projectVersion?'_'+projectVersion.replace(/[^a-zA-Z0-9.\-]/g,''):'';
+      const fileName='Export_merged'+vp+'_'+ts+'.xlsx';
+      XLSX.writeFile(wb,fileName);
+      hideLoading();
+      showToast('✅ '+fileName+' — '+data.textLists.length+' elenchi, '+data.entries.length+' voci');
+    }catch(err){
+      hideLoading();
+      showToast('❌ Errore esportazione: '+err.message);
+      console.error('exportMergedFile error:',err);
+    }
+  }));
+}
+
+/* ========== HELP MODAL ========== */
+const APP_VERSION='5.14';
+const CHANGELOG=[
+  {ver:'5.14',date:'2026-06-18',cur:true,items:[
+    'Aggiunto pulsante controllo aggiornamenti manuale in tutti i topbar',
+  ]},
+  {ver:'5.13',date:'2026-06-18',cur:false,items:[
+    'Repo sorgente privata, release su repo pubblica dist - auto-update senza token',
+  ]},
+  {ver:'5.12',date:'2026-06-18',cur:false,items:[
+    'Aggiunta icona SVG embedded nella tab del browser',
+  ]},
+  {ver:'5.11',date:'2026-05-20',cur:false,items:[
+    'Allineamento nome file e versione interna (ora entrambi v5.11)',
+  ]},
+  {ver:'5.10',date:'2026-05-19',cur:false,items:[
+    'Fix scroll orizzontale e verticale tabella (min-width:0 e min-height:0 sul contenitore flex)',
+    'Risolto: celle fuori schermo non raggiungibili con molte voci',
+  ]},
+  {ver:'5.9',date:'2026-05-19',cur:false,items:[
+    'Fix scroll verticale tabella: le righe scorrono dentro la finestra',
+  ]},
+  {ver:'5.8',date:'2026-05-19',cur:false,items:[
+    'Tabella con scroll orizzontale: tutte le colonne visibili con slider',
+  ]},
+  {ver:'5.7',date:'2026-05-19',cur:false,items:[
+    'Navigazione migliorata: pulsante Home in editor e vista insieme',
+    'Pulsante Torna all\'editor nella schermata selezione elenchi',
+    'Banner Riprendi sessione nella home quando un file e\' gia\' caricato',
+    'Pulsante Chiudi nel modal Risoluzione conflitti (torna a Unisci file)',
+    'Rimosso campo Versione progetto dalla home (non utilizzato)',
+  ]},
+  {ver:'5.6',date:'2026-05-19',cur:false,items:[
+    'Repo pubblica: auto-update senza token GitHub',
+    'Rimosso modal token — il check avviene automaticamente all\'apertura',
+  ]},
+  {ver:'5.5',date:'2026-05-19',cur:false,items:[
+    'Aggiunto controllo automatico aggiornamenti dalla repo GitHub',
+    'Download diretto nuova versione dal banner di update',
+    'Aggiornamento repo con tutte le modifiche del collega (v3.7 → v5.5)',
+  ]},
+  {ver:'3.7',date:'2026-04-14',cur:false,items:[
+    'Fix: SyntaxError apostrofo non escaped nel changelog (l\'interfaccia)',
+  ]},
+  {ver:'3.6',date:'2026-04-14',cur:false,items:[
+    'Performance: caricamento file sequenziale con barra progresso (es. 1/5, 2/5...)',
+    'Performance: esportazione XLSX in Web Worker — non blocca mai l\'interfaccia',
+    'Performance: fallback automatico al thread principale se Worker non disponibile',
+  ]},
+  {ver:'3.5',date:'2026-04-14',cur:false,items:[
+    'Fix: Unisci file molto più veloce — overlay rendering con requestAnimationFrame',
+    'Fix: modale conflitti non blocca il browser — paginata a 50 conflitti per pagina',
+    'Fix: confirmMerge mostra loading overlay prima di bloccare il thread con XLSX',
+  ]},
+  {ver:'3.4',date:'2026-04-14',cur:false,items:[
+    'Fix: SyntaxError — apostrofo non escaped nel changelog spezzava tutto il JS',
+    'Fix: showMergeScreen is not defined risolto (era conseguenza del SyntaxError)',
+  ]},
+  {ver:'3.3',date:'2026-04-14',cur:false,items:[
+    'Nuovo: funzione Unisci file — carica N file e crea un Export unificato',
+    'Rilevamento automatico conflitti (elenchi e voci duplicate tra file diversi)',
+    'Interfaccia di risoluzione conflitti: scegli quale versione tenere per ogni conflitto',
+    'Pulsanti Tieni tutti i primi / Tieni tutti gli ultimi per risoluzione rapida',
+    'Esportazione diretta del file unito come .xlsx con timestamp',
+    'I file possono essere riordinati (▲▼) prima dell\'unione',
+  ]},
+  {ver:'3.2',date:'2026-04-14',cur:false,items:[
+    'Fix: Ctrl+Shift nel confronto seleziona solo la stessa lingua dello stesso slot',
+    'Filtro lingua ora applicato sempre — editor e confronto',
+  ]},
+  {ver:'3.1',date:'2026-04-14',cur:false,items:[
+    'Fix: Ctrl+Shift seleziona solo la stessa lingua — anchorLang estratto dalla chiave (sempre affidabile)',
+    'Fix: filtro lingua in _selectRange ora usa c.lang!==anchorLang senza condizioni extra',
+  ]},
+  {ver:'3.0',date:'2026-04-14',cur:false,items:[
+    'Fix: _selectRange ora filtra SEMPRE per lingua in editor — anchorLang non può essere nullo',
+    'Fix: ricerca nel gruppo ora pulisce il registry prima di ricostruire la tabella',
+    'Fix: selezione Ctrl+clic su una cella non trascina mai celle di altre lingue',
+  ]},
+  {ver:'2.9',date:'2026-04-14',cur:false,items:[
+    'Fix: SyntaxError isDiff dichiarato due volte in _applyPasteGrid',
+  ]},
+  {ver:'2.8',date:'2026-04-14',cur:false,items:[
+    'Fix definitivo range paste con testo a capo: clipboard interna usa struttura 2D, non stringa piatta',
+    'I \\n dentro le celle non vengono mai confusi con separatori di riga',
+    'Aggiunto parser RFC 4180 per celle quotate incollate da Excel esterno',
+  ]},
+  {ver:'2.7',date:'2026-04-14',cur:false,items:[
+    'Fix: ReferenceError cellIdx is not defined — rimosso parametro residuo dalle chiamate addSel',
+  ]},
+  {ver:'2.6',date:'2026-04-14',cur:false,items:[
+    'Fix definitivo Ctrl+Shift tabella A e B: le celle A e B ora hanno chiavi distinte nel registry',
+    'Le celle A e B dello stesso valore non si sovrascrivono più — entrambe selezionabili indipendentemente',
+  ]},
+  {ver:'2.5',date:'2026-04-14',cur:false,items:[
+    'Riscrittura completa del sistema di selezione — risolve tutti i bug accumulati',
+    'Fix: registerCell rimuove le voci stantie — Ctrl+Shift funziona anche su celle modificate',
+    'Fix: _selectRange usa chiavi stringa stabili invece di indici numerici fragili',
+    'Fix: Ctrl+Shift su tabella B seleziona solo celle di B',
+    'Fix: Ctrl+Shift in editor seleziona solo la stessa lingua dell\'ancora',
+    'Fix: incolla testo con a capo — la cella non si spezza mai (logica no-tab = cella singola)',
+    'Fix: doppio firing Ctrl+V eliminato — un solo percorso di paste garantito',
+  ]},
+  {ver:'2.4',date:'2026-04-14',cur:false,items:[
+    'Fix definitivo incolla: rimosso conflitto tra evento keydown Ctrl+V e evento paste del browser',
+    'Fix: testo con a capo incollato da clipboard interna non viene più spezzato su più celle',
+    'Fix: Ctrl+Shift su tabella B ora funziona correttamente',
+    'Fix: Ctrl+Shift in editor seleziona solo la stessa lingua dell\'ancora',
+  ]},
+  {ver:'2.3',date:'2026-04-13',cur:false,items:[
+    'Fix: Ctrl+Shift ora seleziona anche la tabella B nel confronto (rimosso filtro troppo restrittivo)',
+    'Fix: Ctrl+Shift in editor seleziona solo la stessa lingua dell\'ancora — non tutte le lingue',
+    'Fix: incolla con testo a capo non spezza più su 2 celle — intercettato evento copy/paste del browser',
+    'Fix: Ctrl+C del browser con celle selezionate aggiorna correttamente il contatore celle copiate',
+  ]},
+  {ver:'2.2',date:'2026-04-13',cur:false,items:[
+    'Fix: incolla su più celle ora distribuisce correttamente i valori — non tutto nella prima cella',
+    'Fix: mancavano rowIdx/colIdx nelle celle della Vista insieme — ora il grid paste funziona anche lì',
+    'Fix: Ctrl+Shift su celle modificate non va più fuori range — l\'ancora viene risolta freschi dal registry',
+    'Fix: dopo una modifica il registro non si "rompe" — la selezione range rimane stabile',
+  ]},
+  {ver:'2.1',date:'2026-04-13',cur:false,items:[
+    'Fix definitivo testo con a capo: qualsiasi testo senza tab (\\t) viene trattato come valore singolo',
+    'Regola corretta: Excel usa SEMPRE il tab per separare colonne — testo con solo \\n = cella singola multi-riga',
+    'Ora funziona anche copiando con Ctrl+C da dentro la textarea di modifica',
+  ]},
+  {ver:'2.0',date:'2026-04-13',cur:false,items:[
+    'Fix definitivo: testo con a capo copiato da una cella viene incollato intero su tutte le celle selezionate',
+    'Fix: il paste usa la clipboard interna quando disponibile — non risente del parsing del browser',
+    'Fix: la cella modificata con incolla o svuota diventa sempre gialla (evidenziazione garantita)',
+    'Fix: l\'originale viene registrato al momento dell\'incolla anche se la cella non era mai stata aperta',
+  ]},
+  {ver:'1.9',date:'2026-04-08',cur:false,items:[
+    'Fix: testo con a capo (↵) copiato da una cella viene incollato intero in tutte le celle selezionate',
+    'Fix: il testo con \\n non viene più spezzato in più celle al momento dell\'incolla',
+  ]},
+  {ver:'1.8',date:'2026-04-08',cur:false,items:[
+    'Fix: Ctrl+Shift+Clic seleziona solo le celle della stessa colonna (A oppure B) nel confronto',
+    'Fix: la selezione può essere fatta indipendentemente su colonna A, colonna B, o entrambe (con Ctrl+Clic)',
+    'Il range rispetta il contesto della cella di partenza — non mischia A e B involontariamente',
+  ]},
+  {ver:'1.7',date:'2026-04-08',cur:false,items:[
+    'Fix: clic singolo = seleziona cella (blu), doppio clic = modifica cella',
+    'Fix: Ctrl+Shift+Clic seleziona intervallo anche su celle vuote (—)',
+    'Fix: copia/incolla rispetta la struttura righe×colonne esatta come Excel',
+    'Fix: incolla da Excel su selezione → i valori vanno nelle celle corrispondenti, non tutti nella prima',
+    'Fix: selezione funziona in modo indipendente su tabella A, tabella B, o entrambe',
+  ]},
+  {ver:'1.6',date:'2026-04-08',cur:false,items:[
+    'Nuovo: pulsante 🗑 Elimina sezione appare automaticamente quando una sezione del confronto è vuota (0 voci)',
+    'Fix: pulsante elimina riga nel confronto ora è uno solo (🗑) che elimina da A e B simultaneamente',
+    'Nuovo: selezione celle stile Excel con Ctrl+Shift+Clic per selezionare un intervallo di celle',
+    'Nuovo: Ctrl+C copia le celle selezionate in formato tabulare (tab tra colonne, newline tra righe)',
+    'Nuovo: Ctrl+V incolla un blocco copiato da Excel rispettando la struttura righe/colonne',
+    'Fix: il numero di versione app viene incrementato anche per i bugfix (a partire da questa versione)',
+    'Manuale aggiornato: gestione sezioni vuote, selezione range, copia/incolla stile Excel',
+  ]},
+  {ver:'1.5',date:'2026-04-02',cur:false,items:[
+    'Nuovo: eliminare singole voci — pulsante 🗑 al passaggio del mouse sulla riga',
+    'Nuovo: aggiungere voci con modale — pulsante ➕ in fondo alla tabella',
+    'Nuovo: nel confronto 🗑A elimina da A, 🗑B elimina da B',
+    'Nuovo: ➕ Aggiungi voce nel confronto aggiunge in entrambi i file',
+    'Fix: pulsanti 🗑 visibili correttamente al passaggio del mouse',
+    'Aggiunta/eliminazione voci annullabile con Ctrl+Z',
+  ]},
+  {ver:'1.4',date:'2026-03-31',cur:false,items:[
+    'Fix definitivo: celle copiate con →B / ←A / A→B / B→A ora diventano sempre gialle',
+    'Nuovo sistema di tracciamento modifiche diff con Set esplicito — indipendente dalla cache originali',
+    'Fix: il giallo persiste anche dopo undo parziale e ri-apertura dell\'elenco',
+  ]},
+  {ver:'1.3',date:'2026-03-31',cur:false,items:[
+    'Supporto a capo nelle celle: Shift+Invio inserisce a capo, Invio conferma (come Excel)',
+    'Le celle mostrano il simbolo ↵ dove è presente un a capo',
+    'La textarea si espande automaticamente fino a 3 righe durante la modifica',
+    'Fix: a capo funziona sia nell\'editor che nel confronto file',
+  ]},
+  {ver:'1.1',date:'2026-03-30',cur:false,items:[
+    'Manuale operatore ampliato: guida completa a tutte le funzioni con istruzioni passo-passo',
+    'Descrizione dettagliata di ogni pulsante, colore e azione disponibile',
+  ]},
+  {ver:'1.0',date:'2026-03-30',cur:false,items:[
+    'Prima versione ufficiale con numerazione',
+    'Campo versione progetto visibile in topbar e nel nome file esportato',
+    'Celle modificate evidenziate in giallo nell\'editor e nel confronto',
+    'Selezione multi-cella con Ctrl+clic: copia (Ctrl+C), incolla (Ctrl+V), svuota (Canc)',
+    'Fix: colori rosso/verde del confronto non scompaiono dopo la modifica',
+    'Fix: giallo modificato funziona anche nel pannello Confronta file',
+    'Fix: copia riga (→B / ←A) mostra correttamente il giallo sulle celle copiate',
+    'Fix: cache originali separata per editor e confronto',
+    'Aggiunto Manuale utente e Changelog integrati nel programma',
+  ]},
+  {ver:'—',date:'2026-03-29',cur:false,items:[
+    'Aggiunto undo multiplo (Ctrl+Z), pulsante Annulla e Ripristina tutto',
+    'Timestamp nel nome file esportato (data e ora)',
+  ]},
+  {ver:'—',date:'2026-03-28',cur:false,items:[
+    'Modalità Confronta due file: celle editabili in entrambe le colonne A e B',
+    'Pulsanti →B e ←A per copiare righe tra i file, con A→B e B→A globali',
+    'Esporta A modificato e Esporta B modificato con timestamp',
+  ]},
+  {ver:'—',date:'2026-03-27',cur:false,items:[
+    'Aggiunta modalità Confronta due file Excel con evidenziazione differenze',
+    'Filtri: Tutti / Solo differenze / Solo in A / Solo in B',
+  ]},
+  {ver:'—',date:'2026-03-26',cur:false,items:[
+    'Fix esportazione: rimosso carattere _x000d_ dai testi con a capo',
+    'Prima versione dell\'editor singolo file con vista gruppi e lingue',
+  ]},
+];
+
+const MANUAL_HTML=`
+<div class="app-ver-info">
+  <span style="font-size:20px">⚙️</span>
+  <div>
+    <div style="font-size:11px;color:#64748b;margin-bottom:2px">Versione applicazione</div>
+    <strong>TIA Portal Text List Editor v${APP_VERSION}</strong>
+    <div style="font-size:11px;color:#64748b;margin-top:2px">Strumento per visualizzare, modificare e confrontare le Text List esportate dal TIA Portal (Siemens).</div>
+  </div>
+</div>
+
+<h3>📋 Indice</h3>
+<ol style="font-size:13px;color:#334155;padding-left:20px;line-height:2">
+  <li><a href="#s1" onclick="document.getElementById('s1').scrollIntoView({behavior:'smooth'})" style="color:#2563eb;text-decoration:none">Schermata iniziale e versione progetto</a></li>
+  <li><a href="#s2" onclick="document.getElementById('s2').scrollIntoView({behavior:'smooth'})" style="color:#2563eb;text-decoration:none">Strumento 1 — Carica Export (editor singolo file)</a></li>
+  <li><a href="#s3" onclick="document.getElementById('s3').scrollIntoView({behavior:'smooth'})" style="color:#2563eb;text-decoration:none">Strumento 2 — Confronta due file</a></li>
+  <li><a href="#s4" onclick="document.getElementById('s4').scrollIntoView({behavior:'smooth'})" style="color:#2563eb;text-decoration:none">Strumento 3 — Unisci file</a></li>
+  <li><a href="#s5" onclick="document.getElementById('s5').scrollIntoView({behavior:'smooth'})" style="color:#2563eb;text-decoration:none">Selezione multi-cella stile Excel</a></li>
+  <li><a href="#s6" onclick="document.getElementById('s6').scrollIntoView({behavior:'smooth'})" style="color:#2563eb;text-decoration:none">Annulla modifiche (Undo) e Ripristina tutto</a></li>
+  <li><a href="#s7" onclick="document.getElementById('s7').scrollIntoView({behavior:'smooth'})" style="color:#2563eb;text-decoration:none">Esportazione file</a></li>
+  <li><a href="#s8" onclick="document.getElementById('s8').scrollIntoView({behavior:'smooth'})" style="color:#2563eb;text-decoration:none">Riepilogo tasti rapidi</a></li>
+</ol>
+
+<hr style="border:none;border-top:1px solid #e2e8f0;margin:16px 0">
+
+<h3 id="s1">🏠 1 — Schermata iniziale e versione progetto</h3>
+<p>All'apertura del programma vengono mostrati tre pulsanti principali:</p>
+<ul>
+  <li><strong>📂 Carica Export.xlsx</strong> — apre e modifica un singolo file Excel esportato dal TIA Portal.</li>
+  <li><strong>🔀 Confronta due file</strong> — carica due file Excel e mostra le differenze affiancate.</li>
+  <li><strong>🔗 Unisci file</strong> — carica due o più file Excel e crea un unico file unificato.</li>
+</ul>
+<p style="margin-top:8px"><strong>🏷 Versione progetto</strong> — il campo di testo (es. <span class="kbd">v1.2.3</span>) identifica la revisione su cui si lavora. Viene mostrato nella topbar e aggiunto al nome di ogni file esportato.</p>
+<div class="tip">Inserisci la versione progetto prima di caricare il file. Puoi cambiarla in qualsiasi momento dalla schermata iniziale.</div>
+
+<hr style="border:none;border-top:1px solid #e2e8f0;margin:16px 0">
+
+<h3 id="s2">📂 2 — Strumento 1: Carica Export (editor singolo file)</h3>
+
+<p><strong>Passo 1 — Caricamento.</strong> Clicca <em>📂 Carica Export.xlsx</em> e seleziona il file Excel esportato dal TIA Portal, oppure trascinalo nella schermata. Il file deve contenere i fogli <em>TextList</em> e <em>TextListEntry</em>.</p>
+
+<p style="margin-top:8px"><strong>Passo 2 — Selezione elenchi.</strong> Scegli quali elenchi aprire, filtra con la casella di ricerca, poi clicca <em>Apri editor gruppi</em>.</p>
+
+<p style="margin-top:8px"><strong>Passo 3 — Editor gruppi.</strong> L'interfaccia è divisa in:</p>
+<ul>
+  <li><strong>Barra laterale sinistra</strong> — elenca i gruppi. Clic su un gruppo per aprirlo. I gruppi con suffisso _1, _2… vengono affiancati nella stessa tabella.</li>
+  <li><strong>Area centrale</strong> — tabella con tutte le voci e le traduzioni per ogni lingua attiva.</li>
+</ul>
+
+<p style="margin-top:8px"><strong>Modificare una cella</strong> — <strong>doppio clic</strong> per aprire la modifica. Il bordo diventa colorato (blu=IT, rosso=EN, viola=GB, giallo=DE). <span class="kbd">Invio</span> conferma, <span class="kbd">Esc</span> annulla. <span class="kbd">Shift+Invio</span> inserisce un a capo. La cella modificata diventa <strong>gialla</strong>.</p>
+
+<p style="margin-top:8px"><strong>Pulsanti lingua (IT / EN / GB / DE)</strong> — nella topbar, attiva o disattiva le colonne lingua. Almeno una lingua deve rimanere visibile.</p>
+
+<p style="margin-top:8px"><strong>Ricerca voci</strong> — la casella sopra la tabella filtra le righe per valore numerico o per testo in qualsiasi lingua visibile.</p>
+
+<p style="margin-top:8px"><strong>📊 Vista insieme</strong> — affianca più elenchi della stessa sessione per un confronto rapido senza uscire dall'editor.</p>
+
+<p style="margin-top:8px"><strong>📑 Seleziona elenchi</strong> — cambia la selezione degli elenchi visibili senza ricaricare il file.</p>
+
+<p style="margin-top:8px"><strong>📂 Carica altro</strong> — sostituisce il file corrente con uno nuovo, azzerando le modifiche non salvate.</p>
+
+<p style="margin-top:8px"><strong>➕ Aggiungere una voce</strong> — pulsante <em>➕ Aggiungi voce</em> in fondo alla tabella. Inserisci il valore (numerico o testo) e i testi per tutte le lingue. Annullabile con Ctrl+Z.</p>
+
+<p style="margin-top:8px"><strong>🗑 Eliminare una voce</strong> — passa il mouse su una riga: appare il pulsante <strong>🗑</strong> a sinistra del valore. Cliccalo per eliminare la voce. Annullabile con Ctrl+Z.</p>
+
+<div class="warn">L'eliminazione rimuove la voce e tutti i suoi testi in tutte le lingue. Usa Ctrl+Z subito dopo per annullare.</div>
+<div class="tip">Il badge arancione in topbar (es. <em>3 modifiche</em>) conta le celle modificate nella sessione corrente. Si azzera solo con Ripristina tutto o ricaricando il file.</div>
+
+<hr style="border:none;border-top:1px solid #e2e8f0;margin:16px 0">
+
+<h3 id="s3">🔀 3 — Strumento 2: Confronta due file</h3>
+
+<p><strong>Passo 1 — Caricamento.</strong> Clicca <em>🔀 Confronta due file</em>. Carica il <strong>File A</strong> (originale o di riferimento) e il <strong>File B</strong> (versione modificata o più recente).</p>
+
+<p style="margin-top:8px"><strong>Passo 2 — Avvia confronto.</strong> Clicca <em>Avvia confronto</em>. Il programma calcola tutte le differenze e mostra il conteggio totale in topbar.</p>
+
+<p style="margin-top:8px"><strong>Colori della tabella:</strong></p>
+<ul>
+  <li style="margin-bottom:4px"><span style="display:inline-block;width:12px;height:12px;background:#fca5a5;border-radius:2px;vertical-align:middle;margin-right:4px"></span><strong>Rosso</strong> — testo diverso nella colonna A</li>
+  <li style="margin-bottom:4px"><span style="display:inline-block;width:12px;height:12px;background:#86efac;border-radius:2px;vertical-align:middle;margin-right:4px"></span><strong>Verde</strong> — testo diverso nella colonna B</li>
+  <li style="margin-bottom:4px"><span style="display:inline-block;width:12px;height:12px;background:#fed7aa;border-radius:2px;vertical-align:middle;margin-right:4px"></span><strong>Arancione</strong> — voce presente solo in A</li>
+  <li style="margin-bottom:4px"><span style="display:inline-block;width:12px;height:12px;background:#bbf7d0;border-radius:2px;vertical-align:middle;margin-right:4px"></span><strong>Verde chiaro</strong> — voce presente solo in B</li>
+  <li style="margin-bottom:4px"><span style="display:inline-block;width:12px;height:12px;background:#fef9c3;border-radius:2px;vertical-align:middle;margin-right:4px"></span><strong>Giallo</strong> — cella modificata in questa sessione</li>
+</ul>
+
+<p style="margin-top:8px"><strong>Filtri:</strong> Tutti / Solo differenze / Solo in A / Solo in B.</p>
+
+<p style="margin-top:8px"><strong>Modificare le celle.</strong> <strong>Doppio clic</strong> su qualsiasi cella di A o B per modificarla direttamente. La cella diventa gialla dopo la modifica.</p>
+
+<p style="margin-top:8px"><strong>Copiare righe tra i file:</strong></p>
+<ul>
+  <li><strong>→B</strong> — copia la riga da A a B</li>
+  <li><strong>←A</strong> — copia la riga da B ad A</li>
+  <li><strong>A→B / B→A</strong> (in testa alla tabella) — copia tutte le righe visibili in un clic</li>
+</ul>
+<div class="tip">Usa il filtro <em>Solo differenze</em> prima di A→B o B→A per copiare solo le voci diverse, senza sovrascrivere quelle già uguali.</div>
+<div class="warn">Le copie di riga sono annullabili con Ctrl+Z. Ripristina tutto azzera entrambi i file.</div>
+
+<p style="margin-top:8px"><strong>➕ Aggiungere una voce</strong> — <em>➕ Aggiungi voce (in A e B)</em> in fondo alla sezione: aggiunge la voce in entrambi i file simultaneamente. Annullabile con Ctrl+Z.</p>
+
+<p style="margin-top:8px"><strong>🗑 Eliminare una voce</strong> — pulsante 🗑 per riga: elimina da A e B insieme. Annullabile con Ctrl+Z.</p>
+
+<p style="margin-top:8px"><strong>🗑 Eliminare una sezione vuota</strong> — quando una sezione arriva a 0 voci, appare il pulsante <em>🗑 Elimina sezione</em> nell'intestazione. Annullabile con Ctrl+Z.</p>
+
+<hr style="border:none;border-top:1px solid #e2e8f0;margin:16px 0">
+
+<h3 id="s4">🔗 4 — Strumento 3: Unisci file</h3>
+
+<p>Permette di combinare due o più file Excel in un unico Export unificato, con controllo completo su come gestire i conflitti.</p>
+
+<p style="margin-top:8px"><strong>Passo 1 — Carica i file.</strong> Clicca <em>🔗 Unisci file</em> dalla schermata iniziale. Trascina i file nella zona di caricamento oppure clicca <em>Seleziona file</em>. Puoi caricare quanti file vuoi (minimo 2). Per ogni file viene mostrato il nome, il numero di elenchi e di voci. Il caricamento avviene uno alla volta con barra di avanzamento.</p>
+
+<p style="margin-top:8px"><strong>Riordinare i file.</strong> Usa i pulsanti <strong>▲</strong> e <strong>▼</strong> accanto a ogni file per cambiarne l'ordine. L'ordine è importante: determina quale versione viene considerata "prima" e quale "ultima" in caso di conflitto.</p>
+
+<p style="margin-top:8px"><strong>Passo 2 — Avvia unione.</strong> Clicca <em>🔗 Avvia unione</em>. Il programma analizza tutti i file e rileva automaticamente due tipi di conflitti:</p>
+<ul>
+  <li><strong>Conflitti su elenchi</strong> — stesso nome di elenco presente in file diversi con ListRange o commenti differenti.</li>
+  <li><strong>Conflitti su voci</strong> — stessa voce (elenco + valore) in file diversi con testi diversi in almeno una lingua.</li>
+</ul>
+<p style="margin-top:6px">Se non ci sono conflitti, il file unito viene scaricato direttamente senza ulteriori passi.</p>
+
+<p style="margin-top:8px"><strong>Passo 3 — Risoluzione conflitti.</strong> Se ci sono conflitti, appare la finestra di risoluzione con le voci divise in pagine (50 per pagina). Per ogni voce in conflitto:</p>
+<ul>
+  <li>Viene mostrata una <strong>riga per ogni lingua</strong> (IT, EN, GB, DE).</li>
+  <li>Le lingue <strong>identiche</strong> in tutti i file mostrano <em>✓ identico</em> — nessuna scelta richiesta.</li>
+  <li>Le lingue <strong>diverse</strong> mostrano il testo di ogni file come pulsante — <strong>clicca il pulsante del file che vuoi tenere</strong> per quella lingua.</li>
+  <li>Puoi scegliere lingue diverse da file diversi per la stessa voce: es. IT dal file 1, EN dal file 2, DE dal file 3.</li>
+</ul>
+
+<p style="margin-top:8px"><strong>Risoluzione rapida (in blocco):</strong></p>
+<ul>
+  <li><strong>Tieni tutti i primi</strong> — applica il primo file per tutte le lingue di tutti i conflitti</li>
+  <li><strong>Tieni tutti gli ultimi</strong> — applica l'ultimo file per tutte le lingue di tutti i conflitti</li>
+</ul>
+<div class="tip">Con molti conflitti: usa prima <em>Tieni tutti gli ultimi</em> per impostare un default, poi sfoglia le pagine e correggi manualmente solo le eccezioni.</div>
+
+<p style="margin-top:8px"><strong>Passo 4 — Esportazione.</strong> Clicca <em>✅ Conferma e scarica</em>. Il file unito viene scaricato come <span class="kbd">Export_merged_vX.X_AAAA-MM-GG_HHMM.xlsx</span>, compatibile con il TIA Portal.</p>
+
+<hr style="border:none;border-top:1px solid #e2e8f0;margin:16px 0">
+
+<h3 id="s5">🖱 5 — Selezione multi-cella stile Excel</h3>
+<p>Funziona nell'editor, nel confronto e nella vista insieme.</p>
+<ul>
+  <li><strong>Ctrl+clic</strong> su una cella — la aggiunge alla selezione (diventa blu). Ctrl+clic di nuovo la deseleziona.</li>
+  <li><strong>Ctrl+Shift+clic</strong> — seleziona tutte le celle dall'ultima selezionata fino a quella cliccata, <strong>della stessa lingua</strong>. Nel confronto seleziona solo celle dello stesso slot (A oppure B) e della stessa lingua.</li>
+  <li><strong>Doppio clic</strong> — apre la modifica della cella.</li>
+  <li><strong>Clic semplice</strong> — se ci sono celle selezionate, le deseleziona tutte.</li>
+</ul>
+<div class="tip">Flusso tipico: Ctrl+clic sulla prima cella → Ctrl+Shift+clic sull'ultima → le celle in mezzo della stessa lingua vengono selezionate. Poi Ctrl+C per copiare o Ctrl+V per incollare.</div>
+
+<p style="margin-top:8px"><strong>Azioni dalla toolbar e tasti rapidi:</strong></p>
+<ul>
+  <li><strong>📋 Copia</strong> (<span class="kbd">Ctrl+C</span>) — copia in formato tabulare (tab tra colonne, a capo tra righe), compatibile con Excel. I testi con a capo interno vengono preservati correttamente.</li>
+  <li><strong>📥 Incolla</strong> (<span class="kbd">Ctrl+V</span>) — se il testo copiato è una griglia (ha tabulazioni), i valori vengono distribuiti cella per cella in base alla posizione. Un valore singolo viene incollato in tutte le celle selezionate.</li>
+  <li><strong>🗑 Svuota</strong> (<span class="kbd">Canc</span>) — cancella il contenuto di tutte le celle selezionate.</li>
+  <li><strong>↩ Annulla</strong> (<span class="kbd">Ctrl+Z</span>) — annulla l'ultima operazione multi-cella.</li>
+  <li><strong>✕ Esc</strong> (<span class="kbd">Esc</span>) — deseleziona tutto e chiude la toolbar.</li>
+</ul>
+
+<hr style="border:none;border-top:1px solid #e2e8f0;margin:16px 0">
+
+<h3 id="s6">↩ 6 — Annulla modifiche (Undo) e Ripristina tutto</h3>
+<p>Il programma mantiene uno storico delle ultime <strong>100 operazioni</strong> nella sessione corrente.</p>
+<ul>
+  <li><strong>↩ Annulla</strong> (topbar o <span class="kbd">Ctrl+Z</span>) — annulla un'operazione alla volta: modifiche singole, incolla multi-cella, copie di riga (→B/←A), aggiunta e eliminazione voci.</li>
+  <li><strong>🔄 Ripristina tutto</strong> (pulsante rosso in topbar) — riporta tutti i testi esattamente al file originale caricato. Chiede conferma. <em>Non è annullabile.</em></li>
+</ul>
+<div class="warn">Ctrl+Z funziona solo quando il cursore non si trova dentro un campo di testo (altrimenti il browser gestisce il proprio undo interno).</div>
+
+<hr style="border:none;border-top:1px solid #e2e8f0;margin:16px 0">
+
+<h3 id="s7">💾 7 — Esportazione file</h3>
+<p>Tutti i file esportati sono .xlsx compatibili con il TIA Portal, con la stessa struttura del file originale.</p>
+
+<p style="margin-top:8px"><strong>Editor singolo file:</strong> <em>💾 Scarica Export_modified.xlsx</em> nella topbar.</p>
+
+<p style="margin-top:8px"><strong>Confronto due file:</strong> due pulsanti separati — <em>💾 Esporta B modificato</em> e <em>💾 Esporta A modificato</em> (azzurro).</p>
+
+<p style="margin-top:8px"><strong>Unisci file:</strong> <em>✅ Conferma e scarica</em> al termine della risoluzione conflitti.</p>
+
+<p style="margin-top:8px"><strong>Formato nomi file:</strong></p>
+<ul>
+  <li>Editor: <span class="kbd">Export_modified_vX.X_AAAA-MM-GG_HHMM.xlsx</span></li>
+  <li>Confronto: <span class="kbd">NomeFile_modified_vX.X_AAAA-MM-GG_HHMM.xlsx</span></li>
+  <li>Unione: <span class="kbd">Export_merged_vX.X_AAAA-MM-GG_HHMM.xlsx</span></li>
+</ul>
+<div class="warn">I browser salvano nella cartella Download predefinita. Per scegliere la cartella di destinazione, attiva nelle impostazioni del browser l'opzione "Chiedi dove salvare ogni file" (Chrome/Edge: Impostazioni → Download).</div>
+
+<hr style="border:none;border-top:1px solid #e2e8f0;margin:16px 0">
+
+<h3 id="s8">⌨️ 8 — Riepilogo tasti rapidi</h3>
+<table style="width:100%;border-collapse:collapse;font-size:12px">
+  <thead><tr style="background:#f8fafc">
+    <th style="padding:6px 10px;text-align:left;border-bottom:2px solid #e2e8f0;color:#64748b">Tasto</th>
+    <th style="padding:6px 10px;text-align:left;border-bottom:2px solid #e2e8f0;color:#64748b">Azione</th>
+    <th style="padding:6px 10px;text-align:left;border-bottom:2px solid #e2e8f0;color:#64748b">Contesto</th>
+  </tr></thead>
+  <tbody>
+    <tr style="border-bottom:1px solid #f1f5f9"><td style="padding:5px 10px"><span class="kbd">Doppio clic</span></td><td style="padding:5px 10px">Apre modifica cella</td><td style="padding:5px 10px;color:#64748b">Su una cella di testo</td></tr>
+    <tr style="border-bottom:1px solid #f1f5f9"><td style="padding:5px 10px"><span class="kbd">Invio</span></td><td style="padding:5px 10px">Conferma modifica</td><td style="padding:5px 10px;color:#64748b">Durante modifica singola</td></tr>
+    <tr style="border-bottom:1px solid #f1f5f9"><td style="padding:5px 10px"><span class="kbd">Shift+Invio</span></td><td style="padding:5px 10px">A capo nel testo</td><td style="padding:5px 10px;color:#64748b">Durante modifica singola</td></tr>
+    <tr style="border-bottom:1px solid #f1f5f9"><td style="padding:5px 10px"><span class="kbd">Esc</span></td><td style="padding:5px 10px">Annulla modifica / Deseleziona celle</td><td style="padding:5px 10px;color:#64748b">Durante modifica o selezione</td></tr>
+    <tr style="border-bottom:1px solid #f1f5f9"><td style="padding:5px 10px"><span class="kbd">Ctrl+clic</span></td><td style="padding:5px 10px">Seleziona / deseleziona cella</td><td style="padding:5px 10px;color:#64748b">Su una cella di testo</td></tr>
+    <tr style="border-bottom:1px solid #f1f5f9"><td style="padding:5px 10px"><span class="kbd">Ctrl+Shift+clic</span></td><td style="padding:5px 10px">Seleziona intervallo (stessa lingua e slot)</td><td style="padding:5px 10px;color:#64748b">Su una cella di testo</td></tr>
+    <tr style="border-bottom:1px solid #f1f5f9"><td style="padding:5px 10px"><span class="kbd">Ctrl+C</span></td><td style="padding:5px 10px">Copia celle selezionate</td><td style="padding:5px 10px;color:#64748b">Con celle selezionate</td></tr>
+    <tr style="border-bottom:1px solid #f1f5f9"><td style="padding:5px 10px"><span class="kbd">Ctrl+V</span></td><td style="padding:5px 10px">Incolla nelle celle selezionate</td><td style="padding:5px 10px;color:#64748b">Con celle selezionate</td></tr>
+    <tr style="border-bottom:1px solid #f1f5f9"><td style="padding:5px 10px"><span class="kbd">Canc</span></td><td style="padding:5px 10px">Svuota le celle selezionate</td><td style="padding:5px 10px;color:#64748b">Con celle selezionate</td></tr>
+    <tr style="border-bottom:1px solid #f1f5f9"><td style="padding:5px 10px"><span class="kbd">Ctrl+Z</span></td><td style="padding:5px 10px">Annulla ultima modifica</td><td style="padding:5px 10px;color:#64748b">Fuori dai campi di testo</td></tr>
+  </tbody>
+</table>
+`
+
+function buildChangelogHTML(){
+  return CHANGELOG.map(e=>`
+    <div class="cl-entry">
+      <div class="cl-ver">
+        <span class="cl-ver-num">v${e.ver}</span>
+        <span class="cl-ver-date">${e.date}</span>
+        ${e.cur?'<span class="cl-ver-cur">versione attuale</span>':''}
+      </div>
+      ${e.items.map(i=>`<div class="cl-item">${i}</div>`).join('')}
+    </div>`).join('');
+}
+
+function openHelp(tab){
+  document.getElementById('helpOverlay').classList.add('open');
+  switchHelpTab(tab||'manual', document.querySelector('.help-tab'));
+}
+function closeHelp(){document.getElementById('helpOverlay').classList.remove('open');}
+function switchHelpTab(tab,btn){
+  document.querySelectorAll('.help-tab').forEach(t=>t.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+  else{const tabs=document.querySelectorAll('.help-tab');tabs.forEach(t=>{if(t.getAttribute('onclick').includes(tab))t.classList.add('active');});}
+  const body=document.getElementById('helpBody');
+  if(tab==='manual') body.innerHTML=MANUAL_HTML;
+  else body.innerHTML=buildChangelogHTML();
+}
+document.addEventListener('keydown',ev=>{if(ev.key==='Escape'&&document.getElementById('helpOverlay').classList.contains('open')){closeHelp();}});
+// Intercept browser copy/paste events when cells are selected
+document.addEventListener('copy',ev=>{
+  if(selMap.size>0&&!(document.activeElement&&(document.activeElement.tagName==='INPUT'||document.activeElement.tagName==='TEXTAREA'))){
+    ev.preventDefault();
+    selCopy();
+  }
+});
+document.addEventListener('paste',ev=>{
+  if(selMap.size>0&&!(document.activeElement&&(document.activeElement.tagName==='INPUT'||document.activeElement.tagName==='TEXTAREA'))){
+    ev.preventDefault();
+    if(_clipboardGrid){
+      _applyPasteGrid(_clipboardGrid);
+    } else {
+      const txt=ev.clipboardData?.getData('text')||'';
+      _applyPasteText(txt);
+    }
+  }
+});
+document.addEventListener('keydown',ev=>{
+  const inInput=document.activeElement&&(document.activeElement.tagName==='INPUT'||document.activeElement.tagName==='TEXTAREA');
+  if((ev.ctrlKey||ev.metaKey)&&ev.key==='z'&&!ev.shiftKey&&!inInput){ev.preventDefault();doUndo();return;}
+  if(selMap.size>0&&!inInput){
+    if((ev.ctrlKey||ev.metaKey)&&ev.key==='c'){ev.preventDefault();selCopy();return;}
+    if((ev.ctrlKey||ev.metaKey)&&ev.key==='v'){ev.preventDefault();selPaste();return;}
+    if(ev.key==='Delete'||ev.key==='Backspace'){ev.preventDefault();selDelete();return;}
+    if(ev.key==='Escape'){clearSel();return;}
+  }
+});
+
+/* ========== AUTO-UPDATE CHECK (dist repo pubblica — no token needed) ========== */
+(function(){
+  const REPO_OWNER='lucacalcabrini';
+  const REPO_NAME='TiaTextEditor-dist';
+  const VERSION_FILE='version.json';
+  const CURRENT_VERSION=APP_VERSION;
+
+  // Create update banner
+  const banner=document.createElement('div');
+  banner.className='update-banner';
+  banner.id='updateBanner';
+  banner.innerHTML='<span id="updateMsg"></span><a id="updateDownload" href="#">⬇ Scarica aggiornamento</a><button class="update-close" onclick="document.getElementById(\'updateBanner\').style.display=\'none\'">&times;</button>';
+  document.body.appendChild(banner);
+
+  function compareVersions(a,b){
+    const pa=a.split('.').map(Number), pb=b.split('.').map(Number);
+    for(let i=0;i<Math.max(pa.length,pb.length);i++){
+      const na=pa[i]||0, nb=pb[i]||0;
+      if(na<nb) return -1;
+      if(na>nb) return 1;
+    }
+    return 0;
+  }
+
+  async function checkForUpdate(){
+    try{
+      const resp=await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${VERSION_FILE}`,{
+        headers:{'Accept':'application/vnd.github.v3.raw'}
+      });
+      if(!resp.ok){console.warn('[AutoUpdate] Impossibile controllare:',resp.status);return;}
+      const data=JSON.parse(await resp.text());
+      if(data.version && compareVersions(CURRENT_VERSION,data.version)<0){
+        document.getElementById('updateMsg').textContent=`🚀 Nuova versione disponibile: v${data.version} (tu hai v${CURRENT_VERSION})`;
+        const dlBtn=document.getElementById('updateDownload');
+        dlBtn.onclick=async function(e){
+          e.preventDefault();
+          try{
+            const fname=data.filename||'TIA_TextList_Editor_MULTI_v'+data.version+'.html';
+            const r=await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${fname}`,{
+              headers:{'Accept':'application/vnd.github.v3.raw'}
+            });
+            if(!r.ok){alert('Errore nel download: '+r.status);return;}
+            const blob=await r.blob();
+            const url=URL.createObjectURL(blob);
+            const a=document.createElement('a');a.href=url;a.download=fname;a.click();
+            URL.revokeObjectURL(url);
+          }catch(err){alert('Errore: '+err.message);}
+        };
+        banner.style.display='block';
+      } else {
+        console.log('[AutoUpdate] Versione aggiornata (v'+CURRENT_VERSION+')');
+      }
+    }catch(err){console.warn('[AutoUpdate] Errore:',err);}
+  }
+
+  // Auto-check on load (no token needed for public repo)
+  checkForUpdate();
+
+  // Expose for manual check button
+  window.manualCheckForUpdate=async function(){
+    const btns=document.querySelectorAll('.update-check-btn');
+    btns.forEach(b=>{b.disabled=true;b.textContent='🔄 Controllo...';});
+    await checkForUpdate();
+    btns.forEach(b=>{b.disabled=false;b.textContent='🔄 Aggiornamenti';});
+  };
+})();
+</script>
+</body>
+</html>
