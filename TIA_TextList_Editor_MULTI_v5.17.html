@@ -2,7 +2,7 @@
 <html lang="it">
 <head>
 <meta charset="utf-8">
-<title>TIA Portal Text List Editor v5.16</title>
+<title>TIA Portal Text List Editor v5.17</title>
 <link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj4KICA8cmVjdCB4PSI4IiB5PSI3NCIgd2lkdGg9Ijg0IiBoZWlnaHQ9IjEwIiByeD0iNSIgZmlsbD0iIzBjNjQ3OCIvPgogIDxyZWN0IHg9IjE0IiB5PSIxMCIgd2lkdGg9IjcyIiBoZWlnaHQ9IjY1IiByeD0iNiIgZmlsbD0iIzBjNjQ3OCIvPgogIDxyZWN0IHg9IjE5IiB5PSIxNSIgd2lkdGg9IjYyIiBoZWlnaHQ9IjU2IiByeD0iNCIgZmlsbD0iI2ZmZmZmZiIvPgogIDxyZWN0IHg9IjE5IiB5PSIxNSIgd2lkdGg9IjYyIiBoZWlnaHQ9IjExIiByeD0iNCIgZmlsbD0iIzFlMWUyZSIvPgogIDxyZWN0IHg9IjE5IiB5PSIyMCIgd2lkdGg9IjYyIiBoZWlnaHQ9IjYiIGZpbGw9IiMxZTFlMmUiLz4KICA8Y2lyY2xlIGN4PSI3MiIgY3k9IjIwIiByPSIzIiBmaWxsPSIjZmY1ZjVmIi8+CiAgPGNpcmNsZSBjeD0iNjQiIGN5PSIyMCIgcj0iMyIgZmlsbD0iI2ZmNzljNiIvPgogIDxyZWN0IHg9IjE5IiB5PSIyNiIgd2lkdGg9IjYyIiBoZWlnaHQ9IjQ1IiBmaWxsPSIjZjViODAwIi8+CiAgPHJlY3QgeD0iMjYiIHk9IjM0IiB3aWR0aD0iNDgiIGhlaWdodD0iMTAiIHJ4PSIyIiBmaWxsPSIjMWUxZTJlIi8+CiAgPHJlY3QgeD0iNDMiIHk9IjM0IiB3aWR0aD0iMTQiIGhlaWdodD0iMjYiIHJ4PSIyIiBmaWxsPSIjMWUxZTJlIi8+CiAgPHJlY3QgeD0iMjYiIHk9IjYzIiB3aWR0aD0iNDgiIGhlaWdodD0iNSIgcng9IjIuNSIgZmlsbD0iIzFlMWUyZSIvPgo8L3N2Zz4K" type="image/svg+xml">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -223,7 +223,7 @@ tr:hover .row-del-btn{opacity:1}
     <div style="font-size:40px;margin-bottom:16px">⚙️</div>
     <h1>TIA Portal Text List Editor</h1>
     <p style="margin-bottom:6px">Carica il file Excel esportato dal TIA Portal.<br>Dopo il caricamento puoi scegliere quali elenchi aprire.</p>
-    <p style="font-size:12px;color:#64748b;margin-bottom:18px">versione app: <span style="font-family:'JetBrains Mono',monospace;color:#60a5fa">v5.16</span> &nbsp;·&nbsp; <button onclick="openHelp()" style="background:none;border:none;color:#60a5fa;cursor:pointer;font-size:12px;text-decoration:underline">❓ Manuale & Changelog</button></p>
+    <p style="font-size:12px;color:#64748b;margin-bottom:18px">versione app: <span style="font-family:'JetBrains Mono',monospace;color:#60a5fa">v5.17</span> &nbsp;·&nbsp; <button onclick="openHelp()" style="background:none;border:none;color:#60a5fa;cursor:pointer;font-size:12px;text-decoration:underline">❓ Manuale & Changelog</button></p>
     <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap">
       <label class="upload-btn">📂 Carica Export.xlsx<input type="file" accept=".xlsx,.xls" id="fileInput" style="display:none"></label>
       <button class="upload-btn" style="background:#0891b2;box-shadow:0 4px 12px rgba(8,145,178,.35)" onclick="showDiffUploadScreen()">🔀 Confronta due file</button>
@@ -2541,13 +2541,16 @@ function exportMergedFile(data){
 }
 
 /* ========== HELP MODAL ========== */
-const APP_VERSION='5.16';
+const APP_VERSION='5.17';
 const CHANGELOG=[
-  {ver:'5.16',date:'2026-08-04',cur:true,items:[
+  {ver:'5.17',date:'2026-08-04',cur:true,items:[
+    'Fix errore JavaScript nel changelog (apostrofo non gestito): ripristinate tutte le funzioni',
+  ]},
+  {ver:'5.16',date:'2026-08-04',cur:false,items:[
     'Aggiornamento immediato senza attesa cache (API GitHub con fallback CDN)',
   ]},
   {ver:'5.15',date:'2026-08-04',cur:false,items:[
-    'App desktop TiaTextEditor.exe con aggiornamento automatico all'avvio',
+    'App desktop TiaTextEditor.exe con aggiornamento automatico all\'avvio',
   ]},
   {ver:'5.14',date:'2026-08-04',cur:false,items:[
     'Aggiunto pulsante controllo aggiornamenti manuale in tutti i topbar',

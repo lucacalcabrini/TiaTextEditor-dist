@@ -1,6 +1,6 @@
 {
-  "version": "5.16",
-  "filename": "TIA_TextList_Editor_MULTI_v5.16.html",
+  "version": "5.17",
+  "filename": "TIA_TextList_Editor_MULTI_v5.17.html",
   "date": "2026-08-04",
-  "notes": "Aggiornamento immediato senza attesa cache (API GitHub con fallback CDN)"
+  "notes": "Fix errore JavaScript nel changelog (apostrofo non gestito): ripristinate tutte le funzioni"
 }
