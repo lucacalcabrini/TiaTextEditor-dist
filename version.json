@@ -1,6 +1,6 @@
 {
-  "version": "5.15",
-  "filename": "TIA_TextList_Editor_MULTI_v5.15.html",
+  "version": "5.16",
+  "filename": "TIA_TextList_Editor_MULTI_v5.16.html",
   "date": "2026-08-04",
-  "notes": "App desktop TiaTextEditor.exe con aggiornamento automatico all'avvio"
+  "notes": "Aggiornamento immediato senza attesa cache (API GitHub con fallback CDN)"
 }
