@@ -1,6 +1,6 @@
 {
-  "version": "5.14",
-  "filename": "TIA_TextList_Editor_MULTI_v5.14.html",
-  "date": "2026-06-18",
-  "notes": "Aggiunto pulsante controllo aggiornamenti manuale in tutti i topbar"
+  "version": "5.15",
+  "filename": "TIA_TextList_Editor_MULTI_v5.15.html",
+  "date": "2026-08-04",
+  "notes": "App desktop TiaTextEditor.exe con aggiornamento automatico all'avvio"
 }
