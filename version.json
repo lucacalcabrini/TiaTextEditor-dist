@@ -1,6 +1,15 @@
 {
-  "version": "5.17",
-  "filename": "TIA_TextList_Editor_MULTI_v5.17.html",
+  "version": "5.18",
+  "filename": "TIA_TextList_Editor_MULTI_v5.18.html",
   "date": "2026-08-04",
-  "notes": "Fix errore JavaScript nel changelog (apostrofo non gestito): ripristinate tutte le funzioni"
+  "notes": [
+    "Funziona senza internet: libreria Excel inclusa nel programma (prima veniva scaricata da un CDN)",
+    "Export fedele: si scrivono solo le lingue presenti nel file, niente colonna DE inventata",
+    "Export fedele: gli a capo originali (CRLF) non vengono piu' alterati",
+    "Export fedele: la colonna Valore resta testo come la scrive TIA Portal",
+    "Unisci file: DefaultEntry non viene piu' cambiato in False",
+    "Risolto blocco sullo spinner se si minimizza la finestra durante Unisci file",
+    "Entrare e uscire da una cella multilinea non la segna piu' come modificata",
+    "Il confronto ignora le sole differenze di fine riga (niente falsi positivi)"
+  ]
 }
