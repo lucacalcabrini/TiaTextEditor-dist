@@ -2,7 +2,19 @@
 <html lang="it">
 <head>
 <meta charset="utf-8">
-<title>TIA Portal Text List Editor v5.19</title>
+<title>TIA Portal Text List Editor v5.20</title>
+<script>
+/* Tema chiaro/scuro. Questo pezzo sta qui in alto apposta: deve girare prima
+   che il browser disegni la pagina, altrimenti aprendo con il tema scuro si
+   vedrebbe un lampo bianco. La scelta resta memorizzata su questo PC. */
+(function(){
+  try{
+    var t=localStorage.getItem('tiaTema');
+    // senza una scelta salvata si parte dal tema scuro
+    document.documentElement.setAttribute('data-theme',t==='chiaro'?'light':'dark');
+  }catch(e){}
+})();
+</script>
 <link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj4KICA8cmVjdCB4PSI4IiB5PSI3NCIgd2lkdGg9Ijg0IiBoZWlnaHQ9IjEwIiByeD0iNSIgZmlsbD0iIzBjNjQ3OCIvPgogIDxyZWN0IHg9IjE0IiB5PSIxMCIgd2lkdGg9IjcyIiBoZWlnaHQ9IjY1IiByeD0iNiIgZmlsbD0iIzBjNjQ3OCIvPgogIDxyZWN0IHg9IjE5IiB5PSIxNSIgd2lkdGg9IjYyIiBoZWlnaHQ9IjU2IiByeD0iNCIgZmlsbD0iI2ZmZmZmZiIvPgogIDxyZWN0IHg9IjE5IiB5PSIxNSIgd2lkdGg9IjYyIiBoZWlnaHQ9IjExIiByeD0iNCIgZmlsbD0iIzFlMWUyZSIvPgogIDxyZWN0IHg9IjE5IiB5PSIyMCIgd2lkdGg9IjYyIiBoZWlnaHQ9IjYiIGZpbGw9IiMxZTFlMmUiLz4KICA8Y2lyY2xlIGN4PSI3MiIgY3k9IjIwIiByPSIzIiBmaWxsPSIjZmY1ZjVmIi8+CiAgPGNpcmNsZSBjeD0iNjQiIGN5PSIyMCIgcj0iMyIgZmlsbD0iI2ZmNzljNiIvPgogIDxyZWN0IHg9IjE5IiB5PSIyNiIgd2lkdGg9IjYyIiBoZWlnaHQ9IjQ1IiBmaWxsPSIjZjViODAwIi8+CiAgPHJlY3QgeD0iMjYiIHk9IjM0IiB3aWR0aD0iNDgiIGhlaWdodD0iMTAiIHJ4PSIyIiBmaWxsPSIjMWUxZTJlIi8+CiAgPHJlY3QgeD0iNDMiIHk9IjM0IiB3aWR0aD0iMTQiIGhlaWdodD0iMjYiIHJ4PSIyIiBmaWxsPSIjMWUxZTJlIi8+CiAgPHJlY3QgeD0iMjYiIHk9IjYzIiB3aWR0aD0iNDgiIGhlaWdodD0iNSIgcng9IjIuNSIgZmlsbD0iIzFlMWUyZSIvPgo8L3N2Zz4K" type="image/svg+xml">
 <!-- ===== Libreria Excel SheetJS 0.18.5 (Apache-2.0) inclusa nel file =====
      Prima veniva scaricata da un CDN: senza internet, o con il CDN bloccato
@@ -34,245 +46,351 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
 </script>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
+/* ============================================================
+   TEMA — tutti i colori dell'applicazione stanno qui dentro.
+   Per cambiare l'aspetto si toccano SOLO questi valori.
+   Il tema scuro si attiva mettendo data-theme="dark" su <html>.
+   ============================================================ */
+:root{
+  color-scheme:light;
+  /* superfici */
+  --bg:#f8fafc; --surface:#ffffff; --surface-2:#f8fafc; --surface-3:#f1f5f9;
+  --row-a:#ffffff; --row-b:#fafbfc;
+  /* bordi */
+  --border:#e2e8f0; --border-strong:#cbd5e1; --border-soft:#f1f5f9;
+  /* testo */
+  --text:#1e293b; --text-strong:#0f172a; --text-mid:#334155;
+  --text-2:#475569; --text-3:#64748b; --text-muted:#94a3b8; --on-accent:#ffffff;
+  /* barra in alto (scura in entrambi i temi) */
+  --topbar:#0f172a; --topbar-fg:#ffffff; --chip:#334155; --chip-fg-2:#e2e8f0;
+  --ver-bg:#1e3a5f; --ver-bd:#3b82f6; --ver-fg:#93c5fd; --ver-fg-2:#60a5fa;
+  /* schermate iniziali: sfondo sfumato */
+  --hero-1:#0f172a; --hero-2:#1e293b;
+  --hero-diff-1:#0c4a6e; --hero-diff-2:#0f172a;
+  --hero-merge-1:#3b0764; --hero-merge-2:#0f172a;
+  --hero-sel-1:#e2e8f0; --hero-sel-2:#f8fafc;
+  /* accenti pieni (fondo pulsante) */
+  --blue:#2563eb; --blue-h:#1d4ed8; --blue-br:#3b82f6; --blue-deep:#1e40af;
+  --green:#16a34a; --green-h:#15803d; --teal:#059669;
+  --red:#dc2626; --red-soft:#ef4444;
+  --purple:#7c3aed; --purple-h:#6d28d9; --purple-br:#a78bfa;
+  --cyan:#0891b2; --cyan-h:#0e7490; --sky:#0369a1;
+  --amber:#f59e0b; --amber-d:#d97706; --amber-y:#eab308; --orange:#f97316;
+  /* accenti come TESTO su superficie chiara */
+  --blue-t:#2563eb; --blue-t2:#1d4ed8; --green-t:#16a34a; --teal-t:#059669;
+  --green-t2:#166534; --red-t:#dc2626; --purple-t:#7c3aed; --sky-t:#0369a1;
+  --amber-t:#713f12; --blue-deep-t:#1e40af;
+  /* fondi tenui + relativo testo (badge, celle) */
+  --tint-blue:#dbeafe; --tint-blue-bd:#bfdbfe; --tint-blue-2:#eff6ff;
+  --tint-green:#dcfce7; --tint-mint:#f0fdf4;
+  --tint-red:#fee2e2; --tint-red-2:#fef2f2;
+  --tint-amber:#fef9c3; --tint-amber-2:#fffbeb; --tint-amber-3:#fde68a;
+  --tint-orange:#fff7ed; --tint-sky:#e0f2fe;
+  --tint-violet:#ede9fe; --tint-violet-2:#f5f3ff;
+  /* pastiglie della legenda confronto */
+  --dot-a:#fca5a5; --dot-b:#86efac; --dot-onlya:#fed7aa; --dot-onlyb:#bbf7d0;
+  /* velo delle finestre modali */
+  --veil:rgba(15,23,42,.6); --veil-strong:rgba(15,23,42,.7); --veil-max:rgba(15,23,42,.85);
+  --shadow:rgba(0,0,0,.25); --shadow-soft:rgba(0,0,0,.08);
+  /* aggiunte */
+  --chip-h:#475569; --focus:#93c5fd; --on-amber:#0f172a; --drop-bg:#1e1b4b20; --cyan-t:#0891b2;
+  /* colori delle lingue: "pieno" per i fondi, "-t" per le scritte */
+  --lang-blue:#2563eb;   --lang-blue-t:#2563eb;
+  --lang-red:#dc2626;    --lang-red-t:#dc2626;
+  --lang-purple:#7c3aed; --lang-purple-t:#7c3aed;
+  --lang-gold:#ca8a04;   --lang-gold-t:#ca8a04;
+  --lang-cyan:#0891b2;   --lang-cyan-t:#0891b2;
+  --lang-pink:#db2777;   --lang-pink-t:#db2777;
+  --lang-lime:#65a30d;   --lang-lime-t:#65a30d;
+  --lang-indigo:#9333ea; --lang-indigo-t:#9333ea;
+  --lang-orange:#ea580c; --lang-orange-t:#ea580c;
+  --lang-teal:#0d9488;   --lang-teal-t:#0d9488;
+}
+html[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#131c2c; --surface:#1b2536; --surface-2:#202b3e; --surface-3:#26334a;
+  --row-a:#1b2536; --row-b:#1f2a3c;
+  --border:#31405a; --border-strong:#42536f; --border-soft:#26334a;
+  --text:#e2e8f0; --text-strong:#f1f5f9; --text-mid:#cbd5e1;
+  --text-2:#b4c0d3; --text-3:#94a3b8; --text-muted:#93a3ba; --on-accent:#ffffff;
+  --topbar:#0b1220; --topbar-fg:#e2e8f0; --chip:#2b3a52; --chip-fg-2:#e2e8f0;
+  --ver-bg:#17304f; --ver-bd:#3b82f6; --ver-fg:#93c5fd; --ver-fg-2:#60a5fa;
+  --hero-1:#0b1220; --hero-2:#16202f;
+  --hero-diff-1:#0a3550; --hero-diff-2:#0b1220;
+  --hero-merge-1:#2b0752; --hero-merge-2:#0b1220;
+  --hero-sel-1:#16202f; --hero-sel-2:#131c2c;
+  --blue:#2f6ff0; --blue-h:#255ad4; --blue-br:#3b82f6; --blue-deep:#1e40af;
+  --green:#158f42; --green-h:#15803d; --teal:#0c9c6d;
+  --red:#dc4444; --red-soft:#ef4444;
+  --purple:#7442e8; --purple-h:#7c3aed; --purple-br:#a78bfa;
+  --cyan:#0b83a3; --cyan-h:#0e7490; --sky:#0284c7;
+  --amber:#f59e0b; --amber-d:#d97706; --amber-y:#eab308; --orange:#fb923c;
+  --blue-t:#93c5fd; --blue-t2:#93c5fd; --green-t:#86efac; --teal-t:#5eead4;
+  --green-t2:#86efac; --red-t:#fca5a5; --purple-t:#c4b5fd; --sky-t:#7dd3fc;
+  --amber-t:#fde68a; --blue-deep-t:#93c5fd;
+  --tint-blue:#1e3a5f; --tint-blue-bd:#2f5c93; --tint-blue-2:#1a2b45;
+  --tint-green:#14432c; --tint-mint:#1a3f26;
+  --tint-red:#5a2626; --tint-red-2:#472020;
+  --tint-amber:#463c10; --tint-amber-2:#3a3210; --tint-amber-3:#544818;
+  --tint-orange:#4a331a; --tint-sky:#0e3a52;
+  --tint-violet:#2e1f52; --tint-violet-2:#241a42;
+  --dot-a:#b45454; --dot-b:#4d9c6a; --dot-onlya:#a87040; --dot-onlyb:#4f8f63;
+  --veil:rgba(2,6,16,.66); --veil-strong:rgba(2,6,16,.76); --veil-max:rgba(2,6,16,.88);
+  --shadow:rgba(0,0,0,.6); --shadow-soft:rgba(0,0,0,.45);
+  /* aggiunte */
+  --chip-h:#3d4d68; --focus:#3b82f6; --on-amber:#0f172a; --drop-bg:#241d4d55; --cyan-t:#67e8f9;
+  --lang-blue:#2f6ff0;   --lang-blue-t:#7fb0ff;
+  --lang-red:#d13a3a;    --lang-red-t:#f8908f;
+  --lang-purple:#8b5cf6; --lang-purple-t:#c4b5fd;
+  --lang-gold:#a97c0a;   --lang-gold-t:#e5c158;
+  --lang-cyan:#0e9fc4;   --lang-cyan-t:#5fd8ef;
+  --lang-pink:#e0407f;   --lang-pink-t:#f79ac4;
+  --lang-lime:#5a8f11;   --lang-lime-t:#b7e56a;
+  --lang-indigo:#a04ef0; --lang-indigo-t:#d0aaff;
+  --lang-orange:#f06a1e; --lang-orange-t:#ffab73;
+  --lang-teal:#0fa892;   --lang-teal-t:#5fdcc6;
+}
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'IBM Plex Sans','Segoe UI',system-ui,sans-serif;background:#f8fafc;color:#1e293b;height:100vh;display:flex;flex-direction:column;overflow:hidden}
-.topbar{display:flex;align-items:center;justify-content:space-between;padding:10px 20px;background:#0f172a;color:#fff;gap:16px;flex-wrap:wrap}
+body{font-family:'IBM Plex Sans','Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);height:100vh;display:flex;flex-direction:column;overflow:hidden}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:10px 20px;background:var(--topbar);color:var(--on-accent);gap:16px;flex-wrap:wrap}
 .topbar-left{display:flex;align-items:center;gap:12px}
 .topbar-title{font-weight:700;font-size:15px}
 .badge{font-size:11px;font-weight:700;padding:2px 8px;border-radius:10px}
-.badge-changes{background:#f59e0b;color:#0f172a}
-.badge-file{background:#334155;color:#94a3b8}
+.badge-changes{background:var(--amber);color:var(--on-amber)}
+.badge-file{background:var(--chip);color:var(--text-muted)}
 .lang-buttons{display:flex;gap:6px}
-.lang-btn{padding:4px 10px;border-radius:6px;border:none;cursor:pointer;font-size:11px;font-weight:600;color:#fff;transition:.15s}
-.lang-btn.off{background:#334155;opacity:.55}
+.lang-btn{padding:4px 10px;border-radius:6px;border:none;cursor:pointer;font-size:11px;font-weight:600;color:var(--on-accent);transition:.15s}
+.lang-btn.off{background:var(--chip);opacity:.55}
 .topbar-actions{display:flex;gap:8px;flex-wrap:wrap}
 .btn{padding:6px 14px;border-radius:6px;cursor:pointer;font-size:12px;font-weight:600;border:none;display:inline-flex;align-items:center;gap:6px;transition:.15s}
-.btn-load{background:#334155;color:#e2e8f0}.btn-load:hover{background:#475569}
-.btn-export{background:#16a34a;color:#fff}.btn-export:hover{background:#15803d}
-.btn-lists{background:#1d4ed8;color:#fff}.btn-lists:hover{background:#1e40af}
-.btn-compare{background:#7c3aed;color:#fff}.btn-compare:hover{background:#6d28d9}
-.btn-diff{background:#0891b2;color:#fff}.btn-diff:hover{background:#0e7490}
+.btn-tema{background:var(--chip);color:var(--chip-fg-2);min-width:36px;justify-content:center;font-size:14px;padding:6px 10px}
+.btn-tema:hover{background:var(--chip-h)}
+.btn-load{background:var(--chip);color:var(--chip-fg-2)}.btn-load:hover{background:var(--chip-h)}
+.btn-export{background:var(--green);color:var(--on-accent)}.btn-export:hover{background:var(--green-h)}
+.btn-lists{background:var(--blue-h);color:var(--on-accent)}.btn-lists:hover{background:var(--blue-deep)}
+.btn-compare{background:var(--purple);color:var(--on-accent)}.btn-compare:hover{background:var(--purple-h)}
+.btn-diff{background:var(--cyan);color:var(--on-accent)}.btn-diff:hover{background:var(--cyan-h)}
 .main{flex:1;display:flex;overflow:hidden}
-.sidebar{width:270px;background:#fff;border-right:1px solid #e2e8f0;display:flex;flex-direction:column;overflow:hidden;transition:width .2s}
+.sidebar{width:270px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;transition:width .2s}
 .sidebar.collapsed{width:44px}
-.sidebar-header{padding:12px 16px 8px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #f1f5f9}
-.sidebar-toggle{border:none;background:none;cursor:pointer;font-size:16px;color:#94a3b8}
+.sidebar-header{padding:12px 16px 8px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border-soft)}
+.sidebar-toggle{border:none;background:none;cursor:pointer;font-size:16px;color:var(--text-muted)}
 #sidebarBody{flex:1;display:flex;flex-direction:column;overflow:hidden}
 .sidebar-search{padding:8px 12px}
-.sidebar-search input{width:100%;padding:6px 10px;border:1px solid #e2e8f0;border-radius:6px;font-size:12px;outline:none;background:#f8fafc}
-.sidebar-search input:focus{border-color:#93c5fd}
+.sidebar-search input{width:100%;padding:6px 10px;border:1px solid var(--border);border-radius:6px;font-size:12px;outline:none;background:var(--surface-2)}
+.sidebar-search input:focus{border-color:var(--focus)}
 .sidebar-list{flex:1;overflow:auto;padding:0 8px 8px}
 .group-item{padding:8px 10px;border-radius:6px;cursor:pointer;margin-bottom:2px;border:1px solid transparent}
-.group-item:hover{background:#f8fafc}
-.group-item.active{background:#eff6ff;border-color:#bfdbfe}
-.group-item-name{font-size:12px;color:#334155;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.group-item.active .group-item-name{font-weight:600;color:#1d4ed8}
-.group-item-meta{font-size:10px;color:#94a3b8;margin-top:2px}
-.group-item-multi{display:inline-block;background:#dbeafe;color:#2563eb;font-size:9px;font-weight:600;padding:1px 5px;border-radius:4px;margin-left:4px}
+.group-item:hover{background:var(--surface-2)}
+.group-item.active{background:var(--tint-blue-2);border-color:var(--tint-blue-bd)}
+.group-item-name{font-size:12px;color:var(--text-mid);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.group-item.active .group-item-name{font-weight:600;color:var(--blue-t2)}
+.group-item-meta{font-size:10px;color:var(--text-muted);margin-top:2px}
+.group-item-multi{display:inline-block;background:var(--tint-blue);color:var(--blue-t);font-size:9px;font-weight:600;padding:1px 5px;border-radius:4px;margin-left:4px}
 .group-item-diff{display:inline-block;font-size:9px;font-weight:700;padding:1px 5px;border-radius:4px;margin-left:4px}
-.group-item-diff.has-diff{background:#fee2e2;color:#dc2626}
-.group-item-diff.no-diff{background:#dcfce7;color:#16a34a}
+.group-item-diff.has-diff{background:var(--tint-red);color:var(--red-t)}
+.group-item-diff.no-diff{background:var(--tint-green);color:var(--green-t)}
 .content{flex:1;display:flex;flex-direction:column;overflow:hidden}
-.content-header{padding:16px 20px 8px;border-bottom:1px solid #e2e8f0}
-.content-header h2{font-size:18px;font-weight:700;color:#0f172a}
-.content-header .info{font-size:12px;color:#64748b;background:#f1f5f9;padding:2px 8px;border-radius:10px}
-.content-search{width:100%;padding:8px 12px;border:1px solid #e2e8f0;border-radius:8px;font-size:13px;outline:none;background:#f8fafc;margin-top:8px}
-.content-search:focus{border-color:#93c5fd}
+.content-header{padding:16px 20px 8px;border-bottom:1px solid var(--border)}
+.content-header h2{font-size:18px;font-weight:700;color:var(--text-strong)}
+.content-header .info{font-size:12px;color:var(--text-3);background:var(--surface-3);padding:2px 8px;border-radius:10px}
+.content-search{width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:8px;font-size:13px;outline:none;background:var(--surface-2);margin-top:8px}
+.content-search:focus{border-color:var(--focus)}
 .content-table-wrap{flex:1;overflow:auto;min-height:0;min-width:0}
 table{width:max-content;min-width:100%;border-collapse:collapse}
 thead{position:sticky;top:0;z-index:10}
-th{padding:8px 6px;font-size:11px;font-weight:600;text-align:left;border-bottom:2px solid #e2e8f0;text-transform:uppercase;letter-spacing:.05em;color:#64748b;white-space:nowrap}
+th{padding:8px 6px;font-size:11px;font-weight:600;text-align:left;border-bottom:2px solid var(--border);text-transform:uppercase;letter-spacing:.05em;color:var(--text-3);white-space:nowrap}
 th.val-col{width:75px;position:sticky;left:0;z-index:11}
-th.sep{border-left:2px solid #cbd5e1}
-td{padding:2px 4px;border-bottom:1px solid #f1f5f9;font-size:12px}
-td.val-col{font-weight:600;color:#475569;position:sticky;left:0;z-index:5;border-right:1px solid #e2e8f0}
-td.sep{border-left:2px solid #cbd5e1}
-tr:nth-child(even) td{background:#fff}
-tr:nth-child(odd) td{background:#fafbfc}
-thead tr th{background:#f8fafc}
-thead tr.sub th{background:#f1f5f9;font-size:10px}
+th.sep{border-left:2px solid var(--border-strong)}
+td{padding:2px 4px;border-bottom:1px solid var(--border-soft);font-size:12px}
+td.val-col{font-weight:600;color:var(--text-2);position:sticky;left:0;z-index:5;border-right:1px solid var(--border)}
+td.sep{border-left:2px solid var(--border-strong)}
+tr:nth-child(even) td{background:var(--row-a)}
+tr:nth-child(odd) td{background:var(--row-b)}
+thead tr th{background:var(--surface-2)}
+thead tr.sub th{background:var(--surface-3);font-size:10px}
 .cell{padding:3px 6px;cursor:text;height:28px;font-size:12px;font-family:'JetBrains Mono','Cascadia Mono',Consolas,monospace;border-radius:4px;border:1px solid transparent;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;user-select:none;display:flex;align-items:center}
-.cell:hover{border-color:#cbd5e1}
-.cell .nl{color:#94a3b8;font-size:10px;margin:0 1px}
-.cell.empty{color:#94a3b8}
-.cell.modified{background:#fef9c3 !important;border-left:3px solid #d97706 !important}
-.cell.sel{background:#dbeafe !important;border:1.5px solid #3b82f6 !important}
-.cell.sel.modified{background:#fde68a !important;border:1.5px solid #d97706 !important}
-.cell-input{width:100%;min-height:28px;max-height:90px;border-radius:4px;padding:3px 6px;font-size:12px;font-family:'JetBrains Mono','Cascadia Mono',Consolas,monospace;outline:none;background:#fff;resize:none;overflow-y:auto;line-height:1.4}
-.version-badge{display:inline-flex;align-items:center;gap:5px;background:#1e3a5f;border:1px solid #3b82f6;border-radius:6px;padding:3px 10px;font-size:11px;font-weight:700;color:#93c5fd;white-space:nowrap}
-.version-badge span{color:#60a5fa;font-family:'JetBrains Mono','Cascadia Mono',Consolas,monospace}
-.update-banner{display:none;position:fixed;top:0;left:0;right:0;z-index:99999;background:linear-gradient(135deg,#1e40af,#7c3aed);color:#fff;padding:10px 20px;font-size:13px;font-weight:600;text-align:center;box-shadow:0 4px 20px rgba(0,0,0,.3);animation:slideDown .4s ease}
+.cell:hover{border-color:var(--border-strong)}
+.cell .nl{color:var(--text-muted);font-size:10px;margin:0 1px}
+.cell.empty{color:var(--text-muted)}
+.cell.modified{background:var(--tint-amber) !important;border-left:3px solid var(--amber-d) !important}
+.cell.sel{background:var(--tint-blue) !important;border:1.5px solid var(--blue-br) !important}
+.cell.sel.modified{background:var(--tint-amber-3) !important;border:1.5px solid var(--amber-d) !important}
+.cell-input{width:100%;min-height:28px;max-height:90px;border-radius:4px;padding:3px 6px;font-size:12px;font-family:'JetBrains Mono','Cascadia Mono',Consolas,monospace;outline:none;background:var(--surface);resize:none;overflow-y:auto;line-height:1.4}
+.version-badge{display:inline-flex;align-items:center;gap:5px;background:var(--ver-bg);border:1px solid var(--blue-br);border-radius:6px;padding:3px 10px;font-size:11px;font-weight:700;color:var(--ver-fg);white-space:nowrap}
+.version-badge span{color:var(--ver-fg-2);font-family:'JetBrains Mono','Cascadia Mono',Consolas,monospace}
+.update-banner{display:none;position:fixed;top:0;left:0;right:0;z-index:99999;background:linear-gradient(135deg,var(--blue-deep),var(--purple));color:var(--on-accent);padding:10px 20px;font-size:13px;font-weight:600;text-align:center;box-shadow:0 4px 20px var(--shadow);animation:slideDown .4s ease}
 @keyframes slideDown{from{transform:translateY(-100%)}to{transform:translateY(0)}}
-.update-banner a{color:#fde68a;text-decoration:underline;cursor:pointer;margin-left:8px}
-.update-banner .update-close{position:absolute;right:16px;top:50%;transform:translateY(-50%);background:none;border:none;color:#fff;font-size:18px;cursor:pointer;opacity:.7}
+.update-banner a{color:var(--tint-amber-3);text-decoration:underline;cursor:pointer;margin-left:8px}
+.update-banner .update-close{position:absolute;right:16px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--on-accent);font-size:18px;cursor:pointer;opacity:.7}
 .update-banner .update-close:hover{opacity:1}
-.sel-toolbar{display:none;position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#1e293b;color:#fff;border-radius:10px;padding:8px 16px;gap:8px;align-items:center;box-shadow:0 8px 30px rgba(0,0,0,.5);z-index:9000;white-space:nowrap}
+.sel-toolbar{display:none;position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--topbar);color:var(--on-accent);border-radius:10px;padding:8px 16px;gap:8px;align-items:center;box-shadow:0 8px 30px var(--shadow);z-index:9000;white-space:nowrap}
 .sel-toolbar.on{display:flex}
 .stb{padding:4px 12px;border-radius:6px;border:none;cursor:pointer;font-size:11px;font-weight:700}
-.sel-info{background:#334155;border-radius:4px;padding:2px 8px;font-size:11px;color:#94a3b8}
-.cell-diff-a{background:#fee2e2 !important}
-.cell-diff-b{background:#dcfce7 !important}
-.cell-only-a{background:#fff7ed !important}
-.cell-only-b{background:#f0fdf4 !important}
-.tr-only-a td{background:#fff7ed !important}
-.tr-only-b td{background:#f0fdf4 !important}
+.sel-info{background:var(--chip);border-radius:4px;padding:2px 8px;font-size:11px;color:var(--text-muted)}
+.cell-diff-a{background:var(--tint-red) !important}
+.cell-diff-b{background:var(--tint-green) !important}
+.cell-only-a{background:var(--tint-orange) !important}
+.cell-only-b{background:var(--tint-mint) !important}
+.tr-only-a td{background:var(--tint-orange) !important}
+.tr-only-b td{background:var(--tint-mint) !important}
 /* ROW ACTIONS */
-.row-del-btn{border:none;background:none;cursor:pointer;color:#94a3b8;font-size:13px;padding:0 3px;border-radius:3px;opacity:0;transition:.15s;line-height:1}
+.row-del-btn{border:none;background:none;cursor:pointer;color:var(--text-muted);font-size:13px;padding:0 3px;border-radius:3px;opacity:0;transition:.15s;line-height:1}
 tr:hover .row-del-btn{opacity:1}
-.row-del-btn:hover{color:#ef4444;background:#fee2e2}
-.add-row-btn{display:block;width:100%;padding:6px;border:1px dashed #cbd5e1;background:#f8fafc;color:#64748b;font-size:11px;font-weight:600;cursor:pointer;border-radius:0 0 6px 6px;text-align:center;transition:.15s}
-.add-row-btn:hover{background:#eff6ff;border-color:#3b82f6;color:#2563eb}
+.row-del-btn:hover{color:var(--red-soft);background:var(--tint-red)}
+.add-row-btn{display:block;width:100%;padding:6px;border:1px dashed var(--border-strong);background:var(--surface-2);color:var(--text-3);font-size:11px;font-weight:600;cursor:pointer;border-radius:0 0 6px 6px;text-align:center;transition:.15s}
+.add-row-btn:hover{background:var(--tint-blue-2);border-color:var(--blue-br);color:var(--blue-t)}
 /* ADD ROW MODAL */
-.addrow-overlay{display:none;position:fixed;inset:0;background:rgba(15,23,42,.6);z-index:7000;align-items:center;justify-content:center}
+.addrow-overlay{display:none;position:fixed;inset:0;background:var(--veil);z-index:7000;align-items:center;justify-content:center}
 .addrow-overlay.open{display:flex}
-.addrow-modal{background:#fff;border-radius:14px;width:min(440px,94vw);box-shadow:0 20px 50px rgba(0,0,0,.25);overflow:hidden}
-.addrow-header{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid #e2e8f0}
-.addrow-header h3{font-size:14px;font-weight:700;color:#0f172a}
-.addrow-close{border:none;background:none;font-size:20px;cursor:pointer;color:#94a3b8}
+.addrow-modal{background:var(--surface);border-radius:14px;width:min(440px,94vw);box-shadow:0 20px 50px var(--shadow);overflow:hidden}
+.addrow-header{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--border)}
+.addrow-header h3{font-size:14px;font-weight:700;color:var(--text-strong)}
+.addrow-close{border:none;background:none;font-size:20px;cursor:pointer;color:var(--text-muted)}
 .addrow-body{padding:16px 18px;display:flex;flex-direction:column;gap:10px}
-.addrow-body label{font-size:11px;font-weight:600;color:#475569;margin-bottom:2px;display:block}
-.addrow-body input{width:100%;padding:7px 10px;border:1px solid #e2e8f0;border-radius:7px;font-size:13px;font-family:'JetBrains Mono','Cascadia Mono',Consolas,monospace;outline:none}
-.addrow-body input:focus{border-color:#3b82f6}
-.addrow-footer{display:flex;justify-content:flex-end;gap:8px;padding:10px 18px;border-top:1px solid #f1f5f9}
-.empty-state{flex:1;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px;color:#94a3b8}
+.addrow-body label{font-size:11px;font-weight:600;color:var(--text-2);margin-bottom:2px;display:block}
+.addrow-body input{width:100%;padding:7px 10px;border:1px solid var(--border);border-radius:7px;font-size:13px;font-family:'JetBrains Mono','Cascadia Mono',Consolas,monospace;outline:none}
+.addrow-body input:focus{border-color:var(--blue-br)}
+.addrow-footer{display:flex;justify-content:flex-end;gap:8px;padding:10px 18px;border-top:1px solid var(--border-soft)}
+.empty-state{flex:1;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px;color:var(--text-muted)}
 .empty-state .icon{font-size:48px;opacity:.3}
-.upload-zone,.selector-zone{background:#fff;border-radius:16px;padding:36px 42px;text-align:center;box-shadow:0 25px 50px rgba(0,0,0,.08);width:min(960px,92vw)}
-.upload-zone h1,.selector-zone h1{font-size:24px;font-weight:700;color:#0f172a;margin-bottom:8px}
-.upload-zone p,.selector-zone p{color:#64748b;font-size:14px;margin-bottom:22px;line-height:1.6}
-.upload-btn{display:inline-flex;align-items:center;gap:10px;padding:12px 28px;background:#2563eb;color:#fff;border-radius:10px;cursor:pointer;font-size:15px;font-weight:600;transition:.2s;box-shadow:0 4px 12px rgba(37,99,235,.35);border:none}
-.upload-btn:hover{background:#1d4ed8}
-.upload-zone.dragover{border:3px dashed #2563eb;background:#eff6ff}
+.upload-zone,.selector-zone{background:var(--surface);border-radius:16px;padding:36px 42px;text-align:center;box-shadow:0 25px 50px var(--shadow-soft);width:min(960px,92vw)}
+.upload-zone h1,.selector-zone h1{font-size:24px;font-weight:700;color:var(--text-strong);margin-bottom:8px}
+.upload-zone p,.selector-zone p{color:var(--text-3);font-size:14px;margin-bottom:22px;line-height:1.6}
+.upload-btn{display:inline-flex;align-items:center;gap:10px;padding:12px 28px;background:var(--blue);color:var(--on-accent);border-radius:10px;cursor:pointer;font-size:15px;font-weight:600;transition:.2s;box-shadow:0 4px 12px rgba(37,99,235,.35);border:none}
+.upload-btn:hover{background:var(--blue-h)}
+.upload-zone.dragover{border:3px dashed var(--blue);background:var(--tint-blue-2)}
 .selector-actions{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap}
 .selector-actions .left,.selector-actions .right{display:flex;gap:8px;align-items:center}
-.pill-btn{border:1px solid #cbd5e1;background:#fff;color:#334155;border-radius:8px;padding:6px 10px;font-size:12px;cursor:pointer}
-.pill-btn:hover{background:#f8fafc}
-.selector-search{padding:8px 10px;border:1px solid #dbe3ef;border-radius:8px;font-size:13px;min-width:220px}
-.selection-list{max-height:380px;overflow:auto;border:1px solid #e2e8f0;border-radius:10px;text-align:left;background:#f8fafc;padding:10px}
-.sel-item{display:flex;justify-content:space-between;gap:10px;align-items:center;background:#fff;border:1px solid #e2e8f0;border-radius:8px;padding:10px 12px;margin-bottom:8px}
+.pill-btn{border:1px solid var(--border-strong);background:var(--surface);color:var(--text-mid);border-radius:8px;padding:6px 10px;font-size:12px;cursor:pointer}
+.pill-btn:hover{background:var(--surface-2)}
+.selector-search{padding:8px 10px;border:1px solid var(--border);border-radius:8px;font-size:13px;min-width:220px}
+.selection-list{max-height:380px;overflow:auto;border:1px solid var(--border);border-radius:10px;text-align:left;background:var(--surface-2);padding:10px}
+.sel-item{display:flex;justify-content:space-between;gap:10px;align-items:center;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 12px;margin-bottom:8px}
 .sel-item label{display:flex;align-items:center;gap:10px;cursor:pointer;flex:1}
-.sel-meta{font-size:11px;color:#64748b}
+.sel-meta{font-size:11px;color:var(--text-3)}
 .selector-footer{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:14px}
-.primary-btn{background:#2563eb;color:#fff;border:none;border-radius:9px;padding:10px 16px;font-weight:600;cursor:pointer}
-.primary-btn:hover{background:#1d4ed8}
-.compare-layout{flex:1;display:flex;overflow:hidden;background:#f8fafc}
-.compare-panel{width:290px;border-right:1px solid #e2e8f0;background:#fff;display:flex;flex-direction:column}
+.primary-btn{background:var(--blue);color:var(--on-accent);border:none;border-radius:9px;padding:10px 16px;font-weight:600;cursor:pointer}
+.primary-btn:hover{background:var(--blue-h)}
+.compare-layout{flex:1;display:flex;overflow:hidden;background:var(--surface-2)}
+.compare-panel{width:290px;border-right:1px solid var(--border);background:var(--surface);display:flex;flex-direction:column}
 .compare-panel .selector-search{margin:10px}
 .compare-list{flex:1;overflow:auto;padding:0 10px 10px}
-.compare-actions{padding:10px;border-bottom:1px solid #f1f5f9;display:flex;gap:8px;flex-wrap:wrap}
+.compare-actions{padding:10px;border-bottom:1px solid var(--border-soft);display:flex;gap:8px;flex-wrap:wrap}
 .compare-table-wrap{flex:1;display:flex;flex-direction:column;overflow:hidden}
-.compare-hint{padding:10px 14px;font-size:12px;color:#64748b;background:#fff;border-bottom:1px solid #e2e8f0}
+.compare-hint{padding:10px 14px;font-size:12px;color:var(--text-3);background:var(--surface);border-bottom:1px solid var(--border)}
 /* DIFF SCREEN */
 .diff-layout{flex:1;display:flex;overflow:hidden}
-.diff-sidebar{width:280px;min-width:220px;background:#fff;border-right:1px solid #e2e8f0;display:flex;flex-direction:column;overflow:hidden}
-.diff-sidebar-hdr{padding:10px 14px;border-bottom:1px solid #f1f5f9;font-size:12px;font-weight:700;color:#475569}
+.diff-sidebar{width:280px;min-width:220px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden}
+.diff-sidebar-hdr{padding:10px 14px;border-bottom:1px solid var(--border-soft);font-size:12px;font-weight:700;color:var(--text-2)}
 .diff-sidebar-search{padding:8px 12px}
-.diff-sidebar-search input{width:100%;padding:6px 10px;border:1px solid #e2e8f0;border-radius:6px;font-size:12px;outline:none;background:#f8fafc}
+.diff-sidebar-search input{width:100%;padding:6px 10px;border:1px solid var(--border);border-radius:6px;font-size:12px;outline:none;background:var(--surface-2)}
 .diff-list{flex:1;overflow:auto;padding:0 8px 8px}
 .diff-content{flex:1;display:flex;flex-direction:column;overflow:hidden}
-.diff-filter-bar{padding:8px 14px;background:#fff;border-bottom:1px solid #e2e8f0;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-.diff-filter-btn{padding:4px 10px;border-radius:6px;border:1px solid #e2e8f0;background:#f8fafc;font-size:11px;font-weight:600;cursor:pointer;color:#475569}
-.diff-filter-btn.active{background:#0891b2;color:#fff;border-color:#0891b2}
-.diff-legend{display:flex;gap:10px;font-size:11px;color:#64748b;align-items:center;margin-left:auto;flex-wrap:wrap}
+.diff-filter-bar{padding:8px 14px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.diff-filter-btn{padding:4px 10px;border-radius:6px;border:1px solid var(--border);background:var(--surface-2);font-size:11px;font-weight:600;cursor:pointer;color:var(--text-2)}
+.diff-filter-btn.active{background:var(--cyan);color:var(--on-accent);border-color:var(--cyan)}
+.diff-legend{display:flex;gap:10px;font-size:11px;color:var(--text-3);align-items:center;margin-left:auto;flex-wrap:wrap}
 .diff-legend-item{display:flex;align-items:center;gap:4px}
 .diff-legend-dot{width:10px;height:10px;border-radius:2px;flex-shrink:0}
 /* DUAL UPLOAD */
 .dual-upload{display:flex;gap:20px;justify-content:center;align-items:stretch;flex-wrap:wrap;margin-bottom:24px}
-.dual-card{flex:1;min-width:200px;max-width:280px;background:#f8fafc;border:2px dashed #cbd5e1;border-radius:12px;padding:20px 16px;display:flex;flex-direction:column;align-items:center;gap:10px;transition:.2s}
-.dual-card.loaded{border-color:#16a34a;background:#f0fdf4}
+.dual-card{flex:1;min-width:200px;max-width:280px;background:var(--surface-2);border:2px dashed var(--border-strong);border-radius:12px;padding:20px 16px;display:flex;flex-direction:column;align-items:center;gap:10px;transition:.2s}
+.dual-card.loaded{border-color:var(--green);background:var(--tint-mint)}
 .dual-icon{font-size:28px;opacity:.5;transition:.2s}
 .dual-card.loaded .dual-icon{opacity:1}
-.dual-label{font-size:13px;font-weight:600;color:#334155}
-.dual-filename{font-size:11px;color:#16a34a;font-weight:600;text-align:center;word-break:break-all;min-height:16px}
-.dual-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:8px;cursor:pointer;font-size:12px;font-weight:600;border:none;transition:.2s;background:#2563eb;color:#fff}
-.dual-btn:hover{background:#1d4ed8}
-.dual-btn.loaded{background:#15803d}
+.dual-label{font-size:13px;font-weight:600;color:var(--text-mid)}
+.dual-filename{font-size:11px;color:var(--green-t);font-weight:600;text-align:center;word-break:break-all;min-height:16px}
+.dual-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:8px;cursor:pointer;font-size:12px;font-weight:600;border:none;transition:.2s;background:var(--blue);color:var(--on-accent)}
+.dual-btn:hover{background:var(--blue-h)}
+.dual-btn.loaded{background:var(--green-h)}
 /* DIFF TABLE section header */
-.diff-section-hdr{padding:7px 14px;background:#f1f5f9;border-bottom:1px solid #e2e8f0;border-top:2px solid #cbd5e1;font-size:12px;font-weight:700;color:#334155;display:flex;gap:10px;align-items:center}
-.merge-file-item{display:flex;align-items:center;gap:10px;background:#fff;border:1px solid #e2e8f0;border-radius:8px;padding:10px 14px}
-.merge-file-item .mf-name{flex:1;font-size:13px;font-weight:600;color:#1e293b;font-family:'JetBrains Mono','Cascadia Mono',Consolas,monospace;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.merge-file-item .mf-meta{font-size:11px;color:#64748b;white-space:nowrap}
-.merge-file-item .mf-del{border:none;background:none;cursor:pointer;color:#94a3b8;font-size:16px;line-height:1;padding:0 2px;flex-shrink:0}
-.merge-file-item .mf-del:hover{color:#ef4444}
-.conflict-card{border:1px solid #e2e8f0;border-radius:10px;margin-bottom:14px;overflow:hidden}
-.conflict-card-hdr{padding:10px 14px;background:#f8fafc;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #f1f5f9}
-.conflict-card-hdr .cc-title{font-size:13px;font-weight:700;color:#0f172a}
+.diff-section-hdr{padding:7px 14px;background:var(--surface-3);border-bottom:1px solid var(--border);border-top:2px solid var(--border-strong);font-size:12px;font-weight:700;color:var(--text-mid);display:flex;gap:10px;align-items:center}
+.merge-file-item{display:flex;align-items:center;gap:10px;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 14px}
+.merge-file-item .mf-name{flex:1;font-size:13px;font-weight:600;color:var(--text);font-family:'JetBrains Mono','Cascadia Mono',Consolas,monospace;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.merge-file-item .mf-meta{font-size:11px;color:var(--text-3);white-space:nowrap}
+.merge-file-item .mf-del{border:none;background:none;cursor:pointer;color:var(--text-muted);font-size:16px;line-height:1;padding:0 2px;flex-shrink:0}
+.merge-file-item .mf-del:hover{color:var(--red-soft)}
+.conflict-card{border:1px solid var(--border);border-radius:10px;margin-bottom:14px;overflow:hidden}
+.conflict-card-hdr{padding:10px 14px;background:var(--surface-2);display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border-soft)}
+.conflict-card-hdr .cc-title{font-size:13px;font-weight:700;color:var(--text-strong)}
 .conflict-card-hdr .cc-badge{font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px}
 .conflict-options{display:flex;gap:0;flex-wrap:wrap}
-.conflict-opt{flex:1;min-width:140px;padding:10px 12px;cursor:pointer;border:none;background:#fff;text-align:left;font-size:12px;border-right:1px solid #f1f5f9;border-top:1px solid #f1f5f9;transition:.15s;display:flex;flex-direction:column;gap:3px}
+.conflict-opt{flex:1;min-width:140px;padding:10px 12px;cursor:pointer;border:none;background:var(--surface);text-align:left;font-size:12px;border-right:1px solid var(--border-soft);border-top:1px solid var(--border-soft);transition:.15s;display:flex;flex-direction:column;gap:3px}
 .conflict-opt:last-child{border-right:none}
-.conflict-opt:hover{background:#f8fafc}
-.conflict-opt.chosen{background:#eff6ff;box-shadow:inset 0 -2px 0 #2563eb}
-.conflict-opt .co-file{font-size:10px;font-weight:700;color:#64748b}
-.conflict-opt .co-val{font-size:12px;color:#0f172a;font-family:'JetBrains Mono','Cascadia Mono',Consolas,monospace;word-break:break-all}
-.toast{position:fixed;bottom:20px;right:20px;background:#16a34a;color:#fff;padding:12px 20px;border-radius:8px;font-size:13px;font-weight:600;box-shadow:0 8px 24px rgba(0,0,0,.2);z-index:1000;transition:opacity .3s,transform .3s}
+.conflict-opt:hover{background:var(--surface-2)}
+.conflict-opt.chosen{background:var(--tint-blue-2);box-shadow:inset 0 -2px 0 var(--blue)}
+.conflict-opt .co-file{font-size:10px;font-weight:700;color:var(--text-3)}
+.conflict-opt .co-val{font-size:12px;color:var(--text-strong);font-family:'JetBrains Mono','Cascadia Mono',Consolas,monospace;word-break:break-all}
+.toast{position:fixed;bottom:20px;right:20px;background:var(--green);color:var(--on-accent);padding:12px 20px;border-radius:8px;font-size:13px;font-weight:600;box-shadow:0 8px 24px var(--shadow);z-index:1000;transition:opacity .3s,transform .3s}
 .toast.hidden{opacity:0;transform:translateY(10px);pointer-events:none}
-.loading-overlay{position:fixed;inset:0;background:rgba(15,23,42,.7);display:flex;align-items:center;justify-content:center;z-index:9999;flex-direction:column;gap:16px;color:#fff;font-size:16px;font-weight:600}
-.spinner{width:40px;height:40px;border:4px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .8s linear infinite}
+.loading-overlay{position:fixed;inset:0;background:var(--veil-strong);display:flex;align-items:center;justify-content:center;z-index:9999;flex-direction:column;gap:16px;color:var(--on-accent);font-size:16px;font-weight:600}
+.spinner{width:40px;height:40px;border:4px solid rgba(255,255,255,.3);border-top-color:var(--surface);border-radius:50%;animation:spin .8s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 /* HELP MODAL */
-.help-overlay{display:none;position:fixed;inset:0;background:rgba(15,23,42,.7);z-index:8000;align-items:center;justify-content:center}
+.help-overlay{display:none;position:fixed;inset:0;background:var(--veil-strong);z-index:8000;align-items:center;justify-content:center}
 .help-overlay.open{display:flex}
-.help-modal{background:#fff;border-radius:16px;width:min(820px,95vw);max-height:88vh;display:flex;flex-direction:column;box-shadow:0 30px 60px rgba(0,0,0,.3);overflow:hidden}
-.help-header{display:flex;align-items:center;justify-content:space-between;padding:18px 24px 0;border-bottom:1px solid #e2e8f0;flex-shrink:0}
-.help-header h2{font-size:17px;font-weight:700;color:#0f172a}
-.help-close{border:none;background:none;font-size:22px;cursor:pointer;color:#94a3b8;line-height:1;padding:4px}
-.help-close:hover{color:#475569}
-.help-tabs{display:flex;gap:0;padding:0 24px;border-bottom:1px solid #e2e8f0;flex-shrink:0}
-.help-tab{padding:10px 18px;font-size:13px;font-weight:600;cursor:pointer;border:none;background:none;color:#64748b;border-bottom:2px solid transparent;margin-bottom:-1px}
-.help-tab.active{color:#2563eb;border-bottom-color:#2563eb}
+.help-modal{background:var(--surface);border-radius:16px;width:min(820px,95vw);max-height:88vh;display:flex;flex-direction:column;box-shadow:0 30px 60px var(--shadow);overflow:hidden}
+.help-header{display:flex;align-items:center;justify-content:space-between;padding:18px 24px 0;border-bottom:1px solid var(--border);flex-shrink:0}
+.help-header h2{font-size:17px;font-weight:700;color:var(--text-strong)}
+.help-close{border:none;background:none;font-size:22px;cursor:pointer;color:var(--text-muted);line-height:1;padding:4px}
+.help-close:hover{color:var(--text-2)}
+.help-tabs{display:flex;gap:0;padding:0 24px;border-bottom:1px solid var(--border);flex-shrink:0}
+.help-tab{padding:10px 18px;font-size:13px;font-weight:600;cursor:pointer;border:none;background:none;color:var(--text-3);border-bottom:2px solid transparent;margin-bottom:-1px}
+.help-tab.active{color:var(--blue-t);border-bottom-color:var(--blue)}
 .help-body{flex:1;overflow-y:auto;padding:24px}
-.help-body h3{font-size:14px;font-weight:700;color:#0f172a;margin:18px 0 6px;display:flex;align-items:center;gap:6px}
+.help-body h3{font-size:14px;font-weight:700;color:var(--text-strong);margin:18px 0 6px;display:flex;align-items:center;gap:6px}
 .help-body h3:first-child{margin-top:0}
-.help-body p,.help-body li{font-size:13px;color:#334155;line-height:1.7}
+.help-body p,.help-body li{font-size:13px;color:var(--text-mid);line-height:1.7}
 .help-body ul{padding-left:20px;margin:4px 0 10px}
-.help-body .kbd{display:inline-block;background:#f1f5f9;border:1px solid #cbd5e1;border-radius:4px;padding:1px 6px;font-family:'JetBrains Mono','Cascadia Mono',Consolas,monospace;font-size:11px;color:#334155}
-.help-body .tip{background:#eff6ff;border-left:3px solid #2563eb;border-radius:0 6px 6px 0;padding:8px 12px;margin:8px 0;font-size:12px;color:#1e40af}
-.help-body .warn{background:#fef9c3;border-left:3px solid #eab308;border-radius:0 6px 6px 0;padding:8px 12px;margin:8px 0;font-size:12px;color:#713f12}
+.help-body .kbd{display:inline-block;background:var(--surface-3);border:1px solid var(--border-strong);border-radius:4px;padding:1px 6px;font-family:'JetBrains Mono','Cascadia Mono',Consolas,monospace;font-size:11px;color:var(--text-mid)}
+.help-body .tip{background:var(--tint-blue-2);border-left:3px solid var(--blue);border-radius:0 6px 6px 0;padding:8px 12px;margin:8px 0;font-size:12px;color:var(--blue-deep-t)}
+.help-body .warn{background:var(--tint-amber);border-left:3px solid var(--amber-y);border-radius:0 6px 6px 0;padding:8px 12px;margin:8px 0;font-size:12px;color:var(--amber-t)}
 /* Changelog */
 .cl-entry{margin-bottom:20px}
 .cl-ver{display:inline-flex;align-items:center;gap:8px;margin-bottom:6px}
-.cl-ver-num{background:#0f172a;color:#60a5fa;font-family:'JetBrains Mono','Cascadia Mono',Consolas,monospace;font-size:12px;font-weight:700;padding:2px 10px;border-radius:6px}
-.cl-ver-date{font-size:11px;color:#94a3b8}
-.cl-ver-cur{background:#16a34a;color:#fff;font-size:10px;font-weight:700;padding:1px 6px;border-radius:4px}
-.cl-item{font-size:12px;color:#475569;padding:2px 0 2px 16px;position:relative;line-height:1.6}
-.cl-item::before{content:'•';position:absolute;left:4px;color:#94a3b8}
-.app-ver-info{display:flex;align-items:center;gap:8px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:10px 14px;margin-bottom:16px}
-.app-ver-info span{font-size:12px;color:#475569}
-.app-ver-info strong{font-family:'JetBrains Mono','Cascadia Mono',Consolas,monospace;color:#0f172a;font-size:13px}
+.cl-ver-num{background:var(--topbar);color:var(--ver-fg-2);font-family:'JetBrains Mono','Cascadia Mono',Consolas,monospace;font-size:12px;font-weight:700;padding:2px 10px;border-radius:6px}
+.cl-ver-date{font-size:11px;color:var(--text-muted)}
+.cl-ver-cur{background:var(--green);color:var(--on-accent);font-size:10px;font-weight:700;padding:1px 6px;border-radius:4px}
+.cl-item{font-size:12px;color:var(--text-2);padding:2px 0 2px 16px;position:relative;line-height:1.6}
+.cl-item::before{content:'•';position:absolute;left:4px;color:var(--text-muted)}
+.app-ver-info{display:flex;align-items:center;gap:8px;background:var(--surface-2);border:1px solid var(--border);border-radius:8px;padding:10px 14px;margin-bottom:16px}
+.app-ver-info span{font-size:12px;color:var(--text-2)}
+.app-ver-info strong{font-family:'JetBrains Mono','Cascadia Mono',Consolas,monospace;color:var(--text-strong);font-size:13px}
 </style>
 </head>
 <body>
 <div class="loading-overlay" id="loadingOverlay" style="display:none"><div class="spinner"></div><div id="loadingText">Caricamento...</div></div>
 
 <!-- UPLOAD SCREEN -->
-<div id="uploadScreen" style="height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#0f172a 0%,#1e293b 100%)">
+<div id="uploadScreen" style="height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--hero-1) 0%,var(--hero-2) 100%)">
   <div class="upload-zone" id="dropZone">
     <div style="font-size:40px;margin-bottom:16px">⚙️</div>
     <h1>TIA Portal Text List Editor</h1>
     <p style="margin-bottom:6px">Carica il file Excel esportato dal TIA Portal.<br>Dopo il caricamento puoi scegliere quali elenchi aprire.</p>
-    <p style="font-size:12px;color:#64748b;margin-bottom:18px">versione app: <span style="font-family:'JetBrains Mono','Cascadia Mono',Consolas,monospace;color:#60a5fa">v5.19</span> &nbsp;·&nbsp; <button onclick="openHelp()" style="background:none;border:none;color:#60a5fa;cursor:pointer;font-size:12px;text-decoration:underline">❓ Manuale & Changelog</button></p>
+    <p style="font-size:12px;color:var(--text-3);margin-bottom:18px">versione app: <span style="font-family:'JetBrains Mono','Cascadia Mono',Consolas,monospace;color:var(--ver-fg-2)" id="appVerLabel">v5.20</span> &nbsp;·&nbsp; <button onclick="openHelp()" style="background:none;border:none;color:var(--ver-fg-2);cursor:pointer;font-size:12px;text-decoration:underline">❓ Manuale & Changelog</button> &nbsp;·&nbsp; <button class="btn-tema" onclick="toggleTema()" title="Tema chiaro / scuro" style="border:none;border-radius:6px;cursor:pointer;padding:3px 9px">☀️</button></p>
     <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap">
       <label class="upload-btn">📂 Carica Export.xlsx<input type="file" accept=".xlsx,.xls" id="fileInput" style="display:none"></label>
-      <button class="upload-btn" style="background:#0891b2;box-shadow:0 4px 12px rgba(8,145,178,.35)" onclick="showDiffUploadScreen()">🔀 Confronta due file</button>
-      <button class="upload-btn" style="background:#7c3aed;box-shadow:0 4px 12px rgba(124,58,237,.35)" onclick="showMergeScreen()">🔗 Unisci file</button>
+      <button class="upload-btn" style="background:var(--cyan);box-shadow:0 4px 12px rgba(8,145,178,.35)" onclick="showDiffUploadScreen()">🔀 Confronta due file</button>
+      <button class="upload-btn" style="background:var(--purple);box-shadow:0 4px 12px rgba(124,58,237,.35)" onclick="showMergeScreen()">🔗 Unisci file</button>
     </div>
-    <div id="resumeSessionBanner" style="display:none;margin-top:18px;background:#1e293b;border:1px solid #3b82f6;border-radius:10px;padding:12px 20px;display:none;align-items:center;gap:12px;justify-content:center;flex-wrap:wrap">
-      <span style="font-size:13px;color:#94a3b8">Sessione attiva:</span>
-      <span id="resumeFileName" style="font-family:'JetBrains Mono','Cascadia Mono',Consolas,monospace;color:#60a5fa;font-size:13px;font-weight:600"></span>
-      <button onclick="resumeSession()" style="padding:7px 18px;background:#2563eb;color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer">↩ Riprendi sessione</button>
+    <div id="resumeSessionBanner" style="display:none;margin-top:18px;background:var(--topbar);border:1px solid var(--blue-br);border-radius:10px;padding:12px 20px;display:none;align-items:center;gap:12px;justify-content:center;flex-wrap:wrap">
+      <span style="font-size:13px;color:var(--text-muted)">Sessione attiva:</span>
+      <span id="resumeFileName" style="font-family:'JetBrains Mono','Cascadia Mono',Consolas,monospace;color:var(--ver-fg-2);font-size:13px;font-weight:600"></span>
+      <button onclick="resumeSession()" style="padding:7px 18px;background:var(--blue);color:var(--on-accent);border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer">↩ Riprendi sessione</button>
     </div>
   </div>
 </div>
 
 <!-- DIFF UPLOAD SCREEN -->
-<div id="diffUploadScreen" style="display:none;height:100vh;align-items:center;justify-content:center;background:linear-gradient(135deg,#0c4a6e 0%,#0f172a 100%)">
+<div id="diffUploadScreen" style="display:none;height:100vh;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--hero-diff-1) 0%,var(--hero-diff-2) 100%)">
   <div class="upload-zone" style="max-width:680px">
     <div style="font-size:36px;margin-bottom:12px">🔀</div>
     <h1>Confronto tra due file Excel</h1>
     <p>Carica i due file da confrontare. Verranno evidenziate tutte le differenze tra i testi.</p>
     <div class="dual-upload">
       <div class="dual-card" id="diffCardA"
-        ondragover="event.preventDefault();event.stopPropagation();this.style.borderColor='#0891b2'"
+        ondragover="event.preventDefault();event.stopPropagation();this.style.borderColor='var(--cyan)'"
         ondragleave="this.style.borderColor=''"
         ondrop="event.preventDefault();event.stopPropagation();this.style.borderColor='';handleDiffFile(event.dataTransfer.files[0],'A')">
         <div class="dual-icon">📄</div>
@@ -280,9 +398,9 @@ tr:hover .row-del-btn{opacity:1}
         <div class="dual-filename" id="diffNameA">Nessun file</div>
         <label class="dual-btn" id="diffBtnLabelA">📂 Scegli file<input type="file" accept=".xlsx,.xls" id="diffInputA" style="display:none"></label>
       </div>
-      <div style="display:flex;align-items:center;font-size:22px;color:#64748b;font-weight:700">vs</div>
+      <div style="display:flex;align-items:center;font-size:22px;color:var(--text-3);font-weight:700">vs</div>
       <div class="dual-card" id="diffCardB"
-        ondragover="event.preventDefault();event.stopPropagation();this.style.borderColor='#059669'"
+        ondragover="event.preventDefault();event.stopPropagation();this.style.borderColor='var(--teal)'"
         ondragleave="this.style.borderColor=''"
         ondrop="event.preventDefault();event.stopPropagation();this.style.borderColor='';handleDiffFile(event.dataTransfer.files[0],'B')">
         <div class="dual-icon">📄</div>
@@ -292,26 +410,26 @@ tr:hover .row-del-btn{opacity:1}
       </div>
     </div>
     <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
-      <button class="primary-btn" id="startDiffBtn" disabled onclick="startDiff()" style="background:#0891b2;padding:12px 28px;font-size:15px;border-radius:10px;opacity:.5;cursor:not-allowed">🔀 Avvia confronto</button>
-      <button class="primary-btn" onclick="showUploadScreen()" style="background:#475569;padding:12px 28px;font-size:15px;border-radius:10px">← Torna indietro</button>
+      <button class="primary-btn" id="startDiffBtn" disabled onclick="startDiff()" style="background:var(--cyan);padding:12px 28px;font-size:15px;border-radius:10px;opacity:.5;cursor:not-allowed">🔀 Avvia confronto</button>
+      <button class="primary-btn" onclick="showUploadScreen()" style="background:var(--chip-h);padding:12px 28px;font-size:15px;border-radius:10px">← Torna indietro</button>
     </div>
   </div>
 </div>
 
 <!-- MERGE SCREEN -->
-<div id="mergeScreen" style="display:none;height:100vh;align-items:center;justify-content:center;background:linear-gradient(135deg,#3b0764 0%,#0f172a 100%);overflow:auto">
+<div id="mergeScreen" style="display:none;height:100vh;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--hero-merge-1) 0%,var(--hero-merge-2) 100%);overflow:auto">
   <div class="upload-zone" style="max-width:780px;width:94vw">
     <div style="font-size:36px;margin-bottom:12px">🔗</div>
     <h1>Unisci file Excel</h1>
     <p>Carica due o più file da unire in un unico Export. Puoi decidere come gestire i conflitti.</p>
     <!-- Drop zone for multiple files -->
-    <div id="mergeDropZone" style="border:2px dashed #6d28d9;border-radius:12px;padding:28px 20px;margin-bottom:18px;background:#1e1b4b20;cursor:pointer;transition:.2s"
-      ondragover="event.preventDefault();this.style.borderColor='#a78bfa'"
-      ondragleave="this.style.borderColor='#6d28d9'"
+    <div id="mergeDropZone" style="border:2px dashed var(--purple-h);border-radius:12px;padding:28px 20px;margin-bottom:18px;background:var(--drop-bg);cursor:pointer;transition:.2s"
+      ondragover="event.preventDefault();this.style.borderColor='var(--purple-br)'"
+      ondragleave="this.style.borderColor='var(--purple-h)'"
       ondrop="handleMergeDrop(event)">
       <div style="font-size:28px;margin-bottom:8px">📂</div>
-      <div style="font-size:13px;color:#94a3b8">Trascina qui i file .xlsx oppure clicca per selezionarli</div>
-      <label style="display:inline-flex;align-items:center;gap:8px;margin-top:12px;padding:8px 18px;background:#7c3aed;color:#fff;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600">
+      <div style="font-size:13px;color:var(--text-muted)">Trascina qui i file .xlsx oppure clicca per selezionarli</div>
+      <label style="display:inline-flex;align-items:center;gap:8px;margin-top:12px;padding:8px 18px;background:var(--purple);color:var(--on-accent);border-radius:8px;cursor:pointer;font-size:13px;font-weight:600">
         📂 Seleziona file
         <input type="file" accept=".xlsx,.xls" id="mergeFileInput" multiple style="display:none">
       </label>
@@ -320,57 +438,57 @@ tr:hover .row-del-btn{opacity:1}
     <div id="mergeFileList" style="margin-bottom:16px;display:flex;flex-direction:column;gap:8px"></div>
     <!-- Actions -->
     <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
-      <button class="primary-btn" id="startMergeBtn" disabled onclick="startMerge()" style="background:#7c3aed;padding:12px 28px;font-size:15px;border-radius:10px;opacity:.5;cursor:not-allowed">🔗 Avvia unione</button>
-      <button class="primary-btn" onclick="showUploadScreen()" style="background:#475569;padding:12px 28px;font-size:15px;border-radius:10px">← Torna indietro</button>
+      <button class="primary-btn" id="startMergeBtn" disabled onclick="startMerge()" style="background:var(--purple);padding:12px 28px;font-size:15px;border-radius:10px;opacity:.5;cursor:not-allowed">🔗 Avvia unione</button>
+      <button class="primary-btn" onclick="showUploadScreen()" style="background:var(--chip-h);padding:12px 28px;font-size:15px;border-radius:10px">← Torna indietro</button>
     </div>
   </div>
 </div>
 
 <!-- MERGE CONFLICT MODAL -->
-<div id="mergeConflictOverlay" style="display:none;position:fixed;inset:0;background:rgba(15,23,42,.85);z-index:8000;align-items:center;justify-content:center">
-  <div style="background:#fff;border-radius:16px;width:min(960px,96vw);max-height:90vh;display:flex;flex-direction:column;box-shadow:0 30px 60px rgba(0,0,0,.4);overflow:hidden">
+<div id="mergeConflictOverlay" style="display:none;position:fixed;inset:0;background:var(--veil-max);z-index:8000;align-items:center;justify-content:center">
+  <div style="background:var(--surface);border-radius:16px;width:min(960px,96vw);max-height:90vh;display:flex;flex-direction:column;box-shadow:0 30px 60px var(--shadow);overflow:hidden">
     <!-- Header -->
-    <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 24px;border-bottom:1px solid #e2e8f0;flex-shrink:0;flex-wrap:wrap;gap:8px">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 24px;border-bottom:1px solid var(--border);flex-shrink:0;flex-wrap:wrap;gap:8px">
       <div>
-        <div style="font-size:16px;font-weight:700;color:#0f172a">⚠️ Risoluzione conflitti</div>
-        <div style="font-size:12px;color:#64748b;margin-top:2px" id="conflictProgress"></div>
+        <div style="font-size:16px;font-weight:700;color:var(--text-strong)">⚠️ Risoluzione conflitti</div>
+        <div style="font-size:12px;color:var(--text-3);margin-top:2px" id="conflictProgress"></div>
       </div>
       <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
-        <button onclick="resolveAll('first')" style="padding:6px 12px;background:#2563eb;color:#fff;border:none;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer">Tieni tutti i primi</button>
-        <button onclick="resolveAll('last')" style="padding:6px 12px;background:#16a34a;color:#fff;border:none;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer">Tieni tutti gli ultimi</button>
-        <button onclick="collapseAllSections(true)" style="padding:6px 10px;background:#f1f5f9;color:#475569;border:1px solid #e2e8f0;border-radius:7px;font-size:12px;cursor:pointer" title="Chiudi tutti i gruppi">▶ Chiudi tutti</button>
-        <button onclick="collapseAllSections(false)" style="padding:6px 10px;background:#f1f5f9;color:#475569;border:1px solid #e2e8f0;border-radius:7px;font-size:12px;cursor:pointer" title="Apri tutti i gruppi">▼ Apri tutti</button>
-        <button onclick="closeMergeConflictModal()" style="padding:6px 10px;background:#f1f5f9;color:#475569;border:1px solid #e2e8f0;border-radius:7px;font-size:12px;cursor:pointer;margin-left:4px" title="Chiudi e torna indietro">✕ Chiudi</button>
+        <button onclick="resolveAll('first')" style="padding:6px 12px;background:var(--blue);color:var(--on-accent);border:none;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer">Tieni tutti i primi</button>
+        <button onclick="resolveAll('last')" style="padding:6px 12px;background:var(--green);color:var(--on-accent);border:none;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer">Tieni tutti gli ultimi</button>
+        <button onclick="collapseAllSections(true)" style="padding:6px 10px;background:var(--surface-3);color:var(--text-2);border:1px solid var(--border);border-radius:7px;font-size:12px;cursor:pointer" title="Chiudi tutti i gruppi">▶ Chiudi tutti</button>
+        <button onclick="collapseAllSections(false)" style="padding:6px 10px;background:var(--surface-3);color:var(--text-2);border:1px solid var(--border);border-radius:7px;font-size:12px;cursor:pointer" title="Apri tutti i gruppi">▼ Apri tutti</button>
+        <button onclick="closeMergeConflictModal()" style="padding:6px 10px;background:var(--surface-3);color:var(--text-2);border:1px solid var(--border);border-radius:7px;font-size:12px;cursor:pointer;margin-left:4px" title="Chiudi e torna indietro">✕ Chiudi</button>
       </div>
     </div>
     <!-- Filter bar -->
-    <div style="display:flex;align-items:center;gap:12px;padding:10px 24px;border-bottom:1px solid #e2e8f0;flex-shrink:0;flex-wrap:wrap;background:#f8fafc">
+    <div style="display:flex;align-items:center;gap:12px;padding:10px 24px;border-bottom:1px solid var(--border);flex-shrink:0;flex-wrap:wrap;background:var(--surface-2)">
       <!-- View filter -->
       <div style="display:flex;gap:4px;align-items:center">
-        <span style="font-size:11px;font-weight:600;color:#64748b;margin-right:2px">Vista:</span>
-        <button id="mfv-conflicts" onclick="setMergeViewFilter('conflicts')" style="padding:4px 10px;border-radius:6px;border:1px solid #e2e8f0;font-size:11px;font-weight:600;cursor:pointer;background:#7c3aed;color:#fff">Solo conflitti</button>
-        <button id="mfv-all" onclick="setMergeViewFilter('all')" style="padding:4px 10px;border-radius:6px;border:1px solid #e2e8f0;font-size:11px;font-weight:600;cursor:pointer;background:#fff;color:#475569">Tutte le voci</button>
+        <span style="font-size:11px;font-weight:600;color:var(--text-3);margin-right:2px">Vista:</span>
+        <button id="mfv-conflicts" onclick="setMergeViewFilter('conflicts')" style="padding:4px 10px;border-radius:6px;border:1px solid var(--border);font-size:11px;font-weight:600;cursor:pointer;background:var(--purple);color:var(--on-accent)">Solo conflitti</button>
+        <button id="mfv-all" onclick="setMergeViewFilter('all')" style="padding:4px 10px;border-radius:6px;border:1px solid var(--border);font-size:11px;font-weight:600;cursor:pointer;background:var(--surface);color:var(--text-2)">Tutte le voci</button>
       </div>
-      <div style="width:1px;height:20px;background:#e2e8f0"></div>
+      <div style="width:1px;height:20px;background:var(--border)"></div>
       <!-- Search by list name -->
       <input id="mergeSearchList" type="text" placeholder="🔍 Filtra per elenco..." oninput="_mergeConflictPage=0;renderConflictBody()"
-        style="padding:4px 10px;border:1px solid #e2e8f0;border-radius:6px;font-size:11px;outline:none;min-width:180px;background:#fff">
+        style="padding:4px 10px;border:1px solid var(--border);border-radius:6px;font-size:11px;outline:none;min-width:180px;background:var(--surface)">
       <div style="display:flex;gap:4px;align-items:center">
-        <span style="font-size:11px;font-weight:600;color:#64748b;margin-right:2px">Lingua:</span>
+        <span style="font-size:11px;font-weight:600;color:var(--text-3);margin-right:2px">Lingua:</span>
         <!-- pulsanti creati da buildMergeLangButtons() secondo le lingue dei file -->
         <span id="mergeLangButtons" style="display:flex;gap:4px"></span>
       </div>
     </div>
     <div style="flex:1;overflow-y:auto;padding:20px 24px" id="conflictBody"></div>
-    <div style="padding:14px 24px;border-top:1px solid #f1f5f9;display:flex;justify-content:space-between;align-items:center;flex-shrink:0">
-      <div style="font-size:12px;color:#64748b" id="conflictSummary"></div>
-      <button onclick="confirmMerge()" style="padding:10px 24px;background:#7c3aed;color:#fff;border:none;border-radius:9px;font-size:14px;font-weight:700;cursor:pointer">✅ Conferma e scarica</button>
+    <div style="padding:14px 24px;border-top:1px solid var(--border-soft);display:flex;justify-content:space-between;align-items:center;flex-shrink:0">
+      <div style="font-size:12px;color:var(--text-3)" id="conflictSummary"></div>
+      <button onclick="confirmMerge()" style="padding:10px 24px;background:var(--purple);color:var(--on-accent);border:none;border-radius:9px;font-size:14px;font-weight:700;cursor:pointer">✅ Conferma e scarica</button>
     </div>
   </div>
 </div>
 
 <!-- SELECTION SCREEN -->
-<div id="selectionScreen" style="display:none;height:100vh;align-items:center;justify-content:center;background:linear-gradient(135deg,#e2e8f0 0%,#f8fafc 100%)">
+<div id="selectionScreen" style="display:none;height:100vh;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--hero-sel-1) 0%,var(--hero-sel-2) 100%)">
   <div class="selector-zone">
     <h1>Seleziona gli elenchi da caricare</h1>
     <p>Questa selezione definisce l'insieme su cui lavorare.</p>
@@ -403,15 +521,16 @@ tr:hover .row-del-btn{opacity:1}
     </div>
     <div class="lang-buttons" id="compareLangButtons"></div>
     <div class="topbar-actions">
-      <button class="btn undo-btn" style="background:#f59e0b;color:#0f172a;opacity:0.45" disabled onclick="doUndo()" title="Annulla ultima modifica (Ctrl+Z)">↩ Annulla</button>
-      <button class="btn" style="background:#ef4444;color:#fff" onclick="doResetAll('editor')" title="Ripristina tutto">🔄 Ripristina tutto</button>
+      <button class="btn undo-btn" style="background:var(--amber);color:var(--on-amber);opacity:0.45" disabled onclick="doUndo()" title="Annulla ultima modifica (Ctrl+Z)">↩ Annulla</button>
+      <button class="btn" style="background:var(--red-soft);color:var(--on-accent)" onclick="doResetAll('editor')" title="Ripristina tutto">🔄 Ripristina tutto</button>
       <button class="btn btn-diff" onclick="showDiffUploadScreen()">🔀 Confronta file</button>
       <button class="btn btn-lists" onclick="showSelectionScreen()">📑 Cambia insieme</button>
       <button class="btn btn-load" onclick="showEditor()">🧭 Editor gruppi</button>
       <button class="btn btn-export" onclick="doExport()">💾 Scarica Export_modified.xlsx</button>
       <button class="btn btn-load" onclick="showUploadScreen()">🏠 Home</button>
-      <button class="btn" style="background:#334155;color:#e2e8f0" onclick="openHelp()">❓ Aiuto</button>
-      <button class="btn update-check-btn" style="background:#1e3a5f;color:#93c5fd;border:1px solid #3b82f6" onclick="manualCheckForUpdate()" title="Controlla aggiornamenti">↑ Aggiornamenti</button>
+      <button class="btn btn-tema" onclick="toggleTema()" title="Tema chiaro / scuro">☀️</button>
+      <button class="btn" style="background:var(--chip);color:var(--chip-fg-2)" onclick="openHelp()">❓ Aiuto</button>
+      <button class="btn update-check-btn" style="background:var(--ver-bg);color:var(--ver-fg);border:1px solid var(--blue-br)" onclick="manualCheckForUpdate()" title="Controlla aggiornamenti">↑ Aggiornamenti</button>
     </div>
   </div>
   <div class="compare-layout">
@@ -442,21 +561,22 @@ tr:hover .row-del-btn{opacity:1}
     </div>
     <div class="lang-buttons" id="langButtons"></div>
     <div class="topbar-actions">
-      <button class="btn undo-btn" style="background:#f59e0b;color:#0f172a;opacity:0.45" disabled onclick="doUndo()" title="Annulla ultima modifica (Ctrl+Z)">↩ Annulla</button>
-      <button class="btn" style="background:#ef4444;color:#fff" onclick="doResetAll('editor')" title="Ripristina tutto al file originale">🔄 Ripristina tutto</button>
+      <button class="btn undo-btn" style="background:var(--amber);color:var(--on-amber);opacity:0.45" disabled onclick="doUndo()" title="Annulla ultima modifica (Ctrl+Z)">↩ Annulla</button>
+      <button class="btn" style="background:var(--red-soft);color:var(--on-accent)" onclick="doResetAll('editor')" title="Ripristina tutto al file originale">🔄 Ripristina tutto</button>
       <button class="btn btn-diff" onclick="showDiffUploadScreen()">🔀 Confronta file</button>
       <button class="btn btn-compare" onclick="showCompareScreen()">📊 Vista insieme</button>
       <button class="btn btn-lists" onclick="showSelectionScreen()">📑 Seleziona elenchi</button>
       <label class="btn btn-load">📂 Carica altro<input type="file" accept=".xlsx,.xls" id="fileInputAlt" style="display:none"></label>
       <button class="btn btn-export" onclick="doExport()">💾 Scarica Export_modified.xlsx</button>
       <button class="btn btn-load" onclick="showUploadScreen()">🏠 Home</button>
-      <button class="btn" style="background:#334155;color:#e2e8f0" onclick="openHelp()" title="Manuale e Changelog">❓ Aiuto</button>
-      <button class="btn update-check-btn" style="background:#1e3a5f;color:#93c5fd;border:1px solid #3b82f6" onclick="manualCheckForUpdate()" title="Controlla aggiornamenti">↑ Aggiornamenti</button>
+      <button class="btn btn-tema" onclick="toggleTema()" title="Tema chiaro / scuro">☀️</button>
+      <button class="btn" style="background:var(--chip);color:var(--chip-fg-2)" onclick="openHelp()" title="Manuale e Changelog">❓ Aiuto</button>
+      <button class="btn update-check-btn" style="background:var(--ver-bg);color:var(--ver-fg);border:1px solid var(--blue-br)" onclick="manualCheckForUpdate()" title="Controlla aggiornamenti">↑ Aggiornamenti</button>
     </div>
   </div>
   <div class="main">
     <div class="sidebar" id="sidebar">
-      <div class="sidebar-header"><span id="sidebarTitle" style="font-weight:600;font-size:13px;color:#475569"></span><button class="sidebar-toggle" onclick="toggleSidebar()">◀</button></div>
+      <div class="sidebar-header"><span id="sidebarTitle" style="font-weight:600;font-size:13px;color:var(--text-2)"></span><button class="sidebar-toggle" onclick="toggleSidebar()">◀</button></div>
       <div id="sidebarBody"><div class="sidebar-search"><input type="text" placeholder="Filtra gruppi..." id="sidebarSearch" oninput="filterGroups()"></div><div class="sidebar-list" id="sidebarList"></div></div>
     </div>
     <div class="content" id="content">
@@ -471,23 +591,24 @@ tr:hover .row-del-btn{opacity:1}
     <div class="topbar-left">
       <span style="font-size:20px">🔀</span>
       <span class="topbar-title">Confronto file</span>
-      <span class="badge" style="background:#0891b2;color:#fff;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" id="diffBadgeA"></span>
-      <span style="color:#64748b;font-size:12px">vs</span>
-      <span class="badge" style="background:#059669;color:#fff;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" id="diffBadgeB"></span>
+      <span class="badge" style="background:var(--cyan);color:var(--on-accent);max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" id="diffBadgeA"></span>
+      <span style="color:var(--text-3);font-size:12px">vs</span>
+      <span class="badge" style="background:var(--teal);color:var(--on-accent);max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" id="diffBadgeB"></span>
       <span class="badge badge-changes" id="diffDiffBadge" style="display:none"></span>
-      <span class="badge" style="background:#f59e0b;color:#0f172a;display:none" id="diffChangesBadge"></span>
+      <span class="badge" style="background:var(--amber);color:var(--on-amber);display:none" id="diffChangesBadge"></span>
       <div class="version-badge">🏷 <span id="versionDisplayD">—</span></div>
     </div>
     <div class="lang-buttons" id="diffLangButtons"></div>
     <div class="topbar-actions">
-      <button class="btn undo-btn" style="background:#f59e0b;color:#0f172a;opacity:0.45" disabled onclick="doUndo()" title="Annulla ultima modifica (Ctrl+Z)">↩ Annulla</button>
-      <button class="btn" style="background:#ef4444;color:#fff" onclick="doResetAll('diff')" title="Ripristina entrambi i file originali">🔄 Ripristina tutto</button>
+      <button class="btn undo-btn" style="background:var(--amber);color:var(--on-amber);opacity:0.45" disabled onclick="doUndo()" title="Annulla ultima modifica (Ctrl+Z)">↩ Annulla</button>
+      <button class="btn" style="background:var(--red-soft);color:var(--on-accent)" onclick="doResetAll('diff')" title="Ripristina entrambi i file originali">🔄 Ripristina tutto</button>
       <button class="btn btn-export" onclick="exportDiffB()">💾 Esporta B modificato</button>
-      <button class="btn btn-export" style="background:#0891b2" onclick="exportDiffA()">💾 Esporta A modificato</button>
+      <button class="btn btn-export" style="background:var(--cyan)" onclick="exportDiffA()">💾 Esporta A modificato</button>
       <button class="btn btn-diff" onclick="showDiffUploadScreen()">🔀 Cambia file</button>
       <button class="btn btn-load" onclick="showUploadScreen()">🏠 Home</button>
-      <button class="btn" style="background:#334155;color:#e2e8f0" onclick="openHelp()">❓ Aiuto</button>
-      <button class="btn update-check-btn" style="background:#1e3a5f;color:#93c5fd;border:1px solid #3b82f6" onclick="manualCheckForUpdate()" title="Controlla aggiornamenti">↑ Aggiornamenti</button>
+      <button class="btn btn-tema" onclick="toggleTema()" title="Tema chiaro / scuro">☀️</button>
+      <button class="btn" style="background:var(--chip);color:var(--chip-fg-2)" onclick="openHelp()">❓ Aiuto</button>
+      <button class="btn update-check-btn" style="background:var(--ver-bg);color:var(--ver-fg);border:1px solid var(--blue-br)" onclick="manualCheckForUpdate()" title="Controlla aggiornamenti">↑ Aggiornamenti</button>
     </div>
   </div>
   <div class="diff-layout">
@@ -503,10 +624,10 @@ tr:hover .row-del-btn{opacity:1}
         <button class="diff-filter-btn" id="filterOnlyA" onclick="setDiffFilter('onlyA')">Solo in A</button>
         <button class="diff-filter-btn" id="filterOnlyB" onclick="setDiffFilter('onlyB')">Solo in B</button>
         <div class="diff-legend">
-          <div class="diff-legend-item"><div class="diff-legend-dot" style="background:#fca5a5"></div>Testo diverso (A)</div>
-          <div class="diff-legend-item"><div class="diff-legend-dot" style="background:#86efac"></div>Testo diverso (B)</div>
-          <div class="diff-legend-item"><div class="diff-legend-dot" style="background:#fed7aa"></div>Solo in A</div>
-          <div class="diff-legend-item"><div class="diff-legend-dot" style="background:#bbf7d0"></div>Solo in B</div>
+          <div class="diff-legend-item"><div class="diff-legend-dot" style="background:var(--dot-a)"></div>Testo diverso (A)</div>
+          <div class="diff-legend-item"><div class="diff-legend-dot" style="background:var(--dot-b)"></div>Testo diverso (B)</div>
+          <div class="diff-legend-item"><div class="diff-legend-dot" style="background:var(--dot-onlya)"></div>Solo in A</div>
+          <div class="diff-legend-item"><div class="diff-legend-dot" style="background:var(--dot-onlyb)"></div>Solo in B</div>
         </div>
       </div>
       <div class="content-table-wrap" id="diffTableWrap">
@@ -553,11 +674,11 @@ tr:hover .row-del-btn{opacity:1}
 <!-- SELECTION TOOLBAR -->
 <div class="sel-toolbar" id="selToolbar">
   <span class="sel-info" id="selInfo">0 celle</span>
-  <button class="stb" style="background:#3b82f6;color:#fff" onclick="selCopy()">📋 Copia (Ctrl+C)</button>
-  <button class="stb" style="background:#16a34a;color:#fff" onclick="selPaste()">📥 Incolla (Ctrl+V)</button>
-  <button class="stb" style="background:#ef4444;color:#fff" onclick="selDelete()">🗑 Svuota (Canc)</button>
-  <button class="stb" style="background:#f59e0b;color:#0f172a" onclick="doUndo()">↩ Annulla (Ctrl+Z)</button>
-  <button class="stb" style="background:#475569;color:#fff" onclick="clearSel()">✕ Esc</button>
+  <button class="stb" style="background:var(--blue-br);color:var(--on-accent)" onclick="selCopy()">📋 Copia (Ctrl+C)</button>
+  <button class="stb" style="background:var(--green);color:var(--on-accent)" onclick="selPaste()">📥 Incolla (Ctrl+V)</button>
+  <button class="stb" style="background:var(--red-soft);color:var(--on-accent)" onclick="selDelete()">🗑 Svuota (Canc)</button>
+  <button class="stb" style="background:var(--amber);color:var(--on-amber)" onclick="doUndo()">↩ Annulla (Ctrl+Z)</button>
+  <button class="stb" style="background:var(--chip-h);color:var(--on-accent)" onclick="clearSel()">✕ Esc</button>
 </div>
 <div class="toast hidden" id="toast"></div>
 
@@ -567,8 +688,11 @@ tr:hover .row-del-btn{opacity:1}
 const ALL_LANGS=["it-IT","en-US","en-GB","de-DE"];
 let LANGS=[...ALL_LANGS];
 const LANG_LABELS={"it-IT":"IT","en-US":"EN","en-GB":"GB","de-DE":"DE"};
-const LANG_COLORS={"it-IT":"#2563eb","en-US":"#dc2626","en-GB":"#7c3aed","de-DE":"#ca8a04"};
-const LANG_PALETTE=["#0891b2","#db2777","#65a30d","#9333ea","#ea580c","#0d9488"];
+// Ogni lingua ha una tinta. Di ogni tinta esistono due versioni nel tema:
+// quella piena (fondo del pulsante, bordo) e quella "-t" per le scritte,
+// piu' chiara nel tema scuro perche' resti leggibile.
+const LANG_COLORS={"it-IT":"blue","en-US":"red","en-GB":"purple","de-DE":"gold"};
+const LANG_PALETTE=["cyan","pink","lime","indigo","orange","teal"];
 // Etichetta breve: per le lingue non previste si usa la SIGLA DEL PAESE
 // (en-IE -> IE), altrimenti "en-US" ed "en-IE" mostrerebbero entrambe "EN"
 // e nella tabella non si distinguerebbero.
@@ -577,11 +701,35 @@ function langLabel(l){
   const p=String(l||'').split('-');
   return (p[1]||p[0]||'').toUpperCase();
 }
-function langColor(l){
+function langTinta(l){
   if(LANG_COLORS[l]) return LANG_COLORS[l];
   let h=0; for(let i=0;i<l.length;i++) h=(h*31+l.charCodeAt(i))>>>0;
   return LANG_PALETTE[h%LANG_PALETTE.length];
 }
+/* ---- Tema chiaro / scuro ------------------------------------------------
+   Tutti i colori dell'app sono definiti come variabili in cima al foglio di
+   stile: cambiare tema vuol dire solo cambiare l'attributo data-theme su
+   <html>, non ridisegnare nulla. La scelta resta salvata su questo PC. */
+function temaCorrente(){
+  return document.documentElement.getAttribute('data-theme')==='dark'?'scuro':'chiaro';
+}
+function applicaTema(t){
+  document.documentElement.setAttribute('data-theme',t==='scuro'?'dark':'light');
+  try{localStorage.setItem('tiaTema',t);}catch(e){}
+  aggiornaIconaTema();
+}
+function aggiornaIconaTema(){
+  const scuro=temaCorrente()==='scuro';
+  document.querySelectorAll('.btn-tema').forEach(b=>{
+    b.textContent=scuro?'\u2600\ufe0f':'\ud83c\udf19';
+    b.title=scuro?'Passa al tema chiaro':'Passa al tema scuro';
+  });
+}
+function toggleTema(){applicaTema(temaCorrente()==='scuro'?'chiaro':'scuro');}
+aggiornaIconaTema();
+
+function langColor(l){return 'var(--lang-'+langTinta(l)+'-t)';}  // scritte
+function langSolid(l){return 'var(--lang-'+langTinta(l)+')';}    // fondi e bordi
 
 // Confronto "logico" fra testi: una differenza di sole terminazioni di riga
 // (CRLF vs LF) non e' una modifica reale, non va segnalata come differenza.
@@ -1394,7 +1542,7 @@ function makeDiffCell(entry,lang,slot,tdEl,peerEntry,rowIdx,colIdx){
       ta.replaceWith(makeDiffCell(entry,lang,slot,tdEl,peerEntry,ri,ci));
       refreshColors();
     };
-    const ta=makeCellTextarea(entry.texts[lang]||'',slot==='A'?'#0891b2':'#059669',commit);
+    const ta=makeCellTextarea(entry.texts[lang]||'',slot==='A'?'var(--cyan)':'var(--teal)',commit);
     ta.onblur=()=>commit(ta.value);
     div.replaceWith(ta); ta.focus(); ta.select();
   };
@@ -1450,16 +1598,16 @@ function renderDiffTable(gk){
     if(diffFilter==='onlyB') vals=vals.filter(v=>!mapA[v]&&mapB[v]);
 
     const sec=document.createElement('div'); sec.className='diff-section-hdr';
-    const sA=inA.has(listName)?'<span style="background:#dbeafe;color:#2563eb;padding:1px 6px;border-radius:4px;font-size:10px;font-weight:700">A</span>':'<span style="background:#f1f5f9;color:#94a3b8;padding:1px 6px;border-radius:4px;font-size:10px">–</span>';
-    const sB=inB.has(listName)?'<span style="background:#dcfce7;color:#059669;padding:1px 6px;border-radius:4px;font-size:10px;font-weight:700">B</span>':'<span style="background:#f1f5f9;color:#94a3b8;padding:1px 6px;border-radius:4px;font-size:10px">–</span>';
-    const diffInfo=diffs>0?'<span style="color:#dc2626;font-weight:600">'+diffs+' diff</span>':'<span style="color:#16a34a">✓ identico</span>';
+    const sA=inA.has(listName)?'<span style="background:var(--tint-blue);color:var(--blue-t);padding:1px 6px;border-radius:4px;font-size:10px;font-weight:700">A</span>':'<span style="background:var(--surface-3);color:var(--text-muted);padding:1px 6px;border-radius:4px;font-size:10px">–</span>';
+    const sB=inB.has(listName)?'<span style="background:var(--tint-green);color:var(--teal-t);padding:1px 6px;border-radius:4px;font-size:10px;font-weight:700">B</span>':'<span style="background:var(--surface-3);color:var(--text-muted);padding:1px 6px;border-radius:4px;font-size:10px">–</span>';
+    const diffInfo=diffs>0?'<span style="color:var(--red-t);font-weight:600">'+diffs+' diff</span>':'<span style="color:var(--green-t)">✓ identico</span>';
     const totalEntries=getDiffForList(listName).allVals.length;
-    sec.innerHTML='<span style="font-size:13px">'+listName.replace('Z2000_','')+'</span>'+sA+sB+'<span style="font-weight:400;color:#64748b;font-size:11px;margin-left:4px">'+diffInfo+' · '+vals.length+' voci</span>';
+    sec.innerHTML='<span style="font-size:13px">'+listName.replace('Z2000_','')+'</span>'+sA+sB+'<span style="font-weight:400;color:var(--text-3);font-size:11px;margin-left:4px">'+diffInfo+' · '+vals.length+' voci</span>';
     // Add delete-section button when the section has 0 entries total
     if(totalEntries===0){
       const delSec=document.createElement('button');
       delSec.title='Elimina questa sezione vuota';
-      delSec.style.cssText='margin-left:auto;border:none;background:#fee2e2;color:#dc2626;border-radius:5px;padding:2px 8px;font-size:11px;font-weight:700;cursor:pointer';
+      delSec.style.cssText='margin-left:auto;border:none;background:var(--tint-red);color:var(--red-t);border-radius:5px;padding:2px 8px;font-size:11px;font-weight:700;cursor:pointer';
       delSec.textContent='🗑 Elimina sezione';
       delSec.onclick=()=>deleteDiffSection(listName);
       sec.appendChild(delSec);
@@ -1467,7 +1615,7 @@ function renderDiffTable(gk){
     wrap.appendChild(sec);
 
     if(vals.length===0){
-      const em=document.createElement('div'); em.style.cssText='padding:12px 16px;font-size:12px;color:#94a3b8;font-style:italic';
+      const em=document.createElement('div'); em.style.cssText='padding:12px 16px;font-size:12px;color:var(--text-muted);font-style:italic';
       em.textContent='Nessuna voce con il filtro selezionato.'; wrap.appendChild(em); return;
     }
 
@@ -1478,21 +1626,21 @@ function renderDiffTable(gk){
     const thCopy=document.createElement('th'); thCopy.style.cssText='width:64px;text-align:center';
     const btnAllAB=document.createElement('button');
     btnAllAB.title='Copia tutte le righe da A a B';
-    btnAllAB.style.cssText='border:none;background:#e0f2fe;color:#0369a1;border-radius:4px;padding:2px 5px;cursor:pointer;font-size:10px;font-weight:700;margin-right:2px';
+    btnAllAB.style.cssText='border:none;background:var(--tint-sky);color:var(--sky-t);border-radius:4px;padding:2px 5px;cursor:pointer;font-size:10px;font-weight:700;margin-right:2px';
     btnAllAB.textContent='A→B';
     btnAllAB.onclick=()=>{vals.forEach(v=>{if(mapA[v]) copyRow(mapA,mapB,v,listName,'A');});};
     const btnAllBA=document.createElement('button');
     btnAllBA.title='Copia tutte le righe da B a A';
-    btnAllBA.style.cssText='border:none;background:#dcfce7;color:#166534;border-radius:4px;padding:2px 5px;cursor:pointer;font-size:10px;font-weight:700';
+    btnAllBA.style.cssText='border:none;background:var(--tint-green);color:var(--green-t2);border-radius:4px;padding:2px 5px;cursor:pointer;font-size:10px;font-weight:700';
     btnAllBA.textContent='B→A';
     btnAllBA.onclick=()=>{vals.forEach(v=>{if(mapB[v]) copyRow(mapA,mapB,v,listName,'B');});};
     thCopy.appendChild(btnAllAB); thCopy.appendChild(btnAllBA); tr1.appendChild(thCopy);
     const thVal=document.createElement('th'); thVal.className='val-col'; thVal.textContent='Valore'; tr1.appendChild(thVal);
     diffActiveLangs.forEach((lang,i)=>{
       const thA=document.createElement('th'); if(i===0) thA.className='sep';
-      thA.innerHTML='<span style="color:'+langColor(lang)+'">'+langLabel(lang)+'</span> <span style="color:#0891b2;font-size:9px;font-weight:700">(A)</span>';
+      thA.innerHTML='<span style="color:'+langColor(lang)+'">'+langLabel(lang)+'</span> <span style="color:var(--cyan-t);font-size:9px;font-weight:700">(A)</span>';
       const thB=document.createElement('th');
-      thB.innerHTML='<span style="color:'+langColor(lang)+'">'+langLabel(lang)+'</span> <span style="color:#059669;font-size:9px;font-weight:700">(B) ✏️</span>';
+      thB.innerHTML='<span style="color:'+langColor(lang)+'">'+langLabel(lang)+'</span> <span style="color:var(--teal-t);font-size:9px;font-weight:700">(B) ✏️</span>';
       tr1.appendChild(thA); tr1.appendChild(thB);
     });
     thead.appendChild(tr1); table.appendChild(thead);
@@ -1509,7 +1657,7 @@ function renderDiffTable(gk){
       if(eA){
         const btnAB=document.createElement('button');
         btnAB.title='Copia da A a B';
-        btnAB.style.cssText='border:none;background:#e0f2fe;color:#0369a1;border-radius:4px;padding:1px 4px;cursor:pointer;font-size:9px;font-weight:700;margin-right:2px';
+        btnAB.style.cssText='border:none;background:var(--tint-sky);color:var(--sky-t);border-radius:4px;padding:1px 4px;cursor:pointer;font-size:9px;font-weight:700;margin-right:2px';
         btnAB.textContent='→B';
         btnAB.onclick=()=>copyRow(mapA,mapB,val,listName,'A');
         tdCopy.appendChild(btnAB);
@@ -1517,7 +1665,7 @@ function renderDiffTable(gk){
       if(eB){
         const btnBA=document.createElement('button');
         btnBA.title='Copia da B a A';
-        btnBA.style.cssText='border:none;background:#dcfce7;color:#166534;border-radius:4px;padding:1px 4px;cursor:pointer;font-size:9px;font-weight:700;margin-right:2px';
+        btnBA.style.cssText='border:none;background:var(--tint-green);color:var(--green-t2);border-radius:4px;padding:1px 4px;cursor:pointer;font-size:9px;font-weight:700;margin-right:2px';
         btnBA.textContent='←A';
         btnBA.onclick=()=>copyRow(mapA,mapB,val,listName,'B');
         tdCopy.appendChild(btnBA);
@@ -1653,7 +1801,7 @@ function renderCompareTable(){
   const thead=document.createElement('thead');
   const tr1=document.createElement('tr');
   const thVal=document.createElement('th'); thVal.className='val-col'; thVal.textContent='Valore'; tr1.appendChild(thVal);
-  names.forEach((n,i)=>{const th=document.createElement('th'); th.colSpan=activeLangs.length; if(i>0) th.className='sep'; th.innerHTML='<div style="font-size:12px;font-weight:700;color:#334155">'+n.replace('Z2000_','')+'</div>'; tr1.appendChild(th);});
+  names.forEach((n,i)=>{const th=document.createElement('th'); th.colSpan=activeLangs.length; if(i>0) th.className='sep'; th.innerHTML='<div style="font-size:12px;font-weight:700;color:var(--text-mid)">'+n.replace('Z2000_','')+'</div>'; tr1.appendChild(th);});
   thead.appendChild(tr1);
   const tr2=document.createElement('tr'); tr2.className='sub'; const thE=document.createElement('th'); thE.className='val-col'; tr2.appendChild(thE);
   names.forEach((n,li)=>activeLangs.forEach((lang,idx)=>{const th=document.createElement('th'); if(idx===0&&li>0) th.className='sep'; th.style.color=langColor(lang); th.textContent=langLabel(lang); tr2.appendChild(th);}));
@@ -1663,7 +1811,7 @@ function renderCompareTable(){
     const tr=document.createElement('tr');
     const tdVal=document.createElement('td'); tdVal.className='val-col'; tdVal.textContent=val; tr.appendChild(tdVal);
     let colIdx=0;
-    names.forEach((n,li)=>activeLangs.forEach((lang,idx)=>{const td=document.createElement('td'); if(idx===0&&li>0) td.className='sep'; const e=eMap[n+'|'+val]; if(e) td.appendChild(mkCell(e,lang,rowIdx,colIdx++)); else{td.innerHTML='<span style="color:#e2e8f0;font-size:11px">—</span>';colIdx++;} tr.appendChild(td);}));
+    names.forEach((n,li)=>activeLangs.forEach((lang,idx)=>{const td=document.createElement('td'); if(idx===0&&li>0) td.className='sep'; const e=eMap[n+'|'+val]; if(e) td.appendChild(mkCell(e,lang,rowIdx,colIdx++)); else{td.innerHTML='<span style="color:var(--text-muted);font-size:11px">—</span>';colIdx++;} tr.appendChild(td);}));
     tbody.appendChild(tr);
   });
   table.appendChild(tbody); wrap.innerHTML=''; wrap.appendChild(table);
@@ -1680,7 +1828,7 @@ function showEditor(){
 
 function buildLangButtons(containerId,active,toggle){
   const c=document.getElementById(containerId); c.innerHTML='';
-  LANGS.forEach(lang=>{const b=document.createElement('button'); b.className='lang-btn'+(active.includes(lang)?'':' off'); b.style.background=active.includes(lang)?langColor(lang):''; b.textContent=langLabel(lang); b.onclick=()=>toggle(lang); c.appendChild(b);});
+  LANGS.forEach(lang=>{const b=document.createElement('button'); b.className='lang-btn'+(active.includes(lang)?'':' off'); b.style.background=active.includes(lang)?langSolid(lang):''; b.textContent=langLabel(lang); b.onclick=()=>toggle(lang); c.appendChild(b);});
 }
 
 function toggleLang(lang){
@@ -1809,7 +1957,7 @@ function renderGroup(gk){
     const thVal=document.createElement('th'); thVal.className='val-col'; thVal.textContent='Valore'; tr1.appendChild(thVal);
     if(isMulti){
       const shortNames=names.map(n=>{const m=n.match(/_(\d+)$/);return m?('#'+m[1]):n.replace('Z2000_','');});
-      names.forEach((n,i)=>{const th=document.createElement('th'); th.colSpan=activeLangs.length; if(i>0) th.className='sep'; th.innerHTML='<div style="font-size:12px;font-weight:700;color:#334155">'+shortNames[i]+'</div>'; tr1.appendChild(th);});
+      names.forEach((n,i)=>{const th=document.createElement('th'); th.colSpan=activeLangs.length; if(i>0) th.className='sep'; th.innerHTML='<div style="font-size:12px;font-weight:700;color:var(--text-mid)">'+shortNames[i]+'</div>'; tr1.appendChild(th);});
       thead.appendChild(tr1);
       const tr2=document.createElement('tr'); tr2.className='sub';
       const thE=document.createElement('th'); tr2.appendChild(thE);
@@ -1828,7 +1976,7 @@ function renderGroup(gk){
       tdDel.appendChild(delBtn); tr.appendChild(tdDel);
       const tdVal=document.createElement('td'); tdVal.className='val-col'; tdVal.textContent=val; tr.appendChild(tdVal);
       let colIdx=0;
-      (isMulti?names:[names[0]]).forEach((n,li)=>activeLangs.forEach((lang,idx)=>{const td=document.createElement('td'); if(isMulti&&idx===0&&li>0) td.className='sep'; const e=eMap[n+'|'+val]; if(e) td.appendChild(mkCell(e,lang,rowIdx,colIdx++)); else td.innerHTML='<span style="color:#e2e8f0;font-size:11px">—</span>'; tr.appendChild(td);}));
+      (isMulti?names:[names[0]]).forEach((n,li)=>activeLangs.forEach((lang,idx)=>{const td=document.createElement('td'); if(isMulti&&idx===0&&li>0) td.className='sep'; const e=eMap[n+'|'+val]; if(e) td.appendChild(mkCell(e,lang,rowIdx,colIdx++)); else td.innerHTML='<span style="color:var(--text-muted);font-size:11px">—</span>'; tr.appendChild(td);}));
       tbody.appendChild(tr);
     });
     table.appendChild(tbody); return table;
@@ -1872,7 +2020,7 @@ function mkCell(entry,lang,rowIdx,colIdx){
       }
       ta.replaceWith(mkCell(entry,lang,ri,ci));
     };
-    const ta=makeCellTextarea(entry.texts[lang]||'',langColor(lang),commit);
+    const ta=makeCellTextarea(entry.texts[lang]||'',langSolid(lang),commit);
     ta.onblur=()=>commit(ta.value);
     div.replaceWith(ta); ta.focus(); ta.select();
   };
@@ -1905,11 +2053,11 @@ function buildMergeLangButtons(){
   const mk=(val,txt,col)=>{
     const b=document.createElement('button');
     b.id='mfl-'+val; b.textContent=txt;
-    b.style.cssText='padding:4px 10px;border-radius:6px;border:1px solid #e2e8f0;font-size:11px;font-weight:600;cursor:pointer;background:#fff;color:'+col;
+    b.style.cssText='padding:4px 10px;border-radius:6px;border:1px solid var(--border);font-size:11px;font-weight:600;cursor:pointer;background:var(--surface);color:'+col;
     b.onclick=()=>setMergeLangFilter(val);
     c.appendChild(b);
   };
-  mk('all','Tutte','#0f172a');
+  mk('all','Tutte','var(--text-strong)');
   LANGS.forEach(l=>mk(l,langLabel(l),langColor(l)));
   setMergeLangFilter(_mergeLangFilter&&(_mergeLangFilter==='all'||LANGS.includes(_mergeLangFilter))?_mergeLangFilter:'all');
 }
@@ -2042,7 +2190,7 @@ let _mergeConflicts=[]; // [{type:'list'|'entry', key, versions:[{fileIdx,fileN,
 
 function handleMergeDrop(ev){
   ev.preventDefault();
-  ev.currentTarget.style.borderColor='#6d28d9';
+  ev.currentTarget.style.borderColor='var(--purple-h)';
   const files=[...ev.dataTransfer.files].filter(f=>f.name.match(/\.xlsx?$/i));
   if(files.length) addMergeFiles(files);
 }
@@ -2113,21 +2261,24 @@ function setMergeViewFilter(f){
   _mergeViewFilter=f; _mergeConflictPage=0;
   ['conflicts','all'].forEach(function(k){
     const btn=document.getElementById('mfv-'+k);
-    if(btn){btn.style.background=k===f?'#7c3aed':'#fff';btn.style.color=k===f?'#fff':'#475569';btn.style.borderColor=k===f?'#7c3aed':'#e2e8f0';}
+    if(btn){btn.style.background=k===f?'var(--purple)':'var(--surface)';btn.style.color=k===f?'var(--on-accent)':'var(--text-2)';btn.style.borderColor=k===f?'var(--purple)':'var(--border)';}
   });
   renderConflictBody();
 }
 
 function setMergeLangFilter(l){
   _mergeLangFilter=l; _mergeConflictPage=0;
-  const cols={'all':'#0f172a','it-IT':'#2563eb','en-US':'#dc2626','en-GB':'#7c3aed','de-DE':'#ca8a04'};
-  Object.keys(cols).forEach(function(k){
+  // anche le lingue non previste (es. en-IE) hanno il loro pulsante: si parte
+  // da LANGS, non da un elenco fisso, altrimenti restano sempre spenti
+  ['all'].concat(LANGS).forEach(function(k){
     const btn=document.getElementById('mfl-'+k);
     if(!btn) return;
+    const pieno=k==='all'?'var(--topbar)':langSolid(k);
+    const scritta=k==='all'?'var(--text-strong)':langColor(k);
     const active=k===l;
-    btn.style.background=active?cols[k]:'#fff';
-    btn.style.color=active?'#fff':cols[k];
-    btn.style.borderColor=active?cols[k]:'#e2e8f0';
+    btn.style.background=active?pieno:'var(--surface)';
+    btn.style.color=active?'var(--on-accent)':scritta;
+    btn.style.borderColor=active?pieno:'var(--border)';
   });
   renderConflictBody();
 }
@@ -2347,18 +2498,18 @@ function renderConflictBody(){
 
     // Section header with collapse button
     const secHdr=document.createElement('div');
-    secHdr.style.cssText='padding:7px 14px;background:#f1f5f9;border-bottom:1px solid #e2e8f0;border-top:2px solid #cbd5e1;font-size:12px;font-weight:700;color:#334155;margin-top:8px;display:flex;align-items:center;gap:8px;cursor:pointer;user-select:none';
+    secHdr.style.cssText='padding:7px 14px;background:var(--surface-3);border-bottom:1px solid var(--border);border-top:2px solid var(--border-strong);font-size:12px;font-weight:700;color:var(--text-mid);margin-top:8px;display:flex;align-items:center;gap:8px;cursor:pointer;user-select:none';
     const badge=groupConflicts>0?
-      '<span style="background:#fee2e2;color:#dc2626;padding:1px 6px;border-radius:4px;font-size:10px;font-weight:700">'+groupConflicts+' diff</span>':
-      '<span style="background:#dcfce7;color:#16a34a;padding:1px 6px;border-radius:4px;font-size:10px">✓ uguale</span>';
+      '<span style="background:var(--tint-red);color:var(--red-t);padding:1px 6px;border-radius:4px;font-size:10px;font-weight:700">'+groupConflicts+' diff</span>':
+      '<span style="background:var(--tint-green);color:var(--green-t);padding:1px 6px;border-radius:4px;font-size:10px">✓ uguale</span>';
     // Auto-collapse identical groups when view is "all"
     const startCollapsed=(_mergeViewFilter==='all'&&groupConflicts===0);
     const arrow=document.createElement('span');
     arrow.textContent=startCollapsed?'▶':'▼';
-    arrow.style.cssText='font-size:10px;color:#94a3b8;flex-shrink:0;transition:transform .15s';
+    arrow.style.cssText='font-size:10px;color:var(--text-muted);flex-shrink:0;transition:transform .15s';
     secHdr.appendChild(arrow);
     const titleSpan=document.createElement('span');
-    titleSpan.innerHTML=gk.replace('Z2000_','').replace('Z1000_','')+badge+'<span style="font-weight:400;color:#64748b;font-size:11px;margin-left:4px">'+entries.length+' voci</span>';
+    titleSpan.innerHTML=gk.replace('Z2000_','').replace('Z1000_','')+badge+'<span style="font-weight:400;color:var(--text-3);font-size:11px;margin-left:4px">'+entries.length+' voci</span>';
     secHdr.appendChild(titleSpan);
     // Collapse all / expand all buttons
     const actSpan=document.createElement('span');
@@ -2377,17 +2528,17 @@ function renderConflictBody(){
     const thead=document.createElement('thead');
     const trh=document.createElement('tr');
     const thVal=document.createElement('th');
-    thVal.style.cssText='padding:5px 8px;font-size:10px;font-weight:700;color:#64748b;text-align:left;border-bottom:2px solid #e2e8f0;background:#f8fafc;width:70px;white-space:nowrap';
+    thVal.style.cssText='padding:5px 8px;font-size:10px;font-weight:700;color:var(--text-3);text-align:left;border-bottom:2px solid var(--border);background:var(--surface-2);width:70px;white-space:nowrap';
     thVal.textContent='VALORE';
     trh.appendChild(thVal);
     // Quick resolve buttons header
     const thActions=document.createElement('th');
-    thActions.style.cssText='padding:5px 4px;font-size:10px;font-weight:700;color:#64748b;text-align:center;border-bottom:2px solid #e2e8f0;background:#f8fafc;width:50px';
+    thActions.style.cssText='padding:5px 4px;font-size:10px;font-weight:700;color:var(--text-3);text-align:center;border-bottom:2px solid var(--border);background:var(--surface-2);width:50px';
     thActions.textContent='';
     trh.appendChild(thActions);
     _mergeFiles.forEach((f,fi)=>{
       const th=document.createElement('th');
-      th.style.cssText='padding:5px 8px;font-size:10px;font-weight:600;color:#334155;text-align:left;border-bottom:2px solid #e2e8f0;background:#f8fafc;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap';
+      th.style.cssText='padding:5px 8px;font-size:10px;font-weight:600;color:var(--text-mid);text-align:left;border-bottom:2px solid var(--border);background:var(--surface-2);max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap';
       th.title=f.name;
       const shortName=f.name.replace(/\.xlsx?$/i,'').replace(/HMITextLists/i,'').replace(/Export/i,'');
       th.textContent=shortName||f.name;
@@ -2395,7 +2546,7 @@ function renderConflictBody(){
     });
     // Custom text column header
     const thCust=document.createElement('th');
-    thCust.style.cssText='padding:5px 4px;font-size:10px;font-weight:700;color:#7c3aed;text-align:center;border-bottom:2px solid #e2e8f0;background:#f8fafc;width:32px';
+    thCust.style.cssText='padding:5px 4px;font-size:10px;font-weight:700;color:var(--purple-t);text-align:center;border-bottom:2px solid var(--border);background:var(--surface-2);width:32px';
     thCust.textContent='✏';
     thCust.title='Scrivi testo personalizzato';
     trh.appendChild(thCust);
@@ -2428,16 +2579,16 @@ function renderConflictBody(){
 
         const tr=document.createElement('tr');
         const isDiff=!allSame||isMissingConflict;
-        if(isDiff) tr.style.background='#fffbeb';
+        if(isDiff) tr.style.background='var(--tint-amber-2)';
 
         // Value cell (only on first lang row)
         const tdVal=document.createElement('td');
-        tdVal.style.cssText='padding:4px 8px;font-size:11px;font-weight:600;color:#475569;border-bottom:1px solid #f1f5f9;vertical-align:top;white-space:nowrap';
+        tdVal.style.cssText='padding:4px 8px;font-size:11px;font-weight:600;color:var(--text-2);border-bottom:1px solid var(--border-soft);vertical-align:top;white-space:nowrap';
         if(li===0){
           tdVal.textContent=val;
           if(isConflict){
             const dot=document.createElement('span');
-            dot.style.cssText='display:inline-block;width:6px;height:6px;border-radius:50%;background:#dc2626;margin-left:4px;vertical-align:middle';
+            dot.style.cssText='display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--red);margin-left:4px;vertical-align:middle';
             tdVal.appendChild(dot);
           }
         }
@@ -2445,7 +2596,7 @@ function renderConflictBody(){
 
         // Actions cell (resolve all for this row on first lang)
         const tdAct=document.createElement('td');
-        tdAct.style.cssText='padding:2px 4px;text-align:center;border-bottom:1px solid #f1f5f9;vertical-align:top;white-space:nowrap';
+        tdAct.style.cssText='padding:2px 4px;text-align:center;border-bottom:1px solid var(--border-soft);vertical-align:top;white-space:nowrap';
         if(li===0&&conf&&isDiff){
           // Language label
           const langLbl=document.createElement('span');
@@ -2464,17 +2615,17 @@ function renderConflictBody(){
         const fileTds=[];
         versions.forEach((v,vi)=>{
           const td=document.createElement('td');
-          td.style.cssText='padding:3px 8px;font-size:12px;border-bottom:1px solid #f1f5f9;vertical-align:top;font-family:monospace;max-width:200px';
+          td.style.cssText='padding:3px 8px;font-size:12px;border-bottom:1px solid var(--border-soft);vertical-align:top;font-family:monospace;max-width:200px';
           const txt=v.entry&&v.entry.texts?v.entry.texts[lang]||'':'';
           const isMissing=v.entry===null;
 
           if(!conf){
             // No conflict: read-only display
             if(isMissing){
-              td.innerHTML='<span style="color:#e2e8f0;font-size:11px">—</span>';
+              td.innerHTML='<span style="color:var(--text-muted);font-size:11px">—</span>';
             } else {
               td.textContent=txt;
-              if(allSame) td.style.color='#64748b';
+              if(allSame) td.style.color='var(--text-3)';
             }
           } else {
             // Conflict: ALL cells are clickable (including missing = choose empty/absent)
@@ -2482,13 +2633,13 @@ function renderConflictBody(){
             const isCustom=conf.chosenLangs[lang]===-1;
             td.style.cursor='pointer';
             td.style.borderRadius='4px';
-            if(isChosen) td.style.background='#dbeafe';
-            else if(isMissing) td.style.background='#fff7ed';
+            if(isChosen) td.style.background='var(--tint-blue)';
+            else if(isMissing) td.style.background='var(--tint-orange)';
             else if(isDiff&&!isCustom){
-              if(txt!==langTexts[Math.max(0,conf.chosenLangs[lang]??0)]) td.style.background='#fef2f2';
+              if(txt!==langTexts[Math.max(0,conf.chosenLangs[lang]??0)]) td.style.background='var(--tint-red-2)';
             }
             if(isMissing){
-              td.innerHTML='<span style="color:#f97316;font-style:italic;font-size:11px">— assente</span>';
+              td.innerHTML='<span style="color:var(--orange);font-style:italic;font-size:11px">— assente</span>';
               td.title='Clic per scegliere: voce assente in questo file';
             } else {
               td.textContent=txt||'—';
@@ -2504,10 +2655,10 @@ function renderConflictBody(){
         if(conf&&(isDiff||isMissingConflict)){
           const tdCust=document.createElement('td');
           const isCustom=conf.chosenLangs[lang]===-1;
-          tdCust.style.cssText='padding:2px 6px;border-bottom:1px solid #f1f5f9;vertical-align:top;width:32px';
+          tdCust.style.cssText='padding:2px 6px;border-bottom:1px solid var(--border-soft);vertical-align:top;width:32px';
           const custBtn=document.createElement('button');
           custBtn.title='Scrivi testo personalizzato per '+langLabel(lang);
-          custBtn.style.cssText='border:1px solid '+(isCustom?'#7c3aed':'#e2e8f0')+';background:'+(isCustom?'#ede9fe':'#f8fafc')+';color:'+(isCustom?'#7c3aed':'#94a3b8')+';border-radius:4px;padding:2px 5px;font-size:11px;cursor:pointer;white-space:nowrap';
+          custBtn.style.cssText='border:1px solid '+(isCustom?'var(--purple)':'var(--border)')+';background:'+(isCustom?'var(--tint-violet)':'var(--surface-2)')+';color:'+(isCustom?'var(--purple-t)':'var(--text-muted)')+';border-radius:4px;padding:2px 5px;font-size:11px;cursor:pointer;white-space:nowrap';
           custBtn.textContent='✏';
           custBtn.onclick=(function(lg,entConf,trow,tbl){return function(e){
             e.stopPropagation();
@@ -2519,24 +2670,24 @@ function renderConflictBody(){
                 entConf.chosenLangs[lg]=entConf.versions.length-1;
                 delete entConf.customTexts[lg];
               }
-              custBtn.style.background='#f8fafc'; custBtn.style.color='#94a3b8'; custBtn.style.borderColor='#e2e8f0';
+              custBtn.style.background='var(--surface-2)'; custBtn.style.color='var(--text-muted)'; custBtn.style.borderColor='var(--border)';
               return;
             }
             // Create custom text row
             entConf.chosenLangs[lg]=-1;
             if(!entConf.customTexts[lg]) entConf.customTexts[lg]='';
-            custBtn.style.background='#ede9fe'; custBtn.style.color='#7c3aed'; custBtn.style.borderColor='#7c3aed';
+            custBtn.style.background='var(--tint-violet)'; custBtn.style.color='var(--purple-t)'; custBtn.style.borderColor='var(--purple)';
             // Deselect file cells
             fileTds.forEach(t=>{t.style.background='';});
             const custRow=document.createElement('tr');
             custRow.className='custom-row-'+lg.replace('-','_');
-            custRow.style.background='#f5f3ff';
+            custRow.style.background='var(--tint-violet-2)';
             const tdSpan=document.createElement('td');
             tdSpan.colSpan=2+entConf.versions.length+1;
-            tdSpan.style.cssText='padding:6px 10px;border-bottom:1px solid #e2e8f0';
-            tdSpan.innerHTML='<span style="font-size:10px;font-weight:700;color:'+langColor(lg)+'">'+langLabel(lg)+'</span><span style="font-size:10px;color:#7c3aed;margin-left:6px">Testo personalizzato:</span>';
+            tdSpan.style.cssText='padding:6px 10px;border-bottom:1px solid var(--border)';
+            tdSpan.innerHTML='<span style="font-size:10px;font-weight:700;color:'+langColor(lg)+'">'+langLabel(lg)+'</span><span style="font-size:10px;color:var(--purple-t);margin-left:6px">Testo personalizzato:</span>';
             const ta=document.createElement('textarea');
-            ta.style.cssText='display:block;width:100%;margin-top:4px;padding:6px 10px;border:2px solid #7c3aed;border-radius:6px;font-size:13px;font-family:monospace;resize:vertical;min-height:38px;outline:none;box-sizing:border-box';
+            ta.style.cssText='display:block;width:100%;margin-top:4px;padding:6px 10px;border:2px solid var(--purple);border-radius:6px;font-size:13px;font-family:monospace;resize:vertical;min-height:38px;outline:none;box-sizing:border-box';
             ta.placeholder='Scrivi il testo personalizzato per '+langLabel(lg)+'...';
             ta.value=entConf.customTexts[lg];
             ta.oninput=(function(l2){return function(){entConf.customTexts[l2]=this.value;};})(lg);
@@ -2558,7 +2709,7 @@ function renderConflictBody(){
             entConf.chosenLangs[lg]=idx;
             delete entConf.customTexts[lg];
             allTds.forEach(function(t){t.style.background='';});
-            td.style.background='#dbeafe';
+            td.style.background='var(--tint-blue)';
             // Remove custom row if open
             const custRow=tbody.querySelector('.custom-row-'+lg.replace('-','_'));
             if(custRow) custRow.remove();
@@ -2583,13 +2734,13 @@ function renderConflictBody(){
   const listConflicts=_mergeConflicts.filter(c=>c.type==='list');
   if(listConflicts.length>0){
     const lHdr=document.createElement('div');
-    lHdr.style.cssText='padding:7px 14px;background:#fef9c3;border-bottom:1px solid #e2e8f0;font-size:12px;font-weight:700;color:#713f12;margin-bottom:4px';
+    lHdr.style.cssText='padding:7px 14px;background:var(--tint-amber);border-bottom:1px solid var(--border);font-size:12px;font-weight:700;color:var(--amber-t);margin-bottom:4px';
     lHdr.textContent='⚠️ Conflitti su elenchi ('+listConflicts.length+')';
     body.insertBefore(lHdr,body.firstChild);
   }
 
   if(body.children.length===0||body.innerHTML.trim()===''){
-    body.innerHTML='<div style="padding:40px;text-align:center;color:#94a3b8;font-size:13px">Nessuna voce corrisponde ai filtri selezionati.</div>';
+    body.innerHTML='<div style="padding:40px;text-align:center;color:var(--text-muted);font-size:13px">Nessuna voce corrisponde ai filtri selezionati.</div>';
   }
 
   const langTxt=_mergeLangFilter!=='all'?(' · lingua: '+langLabel(_mergeLangFilter)):'';
@@ -2730,9 +2881,16 @@ function exportMergedFile(data){
 }
 
 /* ========== HELP MODAL ========== */
-const APP_VERSION='5.19';
+const APP_VERSION='5.20';
 const CHANGELOG=[
-  {ver:'5.19',date:'2026-08-26',cur:true,items:[
+  {ver:'5.20',date:'2026-08-26',cur:true,items:[
+    'Nuovo tema scuro grigio-blu: ora e\' quello di partenza',
+    'Col pulsante sole accanto ad Aiuto si torna al tema chiaro, e la scelta resta memorizzata',
+    'Tutti i colori sono ora raccolti in un unico punto del file',
+    'Nella finestra Unisci file anche le lingue non previste (es. en-IE) hanno il filtro funzionante',
+    'Il file esportato non cambia in nessun modo: il tema riguarda solo la visualizzazione',
+  ]},
+  {ver:'5.19',date:'2026-08-26',cur:false,items:[
     'CORREZIONE URGENTE: i testi non contengono piu\' la scritta _x000d_ una volta importati in TIA Portal',
     'Le colonne delle lingue restano nell\'ordine del file originale',
     'Conservato il marcatore TIA_Version del file di partenza',
@@ -2969,25 +3127,26 @@ const MANUAL_HTML=`
 <div class="app-ver-info">
   <span style="font-size:20px">⚙️</span>
   <div>
-    <div style="font-size:11px;color:#64748b;margin-bottom:2px">Versione applicazione</div>
+    <div style="font-size:11px;color:var(--text-3);margin-bottom:2px">Versione applicazione</div>
     <strong>TIA Portal Text List Editor v${APP_VERSION}</strong>
-    <div style="font-size:11px;color:#64748b;margin-top:2px">Strumento per visualizzare, modificare e confrontare le Text List esportate dal TIA Portal (Siemens).</div>
+    <div style="font-size:11px;color:var(--text-3);margin-top:2px">Strumento per visualizzare, modificare e confrontare le Text List esportate dal TIA Portal (Siemens).</div>
   </div>
 </div>
 
 <h3>📋 Indice</h3>
-<ol style="font-size:13px;color:#334155;padding-left:20px;line-height:2">
-  <li><a href="#s1" onclick="document.getElementById('s1').scrollIntoView({behavior:'smooth'})" style="color:#2563eb;text-decoration:none">Schermata iniziale e versione progetto</a></li>
-  <li><a href="#s2" onclick="document.getElementById('s2').scrollIntoView({behavior:'smooth'})" style="color:#2563eb;text-decoration:none">Strumento 1 — Carica Export (editor singolo file)</a></li>
-  <li><a href="#s3" onclick="document.getElementById('s3').scrollIntoView({behavior:'smooth'})" style="color:#2563eb;text-decoration:none">Strumento 2 — Confronta due file</a></li>
-  <li><a href="#s4" onclick="document.getElementById('s4').scrollIntoView({behavior:'smooth'})" style="color:#2563eb;text-decoration:none">Strumento 3 — Unisci file</a></li>
-  <li><a href="#s5" onclick="document.getElementById('s5').scrollIntoView({behavior:'smooth'})" style="color:#2563eb;text-decoration:none">Selezione multi-cella stile Excel</a></li>
-  <li><a href="#s6" onclick="document.getElementById('s6').scrollIntoView({behavior:'smooth'})" style="color:#2563eb;text-decoration:none">Annulla modifiche (Undo) e Ripristina tutto</a></li>
-  <li><a href="#s7" onclick="document.getElementById('s7').scrollIntoView({behavior:'smooth'})" style="color:#2563eb;text-decoration:none">Esportazione file</a></li>
-  <li><a href="#s8" onclick="document.getElementById('s8').scrollIntoView({behavior:'smooth'})" style="color:#2563eb;text-decoration:none">Riepilogo tasti rapidi</a></li>
+<ol style="font-size:13px;color:var(--text-mid);padding-left:20px;line-height:2">
+  <li><a href="#s1" onclick="document.getElementById('s1').scrollIntoView({behavior:'smooth'})" style="color:var(--blue-t);text-decoration:none">Schermata iniziale e versione progetto</a></li>
+  <li><a href="#s2" onclick="document.getElementById('s2').scrollIntoView({behavior:'smooth'})" style="color:var(--blue-t);text-decoration:none">Strumento 1 — Carica Export (editor singolo file)</a></li>
+  <li><a href="#s3" onclick="document.getElementById('s3').scrollIntoView({behavior:'smooth'})" style="color:var(--blue-t);text-decoration:none">Strumento 2 — Confronta due file</a></li>
+  <li><a href="#s4" onclick="document.getElementById('s4').scrollIntoView({behavior:'smooth'})" style="color:var(--blue-t);text-decoration:none">Strumento 3 — Unisci file</a></li>
+  <li><a href="#s5" onclick="document.getElementById('s5').scrollIntoView({behavior:'smooth'})" style="color:var(--blue-t);text-decoration:none">Selezione multi-cella stile Excel</a></li>
+  <li><a href="#s6" onclick="document.getElementById('s6').scrollIntoView({behavior:'smooth'})" style="color:var(--blue-t);text-decoration:none">Annulla modifiche (Undo) e Ripristina tutto</a></li>
+  <li><a href="#s7" onclick="document.getElementById('s7').scrollIntoView({behavior:'smooth'})" style="color:var(--blue-t);text-decoration:none">Esportazione file</a></li>
+  <li><a href="#s8" onclick="document.getElementById('s8').scrollIntoView({behavior:'smooth'})" style="color:var(--blue-t);text-decoration:none">Riepilogo tasti rapidi</a></li>
+  <li><a href="#s9" onclick="document.getElementById('s9').scrollIntoView({behavior:'smooth'})" style="color:var(--blue-t);text-decoration:none">Tema chiaro e tema scuro</a></li>
 </ol>
 
-<hr style="border:none;border-top:1px solid #e2e8f0;margin:16px 0">
+<hr style="border:none;border-top:1px solid var(--border);margin:16px 0">
 
 <h3 id="s1">🏠 1 — Schermata iniziale e versione progetto</h3>
 <p>All'apertura del programma vengono mostrati tre pulsanti principali:</p>
@@ -2999,7 +3158,7 @@ const MANUAL_HTML=`
 <p style="margin-top:8px"><strong>🏷 Versione progetto</strong> — il campo di testo (es. <span class="kbd">v1.2.3</span>) identifica la revisione su cui si lavora. Viene mostrato nella topbar e aggiunto al nome di ogni file esportato.</p>
 <div class="tip">Inserisci la versione progetto prima di caricare il file. Puoi cambiarla in qualsiasi momento dalla schermata iniziale.</div>
 
-<hr style="border:none;border-top:1px solid #e2e8f0;margin:16px 0">
+<hr style="border:none;border-top:1px solid var(--border);margin:16px 0">
 
 <h3 id="s2">📂 2 — Strumento 1: Carica Export (editor singolo file)</h3>
 
@@ -3032,7 +3191,7 @@ const MANUAL_HTML=`
 <div class="warn">L'eliminazione rimuove la voce e tutti i suoi testi in tutte le lingue. Usa Ctrl+Z subito dopo per annullare.</div>
 <div class="tip">Il badge arancione in topbar (es. <em>3 modifiche</em>) conta le celle modificate nella sessione corrente. Si azzera solo con Ripristina tutto o ricaricando il file.</div>
 
-<hr style="border:none;border-top:1px solid #e2e8f0;margin:16px 0">
+<hr style="border:none;border-top:1px solid var(--border);margin:16px 0">
 
 <h3 id="s3">🔀 3 — Strumento 2: Confronta due file</h3>
 
@@ -3042,11 +3201,11 @@ const MANUAL_HTML=`
 
 <p style="margin-top:8px"><strong>Colori della tabella:</strong></p>
 <ul>
-  <li style="margin-bottom:4px"><span style="display:inline-block;width:12px;height:12px;background:#fca5a5;border-radius:2px;vertical-align:middle;margin-right:4px"></span><strong>Rosso</strong> — testo diverso nella colonna A</li>
-  <li style="margin-bottom:4px"><span style="display:inline-block;width:12px;height:12px;background:#86efac;border-radius:2px;vertical-align:middle;margin-right:4px"></span><strong>Verde</strong> — testo diverso nella colonna B</li>
-  <li style="margin-bottom:4px"><span style="display:inline-block;width:12px;height:12px;background:#fed7aa;border-radius:2px;vertical-align:middle;margin-right:4px"></span><strong>Arancione</strong> — voce presente solo in A</li>
-  <li style="margin-bottom:4px"><span style="display:inline-block;width:12px;height:12px;background:#bbf7d0;border-radius:2px;vertical-align:middle;margin-right:4px"></span><strong>Verde chiaro</strong> — voce presente solo in B</li>
-  <li style="margin-bottom:4px"><span style="display:inline-block;width:12px;height:12px;background:#fef9c3;border-radius:2px;vertical-align:middle;margin-right:4px"></span><strong>Giallo</strong> — cella modificata in questa sessione</li>
+  <li style="margin-bottom:4px"><span style="display:inline-block;width:12px;height:12px;background:var(--dot-a);border-radius:2px;vertical-align:middle;margin-right:4px"></span><strong>Rosso</strong> — testo diverso nella colonna A</li>
+  <li style="margin-bottom:4px"><span style="display:inline-block;width:12px;height:12px;background:var(--dot-b);border-radius:2px;vertical-align:middle;margin-right:4px"></span><strong>Verde</strong> — testo diverso nella colonna B</li>
+  <li style="margin-bottom:4px"><span style="display:inline-block;width:12px;height:12px;background:var(--dot-onlya);border-radius:2px;vertical-align:middle;margin-right:4px"></span><strong>Arancione</strong> — voce presente solo in A</li>
+  <li style="margin-bottom:4px"><span style="display:inline-block;width:12px;height:12px;background:var(--dot-onlyb);border-radius:2px;vertical-align:middle;margin-right:4px"></span><strong>Verde chiaro</strong> — voce presente solo in B</li>
+  <li style="margin-bottom:4px"><span style="display:inline-block;width:12px;height:12px;background:var(--tint-amber);border-radius:2px;vertical-align:middle;margin-right:4px"></span><strong>Giallo</strong> — cella modificata in questa sessione</li>
 </ul>
 
 <p style="margin-top:8px"><strong>Filtri:</strong> Tutti / Solo differenze / Solo in A / Solo in B.</p>
@@ -3068,7 +3227,7 @@ const MANUAL_HTML=`
 
 <p style="margin-top:8px"><strong>🗑 Eliminare una sezione vuota</strong> — quando una sezione arriva a 0 voci, appare il pulsante <em>🗑 Elimina sezione</em> nell'intestazione. Annullabile con Ctrl+Z.</p>
 
-<hr style="border:none;border-top:1px solid #e2e8f0;margin:16px 0">
+<hr style="border:none;border-top:1px solid var(--border);margin:16px 0">
 
 <h3 id="s4">🔗 4 — Strumento 3: Unisci file</h3>
 
@@ -3102,7 +3261,7 @@ const MANUAL_HTML=`
 
 <p style="margin-top:8px"><strong>Passo 4 — Esportazione.</strong> Clicca <em>✅ Conferma e scarica</em>. Il file unito viene scaricato come <span class="kbd">Export_merged_vX.X_AAAA-MM-GG_HHMM.xlsx</span>, compatibile con il TIA Portal.</p>
 
-<hr style="border:none;border-top:1px solid #e2e8f0;margin:16px 0">
+<hr style="border:none;border-top:1px solid var(--border);margin:16px 0">
 
 <h3 id="s5">🖱 5 — Selezione multi-cella stile Excel</h3>
 <p>Funziona nell'editor, nel confronto e nella vista insieme.</p>
@@ -3123,7 +3282,7 @@ const MANUAL_HTML=`
   <li><strong>✕ Esc</strong> (<span class="kbd">Esc</span>) — deseleziona tutto e chiude la toolbar.</li>
 </ul>
 
-<hr style="border:none;border-top:1px solid #e2e8f0;margin:16px 0">
+<hr style="border:none;border-top:1px solid var(--border);margin:16px 0">
 
 <h3 id="s6">↩ 6 — Annulla modifiche (Undo) e Ripristina tutto</h3>
 <p>Il programma mantiene uno storico delle ultime <strong>100 operazioni</strong> nella sessione corrente.</p>
@@ -3133,7 +3292,7 @@ const MANUAL_HTML=`
 </ul>
 <div class="warn">Ctrl+Z funziona solo quando il cursore non si trova dentro un campo di testo (altrimenti il browser gestisce il proprio undo interno).</div>
 
-<hr style="border:none;border-top:1px solid #e2e8f0;margin:16px 0">
+<hr style="border:none;border-top:1px solid var(--border);margin:16px 0">
 
 <h3 id="s7">💾 7 — Esportazione file</h3>
 <p>Tutti i file esportati sono .xlsx compatibili con il TIA Portal, con la stessa struttura del file originale.</p>
@@ -3152,28 +3311,56 @@ const MANUAL_HTML=`
 </ul>
 <div class="warn">I browser salvano nella cartella Download predefinita. Per scegliere la cartella di destinazione, attiva nelle impostazioni del browser l'opzione "Chiedi dove salvare ogni file" (Chrome/Edge: Impostazioni → Download).</div>
 
-<hr style="border:none;border-top:1px solid #e2e8f0;margin:16px 0">
+<hr style="border:none;border-top:1px solid var(--border);margin:16px 0">
 
 <h3 id="s8">⌨️ 8 — Riepilogo tasti rapidi</h3>
 <table style="width:100%;border-collapse:collapse;font-size:12px">
-  <thead><tr style="background:#f8fafc">
-    <th style="padding:6px 10px;text-align:left;border-bottom:2px solid #e2e8f0;color:#64748b">Tasto</th>
-    <th style="padding:6px 10px;text-align:left;border-bottom:2px solid #e2e8f0;color:#64748b">Azione</th>
-    <th style="padding:6px 10px;text-align:left;border-bottom:2px solid #e2e8f0;color:#64748b">Contesto</th>
+  <thead><tr style="background:var(--surface-2)">
+    <th style="padding:6px 10px;text-align:left;border-bottom:2px solid var(--border);color:var(--text-3)">Tasto</th>
+    <th style="padding:6px 10px;text-align:left;border-bottom:2px solid var(--border);color:var(--text-3)">Azione</th>
+    <th style="padding:6px 10px;text-align:left;border-bottom:2px solid var(--border);color:var(--text-3)">Contesto</th>
   </tr></thead>
   <tbody>
-    <tr style="border-bottom:1px solid #f1f5f9"><td style="padding:5px 10px"><span class="kbd">Doppio clic</span></td><td style="padding:5px 10px">Apre modifica cella</td><td style="padding:5px 10px;color:#64748b">Su una cella di testo</td></tr>
-    <tr style="border-bottom:1px solid #f1f5f9"><td style="padding:5px 10px"><span class="kbd">Invio</span></td><td style="padding:5px 10px">Conferma modifica</td><td style="padding:5px 10px;color:#64748b">Durante modifica singola</td></tr>
-    <tr style="border-bottom:1px solid #f1f5f9"><td style="padding:5px 10px"><span class="kbd">Shift+Invio</span></td><td style="padding:5px 10px">A capo nel testo</td><td style="padding:5px 10px;color:#64748b">Durante modifica singola</td></tr>
-    <tr style="border-bottom:1px solid #f1f5f9"><td style="padding:5px 10px"><span class="kbd">Esc</span></td><td style="padding:5px 10px">Annulla modifica / Deseleziona celle</td><td style="padding:5px 10px;color:#64748b">Durante modifica o selezione</td></tr>
-    <tr style="border-bottom:1px solid #f1f5f9"><td style="padding:5px 10px"><span class="kbd">Ctrl+clic</span></td><td style="padding:5px 10px">Seleziona / deseleziona cella</td><td style="padding:5px 10px;color:#64748b">Su una cella di testo</td></tr>
-    <tr style="border-bottom:1px solid #f1f5f9"><td style="padding:5px 10px"><span class="kbd">Ctrl+Shift+clic</span></td><td style="padding:5px 10px">Seleziona intervallo (stessa lingua e slot)</td><td style="padding:5px 10px;color:#64748b">Su una cella di testo</td></tr>
-    <tr style="border-bottom:1px solid #f1f5f9"><td style="padding:5px 10px"><span class="kbd">Ctrl+C</span></td><td style="padding:5px 10px">Copia celle selezionate</td><td style="padding:5px 10px;color:#64748b">Con celle selezionate</td></tr>
-    <tr style="border-bottom:1px solid #f1f5f9"><td style="padding:5px 10px"><span class="kbd">Ctrl+V</span></td><td style="padding:5px 10px">Incolla nelle celle selezionate</td><td style="padding:5px 10px;color:#64748b">Con celle selezionate</td></tr>
-    <tr style="border-bottom:1px solid #f1f5f9"><td style="padding:5px 10px"><span class="kbd">Canc</span></td><td style="padding:5px 10px">Svuota le celle selezionate</td><td style="padding:5px 10px;color:#64748b">Con celle selezionate</td></tr>
-    <tr style="border-bottom:1px solid #f1f5f9"><td style="padding:5px 10px"><span class="kbd">Ctrl+Z</span></td><td style="padding:5px 10px">Annulla ultima modifica</td><td style="padding:5px 10px;color:#64748b">Fuori dai campi di testo</td></tr>
+    <tr style="border-bottom:1px solid var(--border-soft)"><td style="padding:5px 10px"><span class="kbd">Doppio clic</span></td><td style="padding:5px 10px">Apre modifica cella</td><td style="padding:5px 10px;color:var(--text-3)">Su una cella di testo</td></tr>
+    <tr style="border-bottom:1px solid var(--border-soft)"><td style="padding:5px 10px"><span class="kbd">Invio</span></td><td style="padding:5px 10px">Conferma modifica</td><td style="padding:5px 10px;color:var(--text-3)">Durante modifica singola</td></tr>
+    <tr style="border-bottom:1px solid var(--border-soft)"><td style="padding:5px 10px"><span class="kbd">Shift+Invio</span></td><td style="padding:5px 10px">A capo nel testo</td><td style="padding:5px 10px;color:var(--text-3)">Durante modifica singola</td></tr>
+    <tr style="border-bottom:1px solid var(--border-soft)"><td style="padding:5px 10px"><span class="kbd">Esc</span></td><td style="padding:5px 10px">Annulla modifica / Deseleziona celle</td><td style="padding:5px 10px;color:var(--text-3)">Durante modifica o selezione</td></tr>
+    <tr style="border-bottom:1px solid var(--border-soft)"><td style="padding:5px 10px"><span class="kbd">Ctrl+clic</span></td><td style="padding:5px 10px">Seleziona / deseleziona cella</td><td style="padding:5px 10px;color:var(--text-3)">Su una cella di testo</td></tr>
+    <tr style="border-bottom:1px solid var(--border-soft)"><td style="padding:5px 10px"><span class="kbd">Ctrl+Shift+clic</span></td><td style="padding:5px 10px">Seleziona intervallo (stessa lingua e slot)</td><td style="padding:5px 10px;color:var(--text-3)">Su una cella di testo</td></tr>
+    <tr style="border-bottom:1px solid var(--border-soft)"><td style="padding:5px 10px"><span class="kbd">Ctrl+C</span></td><td style="padding:5px 10px">Copia celle selezionate</td><td style="padding:5px 10px;color:var(--text-3)">Con celle selezionate</td></tr>
+    <tr style="border-bottom:1px solid var(--border-soft)"><td style="padding:5px 10px"><span class="kbd">Ctrl+V</span></td><td style="padding:5px 10px">Incolla nelle celle selezionate</td><td style="padding:5px 10px;color:var(--text-3)">Con celle selezionate</td></tr>
+    <tr style="border-bottom:1px solid var(--border-soft)"><td style="padding:5px 10px"><span class="kbd">Canc</span></td><td style="padding:5px 10px">Svuota le celle selezionate</td><td style="padding:5px 10px;color:var(--text-3)">Con celle selezionate</td></tr>
+    <tr style="border-bottom:1px solid var(--border-soft)"><td style="padding:5px 10px"><span class="kbd">Ctrl+Z</span></td><td style="padding:5px 10px">Annulla ultima modifica</td><td style="padding:5px 10px;color:var(--text-3)">Fuori dai campi di testo</td></tr>
   </tbody>
 </table>
+<hr style="border:none;border-top:1px solid var(--border);margin:16px 0">
+
+<h3 id="s9">🌙 9 — Tema chiaro e tema scuro</h3>
+<p>Il programma si apre con il tema <strong>scuro</strong>: fondo grigio-blu, che stanca meno gli occhi
+di sera o dove c’è poca luce. Se preferisci l’aspetto di prima puoi passare al tema <strong>chiaro</strong>
+(fondo bianco) con un clic, e da quel momento resta chiaro.</p>
+
+<h3>Come si cambia</h3>
+<ul>
+  <li>In alto a destra, accanto al pulsante <span class="kbd">❓ Aiuto</span>, c’è un pulsante con un
+      <strong>sole ☀️</strong>. Cliccalo: il programma diventa chiaro.</li>
+  <li>Nel tema chiaro lo stesso pulsante mostra una <strong>lunetta 🌙</strong>. Cliccalo di nuovo e torni allo scuro.</li>
+  <li>Lo stesso pulsante c’è anche nella schermata iniziale, accanto al numero di versione.</li>
+</ul>
+
+<div class="tip">La scelta viene ricordata: la prossima volta che apri il programma lo ritrovi come lo avevi
+lasciato. La memoria è di questo computer, quindi su un altro PC la scelta va rifatta una volta sola.</div>
+
+<h3>Cosa NON cambia</h3>
+<ul>
+  <li>Il file che esporti è <strong>identico</strong>. Il tema riguarda solo come vedi le cose a schermo:
+      non tocca i testi, non tocca il file Excel, non cambia una virgola di quello che finisce nel TIA Portal.</li>
+  <li>I colori che hanno un significato restano quelli: <strong>rosso</strong> = testo diverso nel file A,
+      <strong>verde</strong> = testo diverso nel file B, <strong>arancione</strong> = voce presente solo in A,
+      <strong>verde chiaro</strong> = voce presente solo in B, <strong>giallo</strong> = cella che hai modificato tu.
+      Nel tema scuro sono più spenti, ma sono sempre quei colori lì.</li>
+  <li>Ogni lingua mantiene il suo colore (IT blu, EN rosso, e così via).</li>
+</ul>
 `
 
 function buildChangelogHTML(){
@@ -3298,7 +3485,7 @@ document.addEventListener('keydown',ev=>{
     const btns=document.querySelectorAll('.update-check-btn');
     btns.forEach(b=>{b.disabled=true;b.textContent='🔄 Controllo...';});
     await checkForUpdate();
-    btns.forEach(b=>{b.disabled=false;b.textContent='🔄 Aggiornamenti';});
+    btns.forEach(b=>{b.disabled=false;b.textContent='↑ Aggiornamenti';});
   };
 })();
 </script>

@@ -1,12 +1,12 @@
 {
-  "version": "5.19",
-  "filename": "TIA_TextList_Editor_MULTI_v5.19.html",
+  "version": "5.20",
+  "filename": "TIA_TextList_Editor_MULTI_v5.20.html",
   "date": "2026-08-26",
   "notes": [
-    "CORREZIONE URGENTE: i testi non contengono piu' la scritta _x000d_ una volta importati in TIA Portal",
-    "Le colonne delle lingue restano nell'ordine del file originale",
-    "Conservato il marcatore TIA_Version del file di partenza",
-    "File esportati circa 3 volte piu' piccoli (compressione attiva)",
-    "Lingue non previste distinguibili: en-US ed en-IE ora mostrano EN e IE"
+    "Nuovo tema scuro grigio-blu: ora e' quello di partenza",
+    "Col pulsante sole accanto ad Aiuto si torna al tema chiaro, e la scelta resta memorizzata",
+    "Tutti i colori sono ora raccolti in un unico punto del file",
+    "Nella finestra Unisci file anche le lingue non previste (es. en-IE) hanno il filtro funzionante",
+    "Il file esportato non cambia in nessun modo: il tema riguarda solo la visualizzazione"
   ]
 }
