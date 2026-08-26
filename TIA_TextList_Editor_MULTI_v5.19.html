@@ -2,7 +2,7 @@
 <html lang="it">
 <head>
 <meta charset="utf-8">
-<title>TIA Portal Text List Editor v5.18</title>
+<title>TIA Portal Text List Editor v5.19</title>
 <link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj4KICA8cmVjdCB4PSI4IiB5PSI3NCIgd2lkdGg9Ijg0IiBoZWlnaHQ9IjEwIiByeD0iNSIgZmlsbD0iIzBjNjQ3OCIvPgogIDxyZWN0IHg9IjE0IiB5PSIxMCIgd2lkdGg9IjcyIiBoZWlnaHQ9IjY1IiByeD0iNiIgZmlsbD0iIzBjNjQ3OCIvPgogIDxyZWN0IHg9IjE5IiB5PSIxNSIgd2lkdGg9IjYyIiBoZWlnaHQ9IjU2IiByeD0iNCIgZmlsbD0iI2ZmZmZmZiIvPgogIDxyZWN0IHg9IjE5IiB5PSIxNSIgd2lkdGg9IjYyIiBoZWlnaHQ9IjExIiByeD0iNCIgZmlsbD0iIzFlMWUyZSIvPgogIDxyZWN0IHg9IjE5IiB5PSIyMCIgd2lkdGg9IjYyIiBoZWlnaHQ9IjYiIGZpbGw9IiMxZTFlMmUiLz4KICA8Y2lyY2xlIGN4PSI3MiIgY3k9IjIwIiByPSIzIiBmaWxsPSIjZmY1ZjVmIi8+CiAgPGNpcmNsZSBjeD0iNjQiIGN5PSIyMCIgcj0iMyIgZmlsbD0iI2ZmNzljNiIvPgogIDxyZWN0IHg9IjE5IiB5PSIyNiIgd2lkdGg9IjYyIiBoZWlnaHQ9IjQ1IiBmaWxsPSIjZjViODAwIi8+CiAgPHJlY3QgeD0iMjYiIHk9IjM0IiB3aWR0aD0iNDgiIGhlaWdodD0iMTAiIHJ4PSIyIiBmaWxsPSIjMWUxZTJlIi8+CiAgPHJlY3QgeD0iNDMiIHk9IjM0IiB3aWR0aD0iMTQiIGhlaWdodD0iMjYiIHJ4PSIyIiBmaWxsPSIjMWUxZTJlIi8+CiAgPHJlY3QgeD0iMjYiIHk9IjYzIiB3aWR0aD0iNDgiIGhlaWdodD0iNSIgcng9IjIuNSIgZmlsbD0iIzFlMWUyZSIvPgo8L3N2Zz4K" type="image/svg+xml">
 <!-- ===== Libreria Excel SheetJS 0.18.5 (Apache-2.0) inclusa nel file =====
      Prima veniva scaricata da un CDN: senza internet, o con il CDN bloccato
@@ -250,7 +250,7 @@ tr:hover .row-del-btn{opacity:1}
     <div style="font-size:40px;margin-bottom:16px">⚙️</div>
     <h1>TIA Portal Text List Editor</h1>
     <p style="margin-bottom:6px">Carica il file Excel esportato dal TIA Portal.<br>Dopo il caricamento puoi scegliere quali elenchi aprire.</p>
-    <p style="font-size:12px;color:#64748b;margin-bottom:18px">versione app: <span style="font-family:'JetBrains Mono','Cascadia Mono',Consolas,monospace;color:#60a5fa">v5.18</span> &nbsp;·&nbsp; <button onclick="openHelp()" style="background:none;border:none;color:#60a5fa;cursor:pointer;font-size:12px;text-decoration:underline">❓ Manuale & Changelog</button></p>
+    <p style="font-size:12px;color:#64748b;margin-bottom:18px">versione app: <span style="font-family:'JetBrains Mono','Cascadia Mono',Consolas,monospace;color:#60a5fa">v5.19</span> &nbsp;·&nbsp; <button onclick="openHelp()" style="background:none;border:none;color:#60a5fa;cursor:pointer;font-size:12px;text-decoration:underline">❓ Manuale & Changelog</button></p>
     <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap">
       <label class="upload-btn">📂 Carica Export.xlsx<input type="file" accept=".xlsx,.xls" id="fileInput" style="display:none"></label>
       <button class="upload-btn" style="background:#0891b2;box-shadow:0 4px 12px rgba(8,145,178,.35)" onclick="showDiffUploadScreen()">🔀 Confronta due file</button>
@@ -569,7 +569,14 @@ let LANGS=[...ALL_LANGS];
 const LANG_LABELS={"it-IT":"IT","en-US":"EN","en-GB":"GB","de-DE":"DE"};
 const LANG_COLORS={"it-IT":"#2563eb","en-US":"#dc2626","en-GB":"#7c3aed","de-DE":"#ca8a04"};
 const LANG_PALETTE=["#0891b2","#db2777","#65a30d","#9333ea","#ea580c","#0d9488"];
-function langLabel(l){return LANG_LABELS[l]||(l||'').split('-')[0].toUpperCase();}
+// Etichetta breve: per le lingue non previste si usa la SIGLA DEL PAESE
+// (en-IE -> IE), altrimenti "en-US" ed "en-IE" mostrerebbero entrambe "EN"
+// e nella tabella non si distinguerebbero.
+function langLabel(l){
+  if(LANG_LABELS[l]) return LANG_LABELS[l];
+  const p=String(l||'').split('-');
+  return (p[1]||p[0]||'').toUpperCase();
+}
 function langColor(l){
   if(LANG_COLORS[l]) return LANG_COLORS[l];
   let h=0; for(let i=0;i<l.length;i++) h=(h*31+l.charCodeAt(i))>>>0;
@@ -593,6 +600,7 @@ function afterPaint(fn){
 
 // Single-file state
 let allTextLists=[],allEntries=[];
+let _layoutMain=null;   // impaginazione del file aperto (colonne + proprieta TIA)
 let textLists=[],entries=[],groups={};
 let selectedListNames=[],compareSelectedLists=[];
 let activeLangs=[...LANGS];
@@ -1131,10 +1139,29 @@ function langsFromHeader(ws,prefisso){
   return out;
 }
 
+// Legge l'intestazione completa di un foglio: serve a riscrivere le colonne
+// nello stesso ordine del file di partenza.
+function headerOf(ws){
+  return (XLSX.utils.sheet_to_json(ws,{header:1,defval:""})[0]||[]).map(h=>String(h??''));
+}
+
+// TIA Portal marca i suoi file con una proprieta' personalizzata (TIA_Version).
+// SheetJS non la legge da solo: la si estrae dal file grezzo per riscriverla.
+function custPropsDaFile(wb){
+  try{
+    const f=wb.files&&wb.files['docProps/custom.xml'];
+    if(!f||!f.content) return null;
+    const xml=(typeof f.content==='string')?f.content:new TextDecoder('utf-8').decode(new Uint8Array(f.content));
+    const props={}; let trovato=false;
+    xml.replace(/name="([^"]+)"[^>]*>\s*<[^>]*lpwstr[^>]*>([^<]*)</g,(_,k,v)=>{props[k]=v;trovato=true;return '';});
+    return trovato?props:null;
+  }catch(e){ return null; }
+}
+
 function parseFileData(arrayBuffer){
   if(typeof XLSX==='undefined'||!XLSX||!XLSX.read)
     throw new Error("Libreria Excel non caricata: ricarica l'applicazione");
-  const wb=XLSX.read(arrayBuffer,{type:'array'});
+  const wb=XLSX.read(arrayBuffer,{type:'array',bookFiles:true});
   const ws1=wb.Sheets['TextList']; if(!ws1) throw new Error("Foglio 'TextList' non trovato");
   const ws2=wb.Sheets['TextListEntry']; if(!ws2) throw new Error("Foglio 'TextListEntry' non trovato");
 
@@ -1155,7 +1182,9 @@ function parseFileData(arrayBuffer){
             valueNum:(typeof r['Value']==='number'),
             texts,fieldInfos:r['FieldInfos']||""};
   });
-  return {textLists:tls,entries:ents,langs};
+  // headerTL/headerTE: ordine originale delle colonne; custprops: marcatore TIA
+  return {textLists:tls,entries:ents,langs,
+          headerTL:headerOf(ws1),headerTE:headerOf(ws2),custprops:custPropsDaFile(wb)};
 }
 
 // Imposta le lingue attive dell'interfaccia a partire dai file caricati.
@@ -1165,8 +1194,9 @@ function applyLangs(...listeLingue){
   // di liste (es. tutti i file caricati per l'unione)
   listeLingue.flat(Infinity).forEach(l=>{if(typeof l==='string'&&l&&!u.includes(l))u.push(l);});
   if(!u.length) return;
-  // ordine preferito per le lingue note, le altre in coda
-  LANGS=[...ALL_LANGS.filter(l=>u.includes(l)),...u.filter(l=>!ALL_LANGS.includes(l))];
+  // Si tiene l'ordine in cui le lingue compaiono nel file: riordinarle
+  // cambierebbe l'ordine delle colonne rispetto all'originale di TIA Portal.
+  LANGS=u;
   activeLangs=[...LANGS];
   diffActiveLangs=[...LANGS];
   buildAddRowFields();
@@ -1180,6 +1210,7 @@ function parseFile(arrayBuffer,name){
     clearOrigCache('editor');
     const data=parseFileData(arrayBuffer);
     applyLangs(data.langs);
+    _layoutMain=data;   // ordine colonne e marcatore TIA del file aperto
     allTextLists=data.textLists; allEntries=data.entries;
     selectedListNames=allTextLists.map(t=>t.name);
     changeCount=0; selectedGroup=null;
@@ -1546,7 +1577,7 @@ function exportDiffA(){
 function exportDiffData(data, origName, slot){
   const vp=projectVersion?'_'+projectVersion.replace(/[^a-zA-Z0-9.\-]/g,''):'';
   const outName=(origName.replace(/\.xlsx?$/i,'')||'File'+slot)+'_modified'+vp+'_'+exportStamp()+'.xlsx';
-  XLSX.writeFile(buildWorkbook(data,data.langs||LANGS),outName);
+  salvaWorkbook(buildWorkbook(data,data.langs||LANGS,data),outName);
   showToast('✅ Esportato: '+outName);
 }
 
@@ -1673,27 +1704,58 @@ function cleanCr(s){return s?String(s).replace(/\r\n/g,"\n").replace(/\r/g,"\n")
    che nel tempo si erano disallineate (es. DefaultEntry diverso nel merge).
    Regole di fedelta' verso TIA Portal:
    - si scrivono SOLO le lingue presenti nel file di partenza
-   - le terminazioni di riga (CRLF) restano quelle originali
-   - la colonna Value mantiene il tipo originale (TIA la scrive come testo) */
-function buildWorkbook(data,langs){
+   - le colonne restano nell'ordine del file di partenza
+   - la colonna Value mantiene il tipo originale (TIA la scrive come testo)
+   - si conserva il marcatore TIA_Version del file originale
+   - NESSUN ritorno a carrello (CR) nei dati: vedi senzaCR() qui sotto */
+
+/* IMPORTANTISSIMO — non rimuovere.
+   Un CR dentro una cella viene salvato nel formato .xlsx come sequenza di
+   escape "_x000d_". Excel la ridecodifica, TIA Portal NO: la importa come
+   testo, e sul pannello compare la scritta _x000d_ in mezzo alle frasi.
+   Percio' ogni testo scritto nel file viene normalizzato a solo "\n".
+   (Nei file di TIA il CR c'e', ma un lettore XML conforme lo converte
+   comunque in "\n": scrivendo "\n" TIA riceve esattamente cio' che leggerebbe
+   dal proprio file.) */
+function senzaCR(v){
+  if(v===null||v===undefined) return '';
+  return String(v).replace(/\r\n/g,'\n').replace(/\r/g,'\n');
+}
+
+function buildWorkbook(data,langs,layout){
   const L=(langs&&langs.length)?langs:LANGS;
+  const lay=layout||{};
   const tlRows=(data.textLists||[]).map(tl=>{
-    const r={"Name":tl.name,"ListRange":tl.listRange||''};
-    L.forEach(l=>{r['Comment ['+l+']']=((tl.comments||{})[l])||'<No value>';});
+    const r={"Name":senzaCR(tl.name),"ListRange":senzaCR(tl.listRange)};
+    L.forEach(l=>{r['Comment ['+l+']']=senzaCR((tl.comments||{})[l])||'<No value>';});
     return r;
   });
   const eRows=(data.entries||[]).filter(Boolean).map(e=>{
     const t=e.texts||{};
-    const r={"Name":e.name||'',"Parent":e.parent||'',"DefaultEntry":e.defaultEntry||'',
+    const r={"Name":senzaCR(e.name),"Parent":senzaCR(e.parent),"DefaultEntry":senzaCR(e.defaultEntry),
              "Value":e.valueNum?Number(e.value):String(e.value??'')};
-    L.forEach(l=>{r['Text ['+l+']']=t[l]||'<No value>';});
-    r['FieldInfos']=e.fieldInfos||'';
+    L.forEach(l=>{r['Text ['+l+']']=senzaCR(t[l])||'<No value>';});
+    r['FieldInfos']=senzaCR(e.fieldInfos);
     return r;
   });
+  // Ordine colonne: quello del file aperto, se noto e coerente con i dati
+  const ordina=(righe,header)=>{
+    if(!header||!header.length||!righe.length) return null;
+    const presenti=Object.keys(righe[0]);
+    if(header.length!==presenti.length||!header.every(c=>presenti.includes(c))) return null;
+    return header;
+  };
   const wb=XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(tlRows),'TextList');
-  XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(eRows),'TextListEntry');
+  const hTL=ordina(tlRows,lay.headerTL), hTE=ordina(eRows,lay.headerTE);
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(tlRows,hTL?{header:hTL}:undefined),'TextList');
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(eRows,hTE?{header:hTE}:undefined),'TextListEntry');
+  if(lay.custprops) wb.Custprops=Object.assign({},lay.custprops);
   return wb;
+}
+
+// Salvataggio: compressione attiva, altrimenti il file pesa 10 volte tanto.
+function salvaWorkbook(wb,nome){
+  XLSX.writeFile(wb,nome,{compression:true});
 }
 
 function exportStamp(){
@@ -1704,7 +1766,7 @@ function exportStamp(){
 function doExport(){
   const vp=projectVersion?'_'+projectVersion.replace(/[^a-zA-Z0-9.\-]/g,''):'';
   const nome='Export_modified'+vp+'_'+exportStamp()+'.xlsx';
-  XLSX.writeFile(buildWorkbook({textLists:allTextLists,entries:allEntries},LANGS),nome);
+  salvaWorkbook(buildWorkbook({textLists:allTextLists,entries:allEntries},LANGS,_layoutMain),nome);
   showToast('✅ '+nome);
 }
 
@@ -2656,7 +2718,7 @@ function exportMergedFile(data){
     try{
       const vp=projectVersion?'_'+projectVersion.replace(/[^a-zA-Z0-9.\-]/g,''):'';
       const fileName='Export_merged'+vp+'_'+exportStamp()+'.xlsx';
-      XLSX.writeFile(buildWorkbook(data,LANGS),fileName);
+      salvaWorkbook(buildWorkbook(data,LANGS,(_mergeFiles[0]&&_mergeFiles[0].data)||_layoutMain),fileName);
       hideLoading();
       showToast('✅ '+fileName+' — '+data.textLists.length+' elenchi, '+data.entries.length+' voci');
     }catch(err){
@@ -2668,9 +2730,16 @@ function exportMergedFile(data){
 }
 
 /* ========== HELP MODAL ========== */
-const APP_VERSION='5.18';
+const APP_VERSION='5.19';
 const CHANGELOG=[
-  {ver:'5.18',date:'2026-08-04',cur:true,items:[
+  {ver:'5.19',date:'2026-08-26',cur:true,items:[
+    'CORREZIONE URGENTE: i testi non contengono piu\' la scritta _x000d_ una volta importati in TIA Portal',
+    'Le colonne delle lingue restano nell\'ordine del file originale',
+    'Conservato il marcatore TIA_Version del file di partenza',
+    'File esportati circa 3 volte piu\' piccoli (compressione attiva)',
+    'Lingue non previste distinguibili: en-US ed en-IE ora mostrano EN e IE',
+  ]},
+  {ver:'5.18',date:'2026-08-26',cur:false,items:[
     'Funziona senza internet: libreria Excel inclusa nel programma (prima veniva scaricata da un CDN)',
     'Export fedele: si scrivono solo le lingue presenti nel file, niente colonna DE inventata',
     'Export fedele: gli a capo originali (CRLF) non vengono piu\' alterati',
