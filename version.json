@@ -1,16 +1,24 @@
 {
-  "version": "5.22",
-  "filename": "TIA_TextList_Editor_MULTI_v5.22.html",
+  "version": "5.23",
+  "filename": "TIA_TextList_Editor_MULTI_v5.23.html",
   "date": "2026-11-12",
   "notes": [
-    "Vista insieme: nuovo cestino su ogni riga (o Ctrl+Canc) per eliminare la voce da tutti gli elenchi spuntati in un colpo solo",
-    "Prima di eliminare compare una finestra che elenca gli elenchi coinvolti e quelli dove la voce non c'era: Invio elimina, Esc annulla",
-    "Ctrl+Z rimette la voce in tutti gli elenchi insieme",
-    "Vista insieme ed Editor gruppi: le voci che non esistono in un elenco ora si vedono rosse con la scritta non esiste, diverse dal trattino grigio delle voci senza testo",
-    "Sopra la tabella il totale delle voci mancanti, e a sinistra quante ne mancano in ogni elenco",
-    "Doppio clic o Invio su una cella rossa crea la voce solo in quell'elenco, dopo una conferma; Ctrl+Z la toglie",
-    "Corretto: dopo Ctrl+Z una voce eliminata tornava in fondo al file esportato, ora torna esattamente al suo posto (Editor gruppi, Vista insieme e Confronta due file)",
-    "Seleziona tutto / Deseleziona tutto: con un filtro scritto agiscono solo sugli elenchi visibili (schermata Seleziona elenchi e Vista insieme), e la scritta del pulsante lo dice",
-    "Il file esportato non cambia: le righe rimaste escono nello stesso ordine e formato di prima"
+    "Corretto: l'export dell'editor poteva perdere una lingua (o aggiungerne una vuota) dopo aver caricato file con lingue diverse nel Confronto o nell'Unione",
+    "Unisci file: le voci presenti in un solo file entrano nel file unito con il loro testo (prima uscivano vuote) e le righe restano nell'ordine del primo file",
+    "Ripristina tutto riporta davvero il file com'era: tornano le voci eliminate e spariscono quelle aggiunte",
+    "Incolla (Ctrl+V) funziona anche con celle copiate da Excel",
+    "Seleziona elenchi: togliendo e rimettendo la spunta l'elenco non resta piu' escluso",
+    "Vista insieme: svuotare o incollare su celle selezionate aggiorna sempre lo schermo",
+    "La selezione a intervallo (Ctrl+Shift+clic) non salta piu' la cella appena modificata",
+    "Confronto: A→B e B→A su tutte le righe sono immediati, copiano solo le righe diverse e si annullano con un solo Ctrl+Z",
+    "Confronto: il giallo segna solo le celle cambiate da te, il totale delle differenze si aggiorna a ogni modifica, annullare una copia toglie anche la riga creata",
+    "Ctrl+S mentre scrivi in una cella esporta anche quel testo",
+    "Avviso prima di perdere modifiche non scaricate (caricando un altro file, ricaricando o chiudendo la pagina)",
+    "Annulla separato tra editor e Confronto, azzerato quando carichi un altro file",
+    "Il filtro di ricerca dell'Editor gruppi resta attivo dopo le modifiche",
+    "Le voci nuove escono con la colonna DefaultEntry scritta come nel file di partenza (prima sempre False)",
+    "Avviso al caricamento se il file ha colonne sconosciute o due voci con lo stesso valore nello stesso elenco",
+    "L'app si apre subito anche dove internet e' filtrato",
+    "Tolto il cartellino della versione progetto, non piu' usato. Manuale aggiornato e date del registro versioni corrette"
   ]
 }

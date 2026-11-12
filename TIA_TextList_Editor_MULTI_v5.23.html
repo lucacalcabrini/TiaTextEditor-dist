@@ -2,7 +2,7 @@
 <html lang="it">
 <head>
 <meta charset="utf-8">
-<title>TIA Portal Text List Editor v5.22</title>
+<title>TIA Portal Text List Editor v5.23</title>
 <script>
 /* Tema chiaro/scuro. Questo pezzo sta qui in alto apposta: deve girare prima
    che il browser disegni la pagina, altrimenti aprendo con il tema scuro si
@@ -44,7 +44,9 @@ var o=Math.min(a.sheetRows||1e7,f.length);var l={s:{r:0,c:0},e:{r:n,c:i}};if(e["
 var o=((a=s[17])==null?void 0:a[0])?Ob(e,e[_b(s[17][0].data)][0]):[];var l=vb(s[3][0].data);var c=0;l[1].forEach(function(r){var a=vb(r.data);var n=e[_b(a[2][0].data)][0];var i=db(n.meta[1][0].data);if(i!=6002)throw new Error("6001 unexpected reference to ".concat(i));var s=Ib(e,n);s.data.forEach(function(e,r){e.forEach(function(e,a){var n=Ra({r:c+r,c:a});var i=Sb(e,f,o);if(i)t[n]=i})});c+=s.nrows})}function Db(e,r){var t=vb(r.data);var a={"!ref":"A1"};var n=e[_b(t[2][0].data)];var i=db(n[0].meta[1][0].data);if(i!=6001)throw new Error("6000 unexpected reference to ".concat(i));Nb(e,n[0],a);return a}function Fb(e,r){var t;var a=vb(r.data);var n={name:((t=a[1])==null?void 0:t[0])?nb(a[1][0].data):"",sheets:[]};var i=gb(a[2],_b);i.forEach(function(r){e[r].forEach(function(r){var t=db(r.meta[1][0].data);if(t==6e3)n.sheets.push(Db(e,r))})});return n}function Pb(e,r){var t=Nw();var a=vb(r.data);var n=gb(a[1],_b);n.forEach(function(r){e[r].forEach(function(r){var a=db(r.meta[1][0].data);if(a==2){var n=Fb(e,r);n.sheets.forEach(function(e,r){Dw(t,e,r==0?n.name:n.name+"_"+r,true)})}})});if(t.SheetNames.length==0)throw new Error("Empty NUMBERS file");return t}function Lb(e){var r,t,a,n;var i={},s=[];e.FullPaths.forEach(function(e){if(e.match(/\.iwpv2/))throw new Error("Unsupported password protection")});e.FileIndex.forEach(function(e){if(!e.name.match(/\.iwa$/))return;var r;try{r=kb(e.content)}catch(t){return console.log("?? "+e.content.length+" "+(t.message||t))}var a;try{a=mb(r)}catch(t){return console.log("## "+(t.message||t))}a.forEach(function(e){i[e.id]=e.messages;s.push(e.id)})});if(!s.length)throw new Error("File has no messages");var f=((n=(a=(t=(r=i==null?void 0:i[1])==null?void 0:r[0])==null?void 0:t.meta)==null?void 0:a[1])==null?void 0:n[0].data)&&db(i[1][0].meta[1][0].data)==1&&i[1][0];if(!f)s.forEach(function(e){i[e].forEach(function(e){var r=db(e.meta[1][0].data)>>>0;if(r==1){if(!f)f=e;else throw new Error("Document has multiple roots")}})});if(!f)throw new Error("Cannot find Document root");return Pb(i,f)}function Mb(e,r,t){var a,n,i,s;if(!((a=e[6])==null?void 0:a[0])||!((n=e[7])==null?void 0:n[0]))throw"Mutation only works on post-BNC storages!";var f=((s=(i=e[8])==null?void 0:i[0])==null?void 0:s.data)&&db(e[8][0].data)>0||false;if(f)throw"Math only works with normal offsets";var o=0;var l=ab(e[7][0].data),c=0,h=[];var u=ab(e[4][0].data),d=0,v=[];for(var p=0;p<r.length;++p){if(r[p]==null){l.setUint16(p*2,65535,true);u.setUint16(p*2,65535);continue}l.setUint16(p*2,c,true);u.setUint16(p*2,d,true);var g,m;switch(typeof r[p]){case"string":g=Cb({t:"s",v:r[p]},t);m=yb({t:"s",v:r[p]},t);break;case"number":g=Cb({t:"n",v:r[p]},t);m=yb({t:"n",v:r[p]},t);break;case"boolean":g=Cb({t:"b",v:r[p]},t);m=yb({t:"b",v:r[p]},t);break;default:throw new Error("Unsupported value "+r[p]);}h.push(g);c+=g.length;v.push(m);d+=m.length;++o}e[2][0].data=ub(o);for(;p<e[7][0].data.length/2;++p){l.setUint16(p*2,65535,true);u.setUint16(p*2,65535,true)}e[6][0].data=fb(h);e[3][0].data=fb(v);return o}function Ub(e,r){if(!r||!r.numbers)throw new Error("Must pass a `numbers` option -- check the README");var t=e.Sheets[e.SheetNames[0]];if(e.SheetNames.length>1)console.error("The Numbers writer currently writes only the first table");var a=Ia(t["!ref"]);a.s.r=a.s.c=0;var n=false;if(a.e.c>9){n=true;a.e.c=9}if(a.e.r>49){n=true;a.e.r=49}if(n)console.error("The Numbers writer is currently limited to ".concat(Na(a)));var i=Aw(t,{range:a,header:1});var s=["~Sh33tJ5~"];i.forEach(function(e){return e.forEach(function(e){if(typeof e=="string")s.push(e)})});var f={};var o=[];var l=Ke.read(r.numbers,{type:"base64"});l.FileIndex.map(function(e,r){return[e,l.FullPaths[r]]}).forEach(function(e){var r=e[0],t=e[1];if(r.type!=2)return;if(!r.name.match(/\.iwa/))return;var a=r.content;var n=kb(a);var i=mb(n);i.forEach(function(e){o.push(e.id);f[e.id]={deps:[],location:t,type:db(e.messages[0].meta[1][0].data)}})});o.sort(function(e,r){return e-r});var c=o.filter(function(e){return e>1}).map(function(e){return[e,ub(e)]});l.FileIndex.map(function(e,r){return[e,l.FullPaths[r]]}).forEach(function(e){var r=e[0],t=e[1];if(!r.name.match(/\.iwa/))return;var a=mb(kb(r.content));a.forEach(function(e){e.messages.forEach(function(r){c.forEach(function(r){if(e.messages.some(function(e){return db(e.meta[1][0].data)!=11006&&sb(e.data,r[1])})){f[r[0]].deps.push(e.id)}})})})});function h(){for(var e=927262;e<2e6;++e)if(!f[e])return e;throw new Error("Too many messages")}var u=Ke.find(l,f[1].location);var d=mb(kb(u.content));var v;for(var p=0;p<d.length;++p){var g=d[p];if(g.id==1)v=g}var m=_b(vb(v.messages[0].data)[1][0].data);u=Ke.find(l,f[m].location);d=mb(kb(u.content));for(p=0;p<d.length;++p){g=d[p];if(g.id==m)v=g}m=_b(vb(v.messages[0].data)[2][0].data);u=Ke.find(l,f[m].location);d=mb(kb(u.content));for(p=0;p<d.length;++p){g=d[p];if(g.id==m)v=g}m=_b(vb(v.messages[0].data)[2][0].data);u=Ke.find(l,f[m].location);d=mb(kb(u.content));for(p=0;p<d.length;++p){g=d[p];if(g.id==m)v=g}var b=vb(v.messages[0].data);{b[6][0].data=ub(a.e.r+1);b[7][0].data=ub(a.e.c+1);var w=_b(b[46][0].data);var k=Ke.find(l,f[w].location);var T=mb(kb(k.content));{for(var A=0;A<T.length;++A){if(T[A].id==w)break}if(T[A].id!=w)throw"Bad ColumnRowUIDMapArchive";var E=vb(T[A].messages[0].data);E[1]=[];E[2]=[],E[3]=[];for(var C=0;C<=a.e.c;++C){var y=[];y[1]=y[2]=[{type:0,data:ub(C+420690)}];E[1].push({type:2,data:pb(y)});E[2].push({type:0,data:ub(C)});E[3].push({type:0,data:ub(C)})}E[4]=[];E[5]=[],E[6]=[];for(var S=0;S<=a.e.r;++S){y=[];y[1]=y[2]=[{type:0,data:ub(S+726270)}];E[4].push({type:2,data:pb(y)});E[5].push({type:0,data:ub(S)});E[6].push({type:0,data:ub(S)})}T[A].messages[0].data=pb(E)}k.content=Tb(bb(T));k.size=k.content.length;delete b[46];var _=vb(b[4][0].data);{_[7][0].data=ub(a.e.r+1);var x=vb(_[1][0].data);var O=_b(x[2][0].data);k=Ke.find(l,f[O].location);T=mb(kb(k.content));{if(T[0].id!=O)throw"Bad HeaderStorageBucket";var R=vb(T[0].messages[0].data);for(S=0;S<i.length;++S){var I=vb(R[2][0].data);I[1][0].data=ub(S);I[4][0].data=ub(i[S].length);R[2][S]={type:R[2][0].type,data:pb(I)}}T[0].messages[0].data=pb(R)}k.content=Tb(bb(T));k.size=k.content.length;var N=_b(_[2][0].data);k=Ke.find(l,f[N].location);T=mb(kb(k.content));{if(T[0].id!=N)throw"Bad HeaderStorageBucket";R=vb(T[0].messages[0].data);for(C=0;C<=a.e.c;++C){I=vb(R[2][0].data);I[1][0].data=ub(C);I[4][0].data=ub(a.e.r+1);R[2][C]={type:R[2][0].type,data:pb(I)}}T[0].messages[0].data=pb(R)}k.content=Tb(bb(T));k.size=k.content.length;var D=_b(_[4][0].data);(function(){var e=Ke.find(l,f[D].location);var r=mb(kb(e.content));var t;for(var a=0;a<r.length;++a){var n=r[a];if(n.id==D)t=n}var i=vb(t.messages[0].data);{i[3]=[];var o=[];s.forEach(function(e,r){o[1]=[{type:0,data:ub(r)}];o[2]=[{type:0,data:ub(1)}];o[3]=[{type:2,data:ib(e)}];i[3].push({type:2,data:pb(o)})})}t.messages[0].data=pb(i);var c=bb(r);var h=Tb(c);e.content=h;e.size=e.content.length})();var F=vb(_[3][0].data);{var P=F[1][0];delete F[2];var L=vb(P.data);{var M=_b(L[2][0].data);(function(){var e=Ke.find(l,f[M].location);var r=mb(kb(e.content));var t;for(var n=0;n<r.length;++n){var o=r[n];if(o.id==M)t=o}var c=vb(t.messages[0].data);{delete c[6];delete F[7];var h=new Uint8Array(c[5][0].data);c[5]=[];var u=0;for(var d=0;d<=a.e.r;++d){var v=vb(h);u+=Mb(v,i[d],s);v[1][0].data=ub(d);c[5].push({data:pb(v),type:2})}c[1]=[{type:0,data:ub(a.e.c+1)}];c[2]=[{type:0,data:ub(a.e.r+1)}];c[3]=[{type:0,data:ub(u)}];c[4]=[{type:0,data:ub(a.e.r+1)}]}t.messages[0].data=pb(c);var p=bb(r);var g=Tb(p);e.content=g;e.size=e.content.length})()}P.data=pb(L)}_[3][0].data=pb(F)}b[4][0].data=pb(_)}v.messages[0].data=pb(b);var U=bb(d);var B=Tb(U);u.content=B;u.size=u.content.length;return l}function Bb(e){return function r(t){for(var a=0;a!=e.length;++a){var n=e[a];if(t[n[0]]===undefined)t[n[0]]=n[1];if(n[2]==="n")t[n[0]]=Number(t[n[0]])}}}function Wb(e){Bb([["cellNF",false],["cellHTML",true],["cellFormula",true],["cellStyles",false],["cellText",true],["cellDates",false],["sheetStubs",false],["sheetRows",0,"n"],["bookDeps",false],["bookSheets",false],["bookProps",false],["bookFiles",false],["bookVBA",false],["password",""],["WTF",false]])(e)}function Hb(e){Bb([["cellDates",false],["bookSST",false],["bookType","xlsx"],["compression",false],["WTF",false]])(e)}function zb(e){if(qn.WS.indexOf(e)>-1)return"sheet";if(qn.CS&&e==qn.CS)return"chart";if(qn.DS&&e==qn.DS)return"dialog";if(qn.MS&&e==qn.MS)return"macro";return e&&e.length?e:"sheet"}function Vb(e,r){if(!e)return 0;try{e=r.map(function a(r){if(!r.id)r.id=r.strRelID;return[r.name,e["!id"][r.id].Target,zb(e["!id"][r.id].Type)]})}catch(t){return null}return!e||e.length===0?null:e}function Gb(e,r,t,a,n,i,s,f,o,l,c,h){try{i[a]=Qn(Rr(e,t,true),r);var u=Or(e,r);var d;switch(f){case"sheet":d=pg(u,r,n,o,i[a],l,c,h);break;case"chart":d=gg(u,r,n,o,i[a],l,c,h);if(!d||!d["!drawel"])break;var v=Lr(d["!drawel"].Target,r);var p=Zn(v);var g=th(Rr(e,v,true),Qn(Rr(e,p,true),v));var m=Lr(g,v);var b=Zn(m);d=Pp(Rr(e,m,true),m,o,Qn(Rr(e,b,true),m),l,d);break;case"macro":d=mg(u,r,n,o,i[a],l,c,h);break;case"dialog":d=bg(u,r,n,o,i[a],l,c,h);break;default:throw new Error("Unrecognized sheet type "+f);}s[a]=d;var w=[];if(i&&i[a])rr(i[a]).forEach(function(t){var n="";if(i[a][t].Type==qn.CMNT){n=Lr(i[a][t].Target,r);var s=Ag(Or(e,n,true),n,o);if(!s||!s.length)return;ih(d,s,false)}if(i[a][t].Type==qn.TCMNT){n=Lr(i[a][t].Target,r);w=w.concat(oh(Or(e,n,true),o))}});if(w&&w.length)ih(d,w,true,o.people||[])}catch(k){if(o.WTF)throw k}}function jb(e){return e.charAt(0)=="/"?e.slice(1):e}function Xb(e,r){ze();r=r||{};Wb(r);if(_r(e,"META-INF/manifest.xml"))return Zm(e,r);if(_r(e,"objectdata.xml"))return Zm(e,r);if(_r(e,"Index/Document.iwa")){if(typeof Uint8Array=="undefined")throw new Error("NUMBERS file parsing requires Uint8Array support");if(typeof Lb!="undefined"){if(e.FileIndex)return Lb(e);var t=Ke.utils.cfb_new();Nr(e).forEach(function(r){Dr(t,r,Ir(e,r))});return Lb(t)}throw new Error("Unsupported NUMBERS file")}if(!_r(e,"[Content_Types].xml")){if(_r(e,"index.xml.gz"))throw new Error("Unsupported NUMBERS 08 file");if(_r(e,"index.xml"))throw new Error("Unsupported NUMBERS 09 file");throw new Error("Unsupported ZIP file")}var a=Nr(e);var n=Kn(Rr(e,"[Content_Types].xml"));var i=false;var s,f;if(n.workbooks.length===0){f="xl/workbook.xml";if(Or(e,f,true))n.workbooks.push(f)}if(n.workbooks.length===0){f="xl/workbook.bin";if(!Or(e,f,true))throw new Error("Could not find workbook");n.workbooks.push(f);i=true}if(n.workbooks[0].slice(-3)=="bin")i=true;var o={};var l={};if(!r.bookSheets&&!r.bookProps){xd=[];if(n.sst)try{xd=Tg(Or(e,jb(n.sst)),n.sst,r)}catch(c){if(r.WTF)throw c}if(r.cellStyles&&n.themes.length)o=kg(Rr(e,n.themes[0].replace(/^\//,""),true)||"",n.themes[0],r);if(n.style)l=wg(Or(e,jb(n.style)),n.style,o,r)}n.links.map(function(t){try{var a=Qn(Rr(e,Zn(jb(t))),t);return Cg(Or(e,jb(t)),a,t,r)}catch(n){}});var h=vg(Or(e,jb(n.workbooks[0])),n.workbooks[0],r);var u={},d="";if(n.coreprops.length){d=Or(e,jb(n.coreprops[0]),true);if(d)u=hi(d);if(n.extprops.length!==0){d=Or(e,jb(n.extprops[0]),true);if(d)mi(d,u,r)}}var v={};if(!r.bookSheets||r.bookProps){if(n.custprops.length!==0){d=Rr(e,jb(n.custprops[0]),true);if(d)v=ki(d,r)}}var p={};if(r.bookSheets||r.bookProps){if(h.Sheets)s=h.Sheets.map(function I(e){return e.name});else if(u.Worksheets&&u.SheetNames.length>0)s=u.SheetNames;if(r.bookProps){p.Props=u;p.Custprops=v}if(r.bookSheets&&typeof s!=="undefined")p.SheetNames=s;if(r.bookSheets?p.SheetNames:r.bookProps)return p}s={};var g={};if(r.bookDeps&&n.calcchain)g=Eg(Or(e,jb(n.calcchain)),n.calcchain,r);var m=0;var b={};var w,k;{var T=h.Sheets;u.Worksheets=T.length;u.SheetNames=[];for(var A=0;A!=T.length;++A){u.SheetNames[A]=T[A].name}}var E=i?"bin":"xml";var C=n.workbooks[0].lastIndexOf("/");var y=(n.workbooks[0].slice(0,C+1)+"_rels/"+n.workbooks[0].slice(C+1)+".rels").replace(/^\//,"");if(!_r(e,y))y="xl/_rels/workbook."+E+".rels";var S=Qn(Rr(e,y,true),y.replace(/_rels.*/,"s5s"));if((n.metadata||[]).length>=1){r.xlmeta=yg(Or(e,jb(n.metadata[0])),n.metadata[0],r)}if((n.people||[]).length>=1){r.people=ch(Or(e,jb(n.people[0])),r)}if(S)S=Vb(S,h.Sheets);var _=Or(e,"xl/worksheets/sheet.xml",true)?1:0;e:for(m=0;m!=u.Worksheets;++m){var x="sheet";if(S&&S[m]){w="xl/"+S[m][1].replace(/[\/]?xl\//,"");if(!_r(e,w))w=S[m][1];if(!_r(e,w))w=y.replace(/_rels\/.*$/,"")+S[m][1];x=S[m][2]}else{w="xl/worksheets/sheet"+(m+1-_)+"."+E;w=w.replace(/sheet0\./,"sheet.")}k=w.replace(/^(.*)(\/)([^\/]*)$/,"$1/_rels/$3.rels");if(r&&r.sheets!=null)switch(typeof r.sheets){case"number":if(m!=r.sheets)continue e;break;case"string":if(u.SheetNames[m].toLowerCase()!=r.sheets.toLowerCase())continue e;break;default:if(Array.isArray&&Array.isArray(r.sheets)){var O=false;for(var R=0;R!=r.sheets.length;++R){if(typeof r.sheets[R]=="number"&&r.sheets[R]==m)O=1;if(typeof r.sheets[R]=="string"&&r.sheets[R].toLowerCase()==u.SheetNames[m].toLowerCase())O=1}if(!O)continue e};}Gb(e,w,k,u.SheetNames[m],m,b,s,x,r,h,o,l)}p={Directory:n,Workbook:h,Props:u,Custprops:v,Deps:g,Sheets:s,SheetNames:u.SheetNames,Strings:xd,Styles:l,Themes:o,SSF:br(X)};if(r&&r.bookFiles){if(e.files){p.keys=a;p.files=e.files}else{p.keys=[];p.files={};e.FullPaths.forEach(function(r,t){r=r.replace(/^Root Entry[\/]/,"");p.keys.push(r);p.files[r]=e.FileIndex[t]})}}if(r&&r.bookVBA){if(n.vba.length>0)p.vbaraw=Or(e,jb(n.vba[0]),true);else if(n.defaults&&n.defaults.bin===bh)p.vbaraw=Or(e,"xl/vbaProject.bin",true)}return p}function $b(e,r){var t=r||{};var a="Workbook",n=Ke.find(e,a);try{a="/!DataSpaces/Version";n=Ke.find(e,a);if(!n||!n.content)throw new Error("ECMA-376 Encrypted file missing "+a);Ko(n.content);a="/!DataSpaces/DataSpaceMap";n=Ke.find(e,a);if(!n||!n.content)throw new Error("ECMA-376 Encrypted file missing "+a);var i=qo(n.content);if(i.length!==1||i[0].comps.length!==1||i[0].comps[0].t!==0||i[0].name!=="StrongEncryptionDataSpace"||i[0].comps[0].v!=="EncryptedPackage")throw new Error("ECMA-376 Encrypted file bad "+a);a="/!DataSpaces/DataSpaceInfo/StrongEncryptionDataSpace";n=Ke.find(e,a);if(!n||!n.content)throw new Error("ECMA-376 Encrypted file missing "+a);var s=Zo(n.content);if(s.length!=1||s[0]!="StrongEncryptionTransform")throw new Error("ECMA-376 Encrypted file bad "+a);a="/!DataSpaces/TransformInfo/StrongEncryptionTransform/!Primary";n=Ke.find(e,a);if(!n||!n.content)throw new Error("ECMA-376 Encrypted file missing "+a);el(n.content)}catch(f){}a="/EncryptionInfo";n=Ke.find(e,a);if(!n||!n.content)throw new Error("ECMA-376 Encrypted file missing "+a);var o=al(n.content);a="/EncryptedPackage";n=Ke.find(e,a);if(!n||!n.content)throw new Error("ECMA-376 Encrypted file missing "+a);if(o[0]==4&&typeof decrypt_agile!=="undefined")return decrypt_agile(o[1],n.content,t.password||"",t);if(o[0]==2&&typeof decrypt_std76!=="undefined")return decrypt_std76(o[1],n.content,t.password||"",t);throw new Error("File is password-protected")}function Yb(e,r){if(r.bookType=="ods")return tb(e,r);if(r.bookType=="numbers")return Ub(e,r);if(r.bookType=="xlsb")return Kb(e,r);return Jb(e,r)}function Kb(e,r){ah=1024;if(e&&!e.SSF){e.SSF=br(X)}if(e&&e.SSF){ze();He(e.SSF);r.revssf=nr(e.SSF);r.revssf[e.SSF[65535]]=0;r.ssf=e.SSF}r.rels={};r.wbrels={};r.Strings=[];r.Strings.Count=0;r.Strings.Unique=0;if(Rd)r.revStrings=new Map;else{r.revStrings={};r.revStrings.foo=[];delete r.revStrings.foo}var t=r.bookType=="xlsb"?"bin":"xml";var a=Th.indexOf(r.bookType)>-1;var n=Yn();Hb(r=r||{});var i=Fr();var s="",f=0;r.cellXfs=[];Fd(r.cellXfs,{},{revssf:{General:0}});if(!e.Props)e.Props={};s="docProps/core.xml";Dr(i,s,di(e.Props,r));n.coreprops.push(s);ri(r.rels,2,s,qn.CORE_PROPS);s="docProps/app.xml";if(e.Props&&e.Props.SheetNames){}else if(!e.Workbook||!e.Workbook.Sheets)e.Props.SheetNames=e.SheetNames;else{var o=[];for(var l=0;l<e.SheetNames.length;++l)if((e.Workbook.Sheets[l]||{}).Hidden!=2)o.push(e.SheetNames[l]);e.Props.SheetNames=o}e.Props.Worksheets=e.Props.SheetNames.length;Dr(i,s,bi(e.Props,r));n.extprops.push(s);ri(r.rels,3,s,qn.EXT_PROPS);if(e.Custprops!==e.Props&&rr(e.Custprops||{}).length>0){s="docProps/custom.xml";Dr(i,s,Ti(e.Custprops,r));n.custprops.push(s);ri(r.rels,4,s,qn.CUST_PROPS)}for(f=1;f<=e.SheetNames.length;++f){var c={"!id":{}};var h=e.Sheets[e.SheetNames[f-1]];var u=(h||{})["!type"]||"sheet";switch(u){case"chart":;default:s="xl/worksheets/sheet"+f+"."+t;Dr(i,s,_g(f-1,s,r,e,c));n.sheets.push(s);ri(r.wbrels,-1,"worksheets/sheet"+f+"."+t,qn.WS[0]);}if(h){var d=h["!comments"];var v=false;var p="";if(d&&d.length>0){p="xl/comments"+f+"."+t;Dr(i,p,Ig(d,p,r));n.comments.push(p);ri(c,-1,"../comments"+f+"."+t,qn.CMNT);v=true}if(h["!legacy"]){if(v)Dr(i,"xl/drawings/vmlDrawing"+f+".vml",nh(f,h["!comments"]))}delete h["!comments"];delete h["!legacy"]}if(c["!id"].rId1)Dr(i,Zn(s),ei(c))}if(r.Strings!=null&&r.Strings.length>0){s="xl/sharedStrings."+t;Dr(i,s,Rg(r.Strings,s,r));n.strs.push(s);ri(r.wbrels,-1,"sharedStrings."+t,qn.SST)}s="xl/workbook."+t;Dr(i,s,Sg(e,s,r));n.workbooks.push(s);ri(r.rels,1,s,qn.WB);s="xl/theme/theme1.xml";Dr(i,s,Ic(e.Themes,r));n.themes.push(s);ri(r.wbrels,-1,"theme/theme1.xml",qn.THEME);s="xl/styles."+t;Dr(i,s,Og(e,s,r));n.styles.push(s);ri(r.wbrels,-1,"styles."+t,qn.STY);if(e.vbaraw&&a){s="xl/vbaProject.bin";Dr(i,s,e.vbaraw);n.vba.push(s);ri(r.wbrels,-1,"vbaProject.bin",qn.VBA)}s="xl/metadata."+t;Dr(i,s,Ng(s));n.metadata.push(s);ri(r.wbrels,-1,"metadata."+t,qn.XLMETA);Dr(i,"[Content_Types].xml",Jn(n,r));Dr(i,"_rels/.rels",ei(r.rels));Dr(i,"xl/_rels/workbook."+t+".rels",ei(r.wbrels));delete r.revssf;delete r.ssf;return i}function Jb(e,r){ah=1024;if(e&&!e.SSF){e.SSF=br(X)}if(e&&e.SSF){ze();He(e.SSF);r.revssf=nr(e.SSF);r.revssf[e.SSF[65535]]=0;r.ssf=e.SSF}r.rels={};r.wbrels={};r.Strings=[];r.Strings.Count=0;r.Strings.Unique=0;if(Rd)r.revStrings=new Map;else{r.revStrings={};r.revStrings.foo=[];delete r.revStrings.foo}var t="xml";var a=Th.indexOf(r.bookType)>-1;var n=Yn();Hb(r=r||{});var i=Fr();var s="",f=0;r.cellXfs=[];Fd(r.cellXfs,{},{revssf:{General:0}});if(!e.Props)e.Props={};s="docProps/core.xml";Dr(i,s,di(e.Props,r));n.coreprops.push(s);ri(r.rels,2,s,qn.CORE_PROPS);s="docProps/app.xml";if(e.Props&&e.Props.SheetNames){}else if(!e.Workbook||!e.Workbook.Sheets)e.Props.SheetNames=e.SheetNames;else{var o=[];for(var l=0;l<e.SheetNames.length;++l)if((e.Workbook.Sheets[l]||{}).Hidden!=2)o.push(e.SheetNames[l]);e.Props.SheetNames=o}e.Props.Worksheets=e.Props.SheetNames.length;Dr(i,s,bi(e.Props,r));n.extprops.push(s);ri(r.rels,3,s,qn.EXT_PROPS);if(e.Custprops!==e.Props&&rr(e.Custprops||{}).length>0){s="docProps/custom.xml";Dr(i,s,Ti(e.Custprops,r));n.custprops.push(s);ri(r.rels,4,s,qn.CUST_PROPS)}var c=["SheetJ5"];r.tcid=0;for(f=1;f<=e.SheetNames.length;++f){var h={"!id":{}};var u=e.Sheets[e.SheetNames[f-1]];var d=(u||{})["!type"]||"sheet";switch(d){case"chart":;default:s="xl/worksheets/sheet"+f+"."+t;Dr(i,s,pv(f-1,r,e,h));n.sheets.push(s);ri(r.wbrels,-1,"worksheets/sheet"+f+"."+t,qn.WS[0]);}if(u){var v=u["!comments"];var p=false;var g="";if(v&&v.length>0){var m=false;v.forEach(function(e){e[1].forEach(function(e){if(e.T==true)m=true})});if(m){g="xl/threadedComments/threadedComment"+f+"."+t;Dr(i,g,lh(v,c,r));n.threadedcomments.push(g);ri(h,-1,"../threadedComments/threadedComment"+f+"."+t,qn.TCMNT)}g="xl/comments"+f+"."+t;Dr(i,g,fh(v,r));n.comments.push(g);ri(h,-1,"../comments"+f+"."+t,qn.CMNT);p=true}if(u["!legacy"]){if(p)Dr(i,"xl/drawings/vmlDrawing"+f+".vml",nh(f,u["!comments"]))}delete u["!comments"];delete u["!legacy"]}if(h["!id"].rId1)Dr(i,Zn(s),ei(h))}if(r.Strings!=null&&r.Strings.length>0){s="xl/sharedStrings."+t;Dr(i,s,Ho(r.Strings,r));n.strs.push(s);ri(r.wbrels,-1,"sharedStrings."+t,qn.SST)}s="xl/workbook."+t;Dr(i,s,rg(e,r));n.workbooks.push(s);ri(r.rels,1,s,qn.WB);s="xl/theme/theme1.xml";Dr(i,s,Ic(e.Themes,r));n.themes.push(s);ri(r.wbrels,-1,"theme/theme1.xml",qn.THEME);s="xl/styles."+t;Dr(i,s,$l(e,r));n.styles.push(s);ri(r.wbrels,-1,"styles."+t,qn.STY);if(e.vbaraw&&a){s="xl/vbaProject.bin";Dr(i,s,e.vbaraw);n.vba.push(s);ri(r.wbrels,-1,"vbaProject.bin",qn.VBA)}s="xl/metadata."+t;Dr(i,s,Jc());n.metadata.push(s);ri(r.wbrels,-1,"metadata."+t,qn.XLMETA);if(c.length>1){s="xl/persons/person.xml";Dr(i,s,hh(c,r));n.people.push(s);ri(r.wbrels,-1,"persons/person.xml",qn.PEOPLE)}Dr(i,"[Content_Types].xml",Jn(n,r));Dr(i,"_rels/.rels",ei(r.rels));Dr(i,"xl/_rels/workbook."+t+".rels",ei(r.wbrels));delete r.revssf;delete r.ssf;return i}function qb(e,r){var t="";switch((r||{}).type||"base64"){case"buffer":return[e[0],e[1],e[2],e[3],e[4],e[5],e[6],e[7]];case"base64":t=k(e.slice(0,12));break;case"binary":t=e;break;case"array":return[e[0],e[1],e[2],e[3],e[4],e[5],e[6],e[7]];default:throw new Error("Unrecognized type "+(r&&r.type||"undefined"));}return[t.charCodeAt(0),t.charCodeAt(1),t.charCodeAt(2),t.charCodeAt(3),t.charCodeAt(4),t.charCodeAt(5),t.charCodeAt(6),t.charCodeAt(7)]}function Zb(e,r){if(Ke.find(e,"EncryptedPackage"))return $b(e,r);return vm(e,r)}function Qb(e,r){var t,a=e;var n=r||{};if(!n.type)n.type=T&&Buffer.isBuffer(e)?"buffer":"base64";t=Pr(a,n);return Xb(t,n)}function ew(e,r){var t=0;e:while(t<e.length)switch(e.charCodeAt(t)){case 10:;case 13:;case 32:++t;break;case 60:return jg(e.slice(t),r);default:break e;}return So.to_workbook(e,r)}function rw(e,r){var t="",a=qb(e,r);switch(r.type){case"base64":t=k(e);break;case"binary":t=e;break;case"buffer":t=e.toString("binary");break;case"array":t=mr(e);break;default:throw new Error("Unrecognized type "+r.type);}if(a[0]==239&&a[1]==187&&a[2]==191)t=lt(t);r.type="binary";return ew(t,r)}function tw(e,r){var t=e;if(r.type=="base64")t=k(t);t=a.utils.decode(1200,t.slice(2),"str");r.type="binary";return ew(t,r)}function aw(e){return!e.match(/[^\x00-\x7F]/)?e:ct(e)}function nw(e,r,t,a){if(a){t.type="string";return So.to_workbook(e,t)}return So.to_workbook(r,t)}function iw(e,r){l();var t=r||{};if(typeof ArrayBuffer!=="undefined"&&e instanceof ArrayBuffer)return iw(new Uint8Array(e),(t=br(t),t.type="array",t));if(typeof Uint8Array!=="undefined"&&e instanceof Uint8Array&&!t.type)t.type=typeof Deno!=="undefined"?"buffer":"array";var a=e,n=[0,0,0,0],i=false;if(t.cellStyles){t.cellNF=true;t.sheetStubs=true}Od={};if(t.dateNF)Od.dateNF=t.dateNF;if(!t.type)t.type=T&&Buffer.isBuffer(e)?"buffer":"base64";if(t.type=="file"){t.type=T?"buffer":"binary";a=er(e);if(typeof Uint8Array!=="undefined"&&!T)t.type="array"}if(t.type=="string"){i=true;t.type="binary";t.codepage=65001;a=aw(e)}if(t.type=="array"&&typeof Uint8Array!=="undefined"&&e instanceof Uint8Array&&typeof ArrayBuffer!=="undefined"){var s=new ArrayBuffer(3),f=new Uint8Array(s);f.foo="bar";if(!f.foo){t=br(t);t.type="array";return iw(O(a),t)}}switch((n=qb(a,t))[0]){case 208:if(n[1]===207&&n[2]===17&&n[3]===224&&n[4]===161&&n[5]===177&&n[6]===26&&n[7]===225)return Zb(Ke.read(a,t),t);break;case 9:if(n[1]<=8)return vm(a,t);break;case 60:return jg(a,t);case 73:if(n[1]===73&&n[2]===42&&n[3]===0)throw new Error("TIFF Image File is not a spreadsheet");if(n[1]===68)return _o(a,t);break;case 84:if(n[1]===65&&n[2]===66&&n[3]===76)return Co.to_workbook(a,t);break;case 80:return n[1]===75&&n[2]<9&&n[3]<9?Qb(a,t):nw(e,a,t,i);case 239:return n[3]===60?jg(a,t):nw(e,a,t,i);case 255:if(n[1]===254){return tw(a,t)}else if(n[1]===0&&n[2]===2&&n[3]===0)return xo.to_workbook(a,t);break;case 0:if(n[1]===0){if(n[2]>=2&&n[3]===0)return xo.to_workbook(a,t);if(n[2]===0&&(n[3]===8||n[3]===9))return xo.to_workbook(a,t)}break;case 3:;case 131:;case 139:;case 140:return Ao.to_workbook(a,t);case 123:if(n[1]===92&&n[2]===114&&n[3]===116)return gl.to_workbook(a,t);break;case 10:;case 13:;case 32:return rw(a,t);case 137:if(n[1]===80&&n[2]===78&&n[3]===71)throw new Error("PNG Image File is not a spreadsheet");break;}if(To.indexOf(n[0])>-1&&n[2]<=12&&n[3]<=31)return Ao.to_workbook(a,t);return nw(e,a,t,i)}function sw(e,r){var t=r||{};t.type="file";return iw(e,t)}function fw(e,r){switch(r.type){case"base64":;case"binary":break;case"buffer":;case"array":r.type="";break;case"file":return Qe(r.file,Ke.write(e,{type:T?"buffer":""}));case"string":throw new Error("'string' output type invalid for '"+r.bookType+"' files");default:throw new Error("Unrecognized type "+r.type);}return Ke.write(e,r)}function ow(e,r){var t=br(r||{});var a=Yb(e,t);return cw(a,t)}function lw(e,r){var t=br(r||{});var a=Jb(e,t);return cw(a,t)}function cw(e,r){var t={};var a=T?"nodebuffer":typeof Uint8Array!=="undefined"?"array":"string";if(r.compression)t.compression="DEFLATE";if(r.password)t.type=a;else switch(r.type){case"base64":t.type="base64";break;case"binary":t.type="string";break;case"string":throw new Error("'string' output type invalid for '"+r.bookType+"' files");case"buffer":;case"file":t.type=a;break;default:throw new Error("Unrecognized type "+r.type);}var n=e.FullPaths?Ke.write(e,{fileType:"zip",type:{nodebuffer:"buffer",string:"binary"}[t.type]||t.type,compression:!!r.compression}):e.generate(t);if(typeof Deno!=="undefined"){if(typeof n=="string"){if(r.type=="binary"||r.type=="base64")return n;n=new Uint8Array(S(n))}}if(r.password&&typeof encrypt_agile!=="undefined")return fw(encrypt_agile(n,r.password),r);if(r.type==="file")return Qe(r.file,n);return r.type=="string"?lt(n):n}function hw(e,r){var t=r||{};var a=pm(e,t);return fw(a,t)}function uw(e,r,t){if(!t)t="";var a=t+e;switch(r.type){case"base64":return w(ct(a));case"binary":return ct(a);case"string":return e;case"file":return Qe(r.file,a,"utf8");case"buffer":{if(T)return A(a,"utf8");else if(typeof TextEncoder!=="undefined")return(new TextEncoder).encode(a);else return uw(a,{type:"binary"}).split("").map(function(e){return e.charCodeAt(0)})};}throw new Error("Unrecognized type "+r.type)}function dw(e,r){switch(r.type){case"base64":return w(e);case"binary":return e;case"string":return e;case"file":return Qe(r.file,e,"binary");case"buffer":{if(T)return A(e,"binary");else return e.split("").map(function(e){return e.charCodeAt(0)})};}throw new Error("Unrecognized type "+r.type)}function vw(e,r){switch(r.type){case"string":;case"base64":;case"binary":var t="";for(var a=0;a<e.length;++a)t+=String.fromCharCode(e[a]);return r.type=="base64"?w(t):r.type=="string"?lt(t):t;case"file":return Qe(r.file,e);case"buffer":return e;default:throw new Error("Unrecognized type "+r.type);}}function pw(e,r){l();Zp(e);var t=br(r||{});if(t.cellStyles){t.cellNF=true;t.sheetStubs=true}if(t.type=="array"){t.type="binary";var a=pw(e,t);t.type="array";return S(a)}return lw(e,t)}function gw(e,r){l();Zp(e);var t=br(r||{});if(t.cellStyles){t.cellNF=true;t.sheetStubs=true}if(t.type=="array"){t.type="binary";var a=gw(e,t);t.type="array";return S(a)}var n=0;if(t.sheet){if(typeof t.sheet=="number")n=t.sheet;else n=e.SheetNames.indexOf(t.sheet);if(!e.SheetNames[n])throw new Error("Sheet not found: "+t.sheet+" : "+typeof t.sheet)}switch(t.bookType||"xlsb"){case"xml":;case"xlml":return uw(nm(e,t),t);case"slk":;case"sylk":return uw(Eo.from_sheet(e.Sheets[e.SheetNames[n]],t),t);case"htm":;case"html":return uw(Vm(e.Sheets[e.SheetNames[n]],t),t);case"txt":return dw(Sw(e.Sheets[e.SheetNames[n]],t),t);case"csv":return uw(yw(e.Sheets[e.SheetNames[n]],t),t,"\ufeff");case"dif":return uw(Co.from_sheet(e.Sheets[e.SheetNames[n]],t),t);case"dbf":return vw(Ao.from_sheet(e.Sheets[e.SheetNames[n]],t),t);case"prn":return uw(So.from_sheet(e.Sheets[e.SheetNames[n]],t),t);case"rtf":return uw(gl.from_sheet(e.Sheets[e.SheetNames[n]],t),t);case"eth":return uw(yo.from_sheet(e.Sheets[e.SheetNames[n]],t),t);case"fods":return uw(tb(e,t),t);case"wk1":return vw(xo.sheet_to_wk1(e.Sheets[e.SheetNames[n]],t),t);case"wk3":return vw(xo.book_to_wk3(e,t),t);case"biff2":if(!t.biff)t.biff=2;case"biff3":if(!t.biff)t.biff=3;case"biff4":if(!t.biff)t.biff=4;return vw(Lm(e,t),t);case"biff5":if(!t.biff)t.biff=5;case"biff8":;case"xla":;case"xls":if(!t.biff)t.biff=8;return hw(e,t);case"xlsx":;case"xlsm":;case"xlam":;case"xlsb":;case"numbers":;case"ods":return ow(e,t);default:throw new Error("Unrecognized bookType |"+t.bookType+"|");}}function mw(e){if(e.bookType)return;var r={xls:"biff8",htm:"html",slk:"sylk",socialcalc:"eth",Sh33tJS:"WTF"};var t=e.file.slice(e.file.lastIndexOf(".")).toLowerCase();if(t.match(/^\.[a-z]+$/))e.bookType=t.slice(1);e.bookType=r[e.bookType]||e.bookType}function bw(e,r,t){var a=t||{};a.type="file";a.file=r;mw(a);return gw(e,a)}function ww(e,r,t){var a=t||{};a.type="file";a.file=r;mw(a);return pw(e,a)}function kw(e,r,t,a){var n=t||{};n.type="file";n.file=e;mw(n);n.type="buffer";var i=a;if(!(i instanceof Function))i=t;return Je.writeFile(e,gw(r,n),i)}function Tw(e,r,t,a,n,i,s,f){var o=Ta(t);var l=f.defval,c=f.raw||!Object.prototype.hasOwnProperty.call(f,"raw");var h=true;var u=n===1?[]:{};if(n!==1){if(Object.defineProperty)try{Object.defineProperty(u,"__rowNum__",{value:t,enumerable:false})}catch(d){u.__rowNum__=t}else u.__rowNum__=t}if(!s||e[t])for(var v=r.s.c;v<=r.e.c;++v){var p=s?e[t][v]:e[a[v]+o];if(p===undefined||p.t===undefined){if(l===undefined)continue;if(i[v]!=null){u[i[v]]=l}continue}var g=p.v;switch(p.t){case"z":if(g==null)break;continue;case"e":g=g==0?null:void 0;break;case"s":;case"d":;case"b":;case"n":break;default:throw new Error("unrecognized type "+p.t);}if(i[v]!=null){if(g==null){if(p.t=="e"&&g===null)u[i[v]]=null;else if(l!==undefined)u[i[v]]=l;else if(c&&g===null)u[i[v]]=null;else continue}else{u[i[v]]=c&&(p.t!=="n"||p.t==="n"&&f.rawNumbers!==false)?g:Pa(p,g,f)}if(g!=null)h=false}}return{row:u,isempty:h}}function Aw(e,r){if(e==null||e["!ref"]==null)return[];var t={t:"n",v:0},a=0,n=1,i=[],s=0,f="";var o={s:{r:0,c:0},e:{r:0,c:0}};var l=r||{};var c=l.range!=null?l.range:e["!ref"];if(l.header===1)a=1;else if(l.header==="A")a=2;else if(Array.isArray(l.header))a=3;else if(l.header==null)a=0;switch(typeof c){case"string":o=Da(c);break;case"number":o=Da(e["!ref"]);o.s.r=c;break;default:o=c;}if(a>0)n=0;var h=Ta(o.s.r);var u=[];var d=[];var v=0,p=0;var g=Array.isArray(e);var m=o.s.r,b=0;var w={};if(g&&!e[m])e[m]=[];var k=l.skipHidden&&e["!cols"]||[];var T=l.skipHidden&&e["!rows"]||[];for(b=o.s.c;b<=o.e.c;++b){if((k[b]||{}).hidden)continue;u[b]=ya(b);t=g?e[m][b]:e[u[b]+h];switch(a){case 1:i[b]=b-o.s.c;break;case 2:i[b]=u[b];break;case 3:i[b]=l.header[b-o.s.c];break;default:if(t==null)t={w:"__EMPTY",t:"s"};f=s=Pa(t,null,l);p=w[s]||0;if(!p)w[s]=1;else{do{f=s+"_"+p++}while(w[f]);w[s]=p;w[f]=1}i[b]=f;}}for(m=o.s.r+n;m<=o.e.r;++m){if((T[m]||{}).hidden)continue;var A=Tw(e,o,m,u,a,i,g,l);if(A.isempty===false||(a===1?l.blankrows!==false:!!l.blankrows))d[v++]=A.row}d.length=v;return d}var Ew=/"/g;function Cw(e,r,t,a,n,i,s,f){var o=true;var l=[],c="",h=Ta(t);for(var u=r.s.c;u<=r.e.c;++u){if(!a[u])continue;var d=f.dense?(e[t]||[])[u]:e[a[u]+h];if(d==null)c="";else if(d.v!=null){o=false;c=""+(f.rawNumbers&&d.t=="n"?d.v:Pa(d,null,f));for(var v=0,p=0;v!==c.length;++v)if((p=c.charCodeAt(v))===n||p===i||p===34||f.forceQuotes){c='"'+c.replace(Ew,'""')+'"';break}if(c=="ID")c='"ID"'}else if(d.f!=null&&!d.F){o=false;c="="+d.f;if(c.indexOf(",")>=0)c='"'+c.replace(Ew,'""')+'"'}else c="";l.push(c)}if(f.blankrows===false&&o)return null;return l.join(s)}function yw(e,r){var t=[];var a=r==null?{}:r;if(e==null||e["!ref"]==null)return"";var n=Da(e["!ref"]);var i=a.FS!==undefined?a.FS:",",s=i.charCodeAt(0);var f=a.RS!==undefined?a.RS:"\n",o=f.charCodeAt(0);var l=new RegExp((i=="|"?"\\|":i)+"+$");var c="",h=[];a.dense=Array.isArray(e);var u=a.skipHidden&&e["!cols"]||[];var d=a.skipHidden&&e["!rows"]||[];for(var v=n.s.c;v<=n.e.c;++v)if(!(u[v]||{}).hidden)h[v]=ya(v);var p=0;for(var g=n.s.r;g<=n.e.r;++g){if((d[g]||{}).hidden)continue;c=Cw(e,n,g,h,s,o,i,a);if(c==null){continue}if(a.strip)c=c.replace(l,"");if(c||a.blankrows!==false)t.push((p++?f:"")+c)}delete a.dense;return t.join("")}function Sw(e,r){if(!r)r={};r.FS="\t";r.RS="\n";var t=yw(e,r);if(typeof a=="undefined"||r.type=="string")return t;var n=a.utils.encode(1200,t,"str");return String.fromCharCode(255)+String.fromCharCode(254)+n}function _w(e){var r="",t,a="";if(e==null||e["!ref"]==null)return[];var n=Da(e["!ref"]),i="",s=[],f;
 var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.s.r;c<=n.e.r;++c){i=Ta(c);for(f=n.s.c;f<=n.e.c;++f){r=s[f]+i;t=l?(e[c]||[])[f]:e[r];a="";if(t===undefined)continue;else if(t.F!=null){r=t.F;if(!t.f)continue;a=t.f;if(r.indexOf(":")==-1)r=r+":"+r}if(t.f!=null)a=t.f;else if(t.t=="z")continue;else if(t.t=="n"&&t.v!=null)a=""+t.v;else if(t.t=="b")a=t.v?"TRUE":"FALSE";else if(t.w!==undefined)a="'"+t.w;else if(t.v===undefined)continue;else if(t.t=="s")a="'"+t.v;else a=""+t.v;o[o.length]=r+"="+a}}return o}function xw(e,r,t){var a=t||{};var n=+!a.skipHeader;var i=e||{};var s=0,f=0;if(i&&a.origin!=null){if(typeof a.origin=="number")s=a.origin;else{var o=typeof a.origin=="string"?Oa(a.origin):a.origin;s=o.r;f=o.c}}var l;var c={s:{c:0,r:0},e:{c:f,r:s+r.length-1+n}};if(i["!ref"]){var h=Da(i["!ref"]);c.e.c=Math.max(c.e.c,h.e.c);c.e.r=Math.max(c.e.r,h.e.r);if(s==-1){s=h.e.r+1;c.e.r=s+r.length-1+n}}else{if(s==-1){s=0;c.e.r=r.length-1+n}}var u=a.header||[],d=0;r.forEach(function(e,r){rr(e).forEach(function(t){if((d=u.indexOf(t))==-1)u[d=u.length]=t;var o=e[t];var c="z";var h="";var v=Ra({c:f+d,r:s+r+n});l=Rw(i,v);if(o&&typeof o==="object"&&!(o instanceof Date)){i[v]=o}else{if(typeof o=="number")c="n";else if(typeof o=="boolean")c="b";else if(typeof o=="string")c="s";else if(o instanceof Date){c="d";if(!a.cellDates){c="n";o=fr(o)}h=a.dateNF||X[14]}else if(o===null&&a.nullError){c="e";o=0}if(!l)i[v]=l={t:c,v:o};else{l.t=c;l.v=o;delete l.w;delete l.R;if(h)l.z=h}if(h)l.z=h}})});c.e.c=Math.max(c.e.c,f+u.length-1);var v=Ta(s);if(n)for(d=0;d<u.length;++d)i[ya(d+f)+v]={t:"s",v:u[d]};i["!ref"]=Na(c);return i}function Ow(e,r){return xw(null,e,r)}function Rw(e,r,t){if(typeof r=="string"){if(Array.isArray(e)){var a=Oa(r);if(!e[a.r])e[a.r]=[];return e[a.r][a.c]||(e[a.r][a.c]={t:"z"})}return e[r]||(e[r]={t:"z"})}if(typeof r!="number")return Rw(e,Ra(r));return Rw(e,Ra({r:r,c:t||0}))}function Iw(e,r){if(typeof r=="number"){if(r>=0&&e.SheetNames.length>r)return r;throw new Error("Cannot find sheet # "+r)}else if(typeof r=="string"){var t=e.SheetNames.indexOf(r);if(t>-1)return t;throw new Error("Cannot find sheet name |"+r+"|")}else throw new Error("Cannot find sheet |"+r+"|")}function Nw(){return{SheetNames:[],Sheets:{}}}function Dw(e,r,t,a){var n=1;if(!t)for(;n<=65535;++n,t=undefined)if(e.SheetNames.indexOf(t="Sheet"+n)==-1)break;if(!t||e.SheetNames.length>=65535)throw new Error("Too many worksheets");if(a&&e.SheetNames.indexOf(t)>=0){var i=t.match(/(^.*?)(\d+)$/);n=i&&+i[2]||0;var s=i&&i[1]||t;for(++n;n<=65535;++n)if(e.SheetNames.indexOf(t=s+n)==-1)break}Jp(t);if(e.SheetNames.indexOf(t)>=0)throw new Error("Worksheet with name |"+t+"| already exists!");e.SheetNames.push(t);e.Sheets[t]=r;return t}function Fw(e,r,t){if(!e.Workbook)e.Workbook={};if(!e.Workbook.Sheets)e.Workbook.Sheets=[];var a=Iw(e,r);if(!e.Workbook.Sheets[a])e.Workbook.Sheets[a]={};switch(t){case 0:;case 1:;case 2:break;default:throw new Error("Bad sheet visibility setting "+t);}e.Workbook.Sheets[a].Hidden=t}function Pw(e,r){e.z=r;return e}function Lw(e,r,t){if(!r){delete e.l}else{e.l={Target:r};if(t)e.l.Tooltip=t}return e}function Mw(e,r,t){return Lw(e,"#"+r,t)}function Uw(e,r,t){if(!e.c)e.c=[];e.c.push({t:r,a:t||"SheetJS"})}function Bw(e,r,t,a){var n=typeof r!="string"?r:Da(r);var i=typeof r=="string"?r:Na(r);for(var s=n.s.r;s<=n.e.r;++s)for(var f=n.s.c;f<=n.e.c;++f){var o=Rw(e,s,f);o.t="n";o.F=i;delete o.v;if(s==n.s.r&&f==n.s.c){o.f=t;if(a)o.D=true}}return e}var Ww={encode_col:ya,encode_row:Ta,encode_cell:Ra,encode_range:Na,decode_col:Ca,decode_row:ka,split_cell:xa,decode_cell:Oa,decode_range:Ia,format_cell:Pa,sheet_add_aoa:Ma,sheet_add_json:xw,sheet_add_dom:Gm,aoa_to_sheet:Ua,json_to_sheet:Ow,table_to_sheet:jm,table_to_book:Xm,sheet_to_csv:yw,sheet_to_txt:Sw,sheet_to_json:Aw,sheet_to_html:Vm,sheet_to_formulae:_w,sheet_to_row_object_array:Aw,sheet_get_cell:Rw,book_new:Nw,book_append_sheet:Dw,book_set_sheet_visibility:Fw,cell_set_number_format:Pw,cell_set_hyperlink:Lw,cell_set_internal_link:Mw,cell_add_comment:Uw,sheet_set_array_formula:Bw,consts:{SHEET_VISIBLE:0,SHEET_HIDDEN:1,SHEET_VERY_HIDDEN:2}};var Hw;function zw(e){Hw=e}function Vw(e,r){var t=Hw();var a=r==null?{}:r;if(e==null||e["!ref"]==null){t.push(null);return t}var n=Da(e["!ref"]);var i=a.FS!==undefined?a.FS:",",s=i.charCodeAt(0);var f=a.RS!==undefined?a.RS:"\n",o=f.charCodeAt(0);var l=new RegExp((i=="|"?"\\|":i)+"+$");var c="",h=[];a.dense=Array.isArray(e);var u=a.skipHidden&&e["!cols"]||[];var d=a.skipHidden&&e["!rows"]||[];for(var v=n.s.c;v<=n.e.c;++v)if(!(u[v]||{}).hidden)h[v]=ya(v);var p=n.s.r;var g=false,m=0;t._read=function(){if(!g){g=true;return t.push("\ufeff")}while(p<=n.e.r){++p;if((d[p-1]||{}).hidden)continue;c=Cw(e,n,p-1,h,s,o,i,a);if(c!=null){if(a.strip)c=c.replace(l,"");if(c||a.blankrows!==false)return t.push((m++?f:"")+c)}}return t.push(null)};return t}function Gw(e,r){var t=Hw();var a=r||{};var n=a.header!=null?a.header:Bm;var i=a.footer!=null?a.footer:Wm;t.push(n);var s=Ia(e["!ref"]);a.dense=Array.isArray(e);t.push(zm(e,s,a));var f=s.s.r;var o=false;t._read=function(){if(f>s.e.r){if(!o){o=true;t.push("</table>"+i)}return t.push(null)}while(f<=s.e.r){t.push(Um(e,s,f,a));++f;break}};return t}function jw(e,r){var t=Hw({objectMode:true});if(e==null||e["!ref"]==null){t.push(null);return t}var a={t:"n",v:0},n=0,i=1,s=[],f=0,o="";var l={s:{r:0,c:0},e:{r:0,c:0}};var c=r||{};var h=c.range!=null?c.range:e["!ref"];if(c.header===1)n=1;else if(c.header==="A")n=2;else if(Array.isArray(c.header))n=3;switch(typeof h){case"string":l=Da(h);break;case"number":l=Da(e["!ref"]);l.s.r=h;break;default:l=h;}if(n>0)i=0;var u=Ta(l.s.r);var d=[];var v=0;var p=Array.isArray(e);var g=l.s.r,m=0;var b={};if(p&&!e[g])e[g]=[];var w=c.skipHidden&&e["!cols"]||[];var k=c.skipHidden&&e["!rows"]||[];for(m=l.s.c;m<=l.e.c;++m){if((w[m]||{}).hidden)continue;d[m]=ya(m);a=p?e[g][m]:e[d[m]+u];switch(n){case 1:s[m]=m-l.s.c;break;case 2:s[m]=d[m];break;case 3:s[m]=c.header[m-l.s.c];break;default:if(a==null)a={w:"__EMPTY",t:"s"};o=f=Pa(a,null,c);v=b[f]||0;if(!v)b[f]=1;else{do{o=f+"_"+v++}while(b[o]);b[f]=v;b[o]=1}s[m]=o;}}g=l.s.r+i;t._read=function(){while(g<=l.e.r){if((k[g-1]||{}).hidden)continue;var r=Tw(e,l,g,d,n,s,p,c);++g;if(r.isempty===false||(n===1?c.blankrows!==false:!!c.blankrows)){t.push(r.row);return}}return t.push(null)};return t}var Xw={to_json:jw,to_html:Gw,to_csv:Vw,set_readable:zw};if(typeof vm!=="undefined")e.parse_xlscfb=vm;e.parse_zip=Xb;e.read=iw;e.readFile=sw;e.readFileSync=sw;e.write=gw;e.writeFile=bw;e.writeFileSync=bw;e.writeFileAsync=kw;e.utils=Ww;e.writeXLSX=pw;e.writeFileXLSX=ww;e.SSF=Ve;if(typeof Xw!=="undefined")e.stream=Xw;if(typeof Ke!=="undefined")e.CFB=Ke;if(typeof require!=="undefined"){var $w=undefined;if(($w||{}).Readable)zw($w.Readable)}}if(typeof exports!=="undefined")make_xlsx_lib(exports);else if(typeof module!=="undefined"&&module.exports)make_xlsx_lib(module.exports);else if(typeof define==="function"&&define.amd)define("xlsx",function(){if(!XLSX.version)make_xlsx_lib(XLSX);return XLSX});else make_xlsx_lib(XLSX);if(typeof window!=="undefined"&&!window.XLSX)try{window.XLSX=XLSX}catch(e){}
 </script>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<!-- Caratteri: caricati SENZA bloccare la pagina (media="print" finche' non arrivano).
+     Se internet manca o e' filtrato, l'app si apre subito con i caratteri di Windows. -->
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
 <style>
 /* ============================================================
    TEMA — tutti i colori dell'applicazione stanno qui dentro.
@@ -62,8 +64,8 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
   --text:#1e293b; --text-strong:#0f172a; --text-mid:#334155;
   --text-2:#475569; --text-3:#64748b; --text-muted:#94a3b8; --on-accent:#ffffff;
   /* barra in alto (scura in entrambi i temi) */
-  --topbar:#0f172a; --topbar-fg:#ffffff; --chip:#334155; --chip-fg-2:#e2e8f0;
-  --ver-bg:#1e3a5f; --ver-bd:#3b82f6; --ver-fg:#93c5fd; --ver-fg-2:#60a5fa;
+  --topbar:#0f172a; --chip:#334155; --chip-fg-2:#e2e8f0;
+  --ver-bg:#1e3a5f; --ver-fg:#93c5fd; --ver-fg-2:#60a5fa;
   /* schermate iniziali: sfondo sfumato */
   --hero-1:#0f172a; --hero-2:#1e293b;
   --hero-diff-1:#0c4a6e; --hero-diff-2:#0f172a;
@@ -74,7 +76,7 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
   --green:#16a34a; --green-h:#15803d; --teal:#059669;
   --red:#dc2626; --red-soft:#ef4444;
   --purple:#7c3aed; --purple-h:#6d28d9; --purple-br:#a78bfa;
-  --cyan:#0891b2; --cyan-h:#0e7490; --sky:#0369a1;
+  --cyan:#0891b2; --cyan-h:#0e7490;
   --amber:#f59e0b; --amber-d:#d97706; --amber-y:#eab308; --orange:#f97316;
   /* accenti come TESTO su superficie chiara */
   --blue-t:#2563eb; --blue-t2:#1d4ed8; --green-t:#16a34a; --teal-t:#059669;
@@ -113,8 +115,8 @@ html[data-theme="dark"]{
   --border:#31405a; --border-strong:#42536f; --border-soft:#26334a;
   --text:#e2e8f0; --text-strong:#f1f5f9; --text-mid:#cbd5e1;
   --text-2:#b4c0d3; --text-3:#94a3b8; --text-muted:#93a3ba; --on-accent:#ffffff;
-  --topbar:#0b1220; --topbar-fg:#e2e8f0; --chip:#2b3a52; --chip-fg-2:#e2e8f0;
-  --ver-bg:#17304f; --ver-bd:#3b82f6; --ver-fg:#93c5fd; --ver-fg-2:#60a5fa;
+  --topbar:#0b1220; --chip:#2b3a52; --chip-fg-2:#e2e8f0;
+  --ver-bg:#17304f; --ver-fg:#93c5fd; --ver-fg-2:#60a5fa;
   --hero-1:#0b1220; --hero-2:#16202f;
   --hero-diff-1:#0a3550; --hero-diff-2:#0b1220;
   --hero-merge-1:#2b0752; --hero-merge-2:#0b1220;
@@ -123,7 +125,7 @@ html[data-theme="dark"]{
   --green:#158f42; --green-h:#15803d; --teal:#0c9c6d;
   --red:#dc4444; --red-soft:#ef4444;
   --purple:#7442e8; --purple-h:#7c3aed; --purple-br:#a78bfa;
-  --cyan:#0b83a3; --cyan-h:#0e7490; --sky:#0284c7;
+  --cyan:#0b83a3; --cyan-h:#0e7490;
   --amber:#f59e0b; --amber-d:#d97706; --amber-y:#eab308; --orange:#fb923c;
   --blue-t:#93c5fd; --blue-t2:#93c5fd; --green-t:#86efac; --teal-t:#5eead4;
   --green-t2:#86efac; --red-t:#fca5a5; --purple-t:#c4b5fd; --sky-t:#7dd3fc;
@@ -224,8 +226,6 @@ thead tr.sub th{background:var(--surface-3);font-size:10px}
 .cell-edit{position:relative;z-index:4}
 .cell-edit .cell-input{position:absolute;top:0;left:0;box-shadow:0 6px 18px var(--shadow)}
 .cell-input{width:100%;min-height:28px;max-height:90px;border-radius:4px;padding:3px 6px;font-size:12px;font-family:'JetBrains Mono','Cascadia Mono',Consolas,monospace;outline:none;background:var(--surface);resize:none;overflow-y:auto;line-height:1.4}
-.version-badge{display:inline-flex;align-items:center;gap:5px;background:var(--ver-bg);border:1px solid var(--blue-br);border-radius:6px;padding:3px 10px;font-size:11px;font-weight:700;color:var(--ver-fg);white-space:nowrap}
-.version-badge span{color:var(--ver-fg-2);font-family:'JetBrains Mono','Cascadia Mono',Consolas,monospace}
 .update-banner{display:none;position:fixed;top:0;left:0;right:0;z-index:99999;background:linear-gradient(135deg,var(--blue-deep),var(--purple));color:var(--on-accent);padding:10px 20px;font-size:13px;font-weight:600;text-align:center;box-shadow:0 4px 20px var(--shadow);animation:slideDown .4s ease}
 @keyframes slideDown{from{transform:translateY(-100%)}to{transform:translateY(0)}}
 .update-banner a{color:var(--tint-amber-3);text-decoration:underline;cursor:pointer;margin-left:8px}
@@ -341,17 +341,6 @@ tr:focus-within .row-del-btn{opacity:1} /* visibile anche quando il cursore dell
 .merge-file-item .mf-meta{font-size:11px;color:var(--text-3);white-space:nowrap}
 .merge-file-item .mf-del{border:none;background:none;cursor:pointer;color:var(--text-muted);font-size:16px;line-height:1;padding:0 2px;flex-shrink:0}
 .merge-file-item .mf-del:hover{color:var(--red-soft)}
-.conflict-card{border:1px solid var(--border);border-radius:10px;margin-bottom:14px;overflow:hidden}
-.conflict-card-hdr{padding:10px 14px;background:var(--surface-2);display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border-soft)}
-.conflict-card-hdr .cc-title{font-size:13px;font-weight:700;color:var(--text-strong)}
-.conflict-card-hdr .cc-badge{font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px}
-.conflict-options{display:flex;gap:0;flex-wrap:wrap}
-.conflict-opt{flex:1;min-width:140px;padding:10px 12px;cursor:pointer;border:none;background:var(--surface);text-align:left;font-size:12px;border-right:1px solid var(--border-soft);border-top:1px solid var(--border-soft);transition:.15s;display:flex;flex-direction:column;gap:3px}
-.conflict-opt:last-child{border-right:none}
-.conflict-opt:hover{background:var(--surface-2)}
-.conflict-opt.chosen{background:var(--tint-blue-2);box-shadow:inset 0 -2px 0 var(--blue)}
-.conflict-opt .co-file{font-size:10px;font-weight:700;color:var(--text-3)}
-.conflict-opt .co-val{font-size:12px;color:var(--text-strong);font-family:'JetBrains Mono','Cascadia Mono',Consolas,monospace;word-break:break-all}
 .toast{position:fixed;bottom:20px;right:20px;background:var(--green);color:var(--on-accent);padding:12px 20px;border-radius:8px;font-size:13px;font-weight:600;box-shadow:0 8px 24px var(--shadow);z-index:1000;transition:opacity .3s,transform .3s}
 .toast.hidden{opacity:0;transform:translateY(10px);pointer-events:none}
 .loading-overlay{position:fixed;inset:0;background:var(--veil-strong);display:flex;align-items:center;justify-content:center;z-index:9999;flex-direction:column;gap:16px;color:var(--on-accent);font-size:16px;font-weight:600}
@@ -402,7 +391,7 @@ tr:focus-within .row-del-btn{opacity:1} /* visibile anche quando il cursore dell
     <div style="font-size:40px;margin-bottom:16px">⚙️</div>
     <h1>TIA Portal Text List Editor</h1>
     <p style="margin-bottom:6px">Carica il file Excel esportato dal TIA Portal.<br>Dopo il caricamento puoi scegliere quali elenchi aprire.</p>
-    <p style="font-size:12px;color:var(--text-3);margin-bottom:18px">versione app: <span style="font-family:'JetBrains Mono','Cascadia Mono',Consolas,monospace;color:var(--ver-fg-2)" id="appVerLabel">v5.22</span> &nbsp;·&nbsp; <button onclick="openHelp()" style="background:none;border:none;color:var(--ver-fg-2);cursor:pointer;font-size:12px;text-decoration:underline">❓ Manuale & Changelog</button> &nbsp;·&nbsp; <button class="btn-tema" onclick="toggleTema()" title="Tema chiaro / scuro" style="border:none;border-radius:6px;cursor:pointer;padding:3px 9px">☀️</button></p>
+    <p style="font-size:12px;color:var(--text-3);margin-bottom:18px">versione app: <span style="font-family:'JetBrains Mono','Cascadia Mono',Consolas,monospace;color:var(--ver-fg-2)" id="appVerLabel">v5.23</span> &nbsp;·&nbsp; <button onclick="openHelp()" style="background:none;border:none;color:var(--ver-fg-2);cursor:pointer;font-size:12px;text-decoration:underline">❓ Manuale & Changelog</button> &nbsp;·&nbsp; <button class="btn-tema" onclick="toggleTema()" title="Tema chiaro / scuro" style="border:none;border-radius:6px;cursor:pointer;padding:3px 9px">☀️</button></p>
     <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap">
       <label class="upload-btn">📂 Carica Export.xlsx<input type="file" accept=".xlsx,.xls" id="fileInput" style="display:none"></label>
       <button class="upload-btn" style="background:var(--cyan);box-shadow:0 4px 12px rgba(8,145,178,.35)" onclick="showDiffUploadScreen()">🔀 Confronta due file</button>
@@ -505,7 +494,7 @@ tr:focus-within .row-del-btn{opacity:1} /* visibile anche quando il cursore dell
       </div>
       <div style="width:1px;height:20px;background:var(--border)"></div>
       <!-- Search by list name -->
-      <input id="mergeSearchList" type="text" placeholder="🔍 Filtra per elenco..." oninput="_mergeConflictPage=0;renderConflictBody()"
+      <input id="mergeSearchList" type="text" placeholder="🔍 Filtra per elenco..." oninput="renderConflictBody()"
         style="padding:4px 10px;border:1px solid var(--border);border-radius:6px;font-size:11px;outline:none;min-width:180px;background:var(--surface)">
       <div style="display:flex;gap:4px;align-items:center">
         <span style="font-size:11px;font-weight:600;color:var(--text-3);margin-right:2px">Lingua:</span>
@@ -551,7 +540,7 @@ tr:focus-within .row-del-btn{opacity:1} /* visibile anche quando il cursore dell
       <span style="font-size:20px">📊</span><span class="topbar-title">Vista insieme</span>
       <span class="badge badge-file" id="compareFileLabel"></span>
       <span class="badge badge-changes" id="compareChangesBadge" style="display:none"></span>
-      <div class="version-badge">🏷 <span id="versionDisplayC">—</span></div>
+
     </div>
     <div class="lang-buttons" id="compareLangButtons"></div>
     <div class="topbar-actions">
@@ -592,7 +581,7 @@ tr:focus-within .row-del-btn{opacity:1} /* visibile anche quando il cursore dell
       <span class="topbar-title">TIA Text Editor</span>
       <span class="badge badge-file" id="fileLabel"></span>
       <span class="badge badge-changes" id="changesBadge" style="display:none"></span>
-      <div class="version-badge">🏷 <span id="versionDisplay">—</span></div>
+
     </div>
     <div class="lang-buttons" id="langButtons"></div>
     <div class="topbar-actions">
@@ -632,7 +621,7 @@ tr:focus-within .row-del-btn{opacity:1} /* visibile anche quando il cursore dell
       <span class="badge" style="background:var(--teal);color:var(--on-accent);max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" id="diffBadgeB"></span>
       <span class="badge badge-changes" id="diffDiffBadge" style="display:none"></span>
       <span class="badge" style="background:var(--amber);color:var(--on-amber);display:none" id="diffChangesBadge"></span>
-      <div class="version-badge">🏷 <span id="versionDisplayD">—</span></div>
+
     </div>
     <div class="lang-buttons" id="diffLangButtons"></div>
     <div class="topbar-actions">
@@ -786,6 +775,8 @@ function langSolid(l){return 'var(--lang-'+langTinta(l)+')';}    // fondi e bord
 // Confronto "logico" fra testi: una differenza di sole terminazioni di riga
 // (CRLF vs LF) non e' una modifica reale, non va segnalata come differenza.
 function normNL(s){return String(s??'').replace(/\r\n/g,'\n');}
+// Rende innocuo un testo prima di metterlo dentro la pagina (nomi di elenchi e di file).
+function escHtml(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 function sameText(a,b){return normNL(a)===normNL(b);}
 
 // Esegue fn dopo che l'overlay ha potuto disegnarsi. requestAnimationFrame NON
@@ -811,13 +802,6 @@ let diffDataA=null,diffDataB=null,diffFileNameA="",diffFileNameB="";
 let diffActiveLangs=[...LANGS],diffFilter='all',selectedDiffList=null,diffGroups={};
 let diffChangeCount=0;
 
-/* ========== VERSION ========== */
-let projectVersion='';
-function setVersion(v){
-  projectVersion=v.trim();
-  const d=projectVersion||'—';
-  ['versionDisplay','versionDisplayC','versionDisplayD'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=d;});
-}
 
 /* ========== CELL HELPERS ========== */
 function renderCellContent(div, text){
@@ -896,42 +880,52 @@ function openCellEditor(cell,ta){
   navReveal(ta);
   return box;
 }
-// Two separate caches: one for editor, one for diff
+// Testi originali, per sapere quali celle sono state modificate in questa sessione.
+// Editor: per nome (elenco + valore + lingua).
 const _origEditor={};
-const _origDiff={};
-// Explicit set of keys modified by user in diff (includes copies)
-const _diffModified=new Set();
+// Confronto: legati alla VOCE stessa e non al nome, perche' la voce del file A e quella
+// del file B si chiamano uguale ma sono due cose distinte (prima si confondevano e la
+// cella di B risultava "modificata" solo perche' diversa da A).
+let _origDiff=new WeakMap();      // voce -> {lingua: testo originale}
+let _diffModified=new WeakMap();  // voce -> Set(lingue cambiate apposta: copie, incolla, svuota)
 
 function origKey(entry,lang){return entry.parent+'§'+entry.value+'§'+lang;}
 
 function recordOrig(entry,lang,ctx){
-  const cache=ctx==='diff'?_origDiff:_origEditor;
+  if(ctx==='diff'){
+    const m=_diffModified.get(entry);
+    if(m&&m.has(lang)) return; // gia' segnata come modificata: l'originale non si riscrive
+    let o=_origDiff.get(entry); if(!o){o={}; _origDiff.set(entry,o);}
+    if(!(lang in o)) o[lang]=entry.texts[lang]||'';
+    return;
+  }
   const k=origKey(entry,lang);
-  // If already explicitly marked as modified (e.g. by copyRow), don't overwrite the original
-  if(ctx==='diff'&&_diffModified.has(k)) return;
-  if(!(k in cache)) cache[k]=entry.texts[lang]||'';
+  if(!(k in _origEditor)) _origEditor[k]=entry.texts[lang]||'';
 }
 
 function isModified(entry,lang,ctx){
   if(ctx==='diff'){
-    // A cell is modified if it's in the explicit set OR if its value differs from original
-    const k=origKey(entry,lang);
-    if(_diffModified.has(k)) return true;
-    return (k in _origDiff)&&!sameText(_origDiff[k],entry.texts[lang]);
+    const m=_diffModified.get(entry);
+    if(m&&m.has(lang)) return true;
+    const o=_origDiff.get(entry);
+    return !!o&&(lang in o)&&!sameText(o[lang],entry.texts[lang]);
   }
-  const cache=_origEditor;
   const k=origKey(entry,lang);
-  return (k in cache)&&!sameText(cache[k],entry.texts[lang]);
+  return (k in _origEditor)&&!sameText(_origEditor[k],entry.texts[lang]);
 }
 
 function markDiffModified(entry,lang){
-  _diffModified.add(origKey(entry,lang));
+  let m=_diffModified.get(entry); if(!m){m=new Set(); _diffModified.set(entry,m);}
+  m.add(lang);
+}
+// Con l'annulla il segno "modificata" va tolto: resta gialla solo se e' ancora diversa dall'originale.
+function unmarkDiffModified(entry,lang){
+  const m=_diffModified.get(entry); if(m) m.delete(lang);
 }
 
 function clearOrigCache(ctx){
   if(ctx==='diff'){
-    for(const k in _origDiff) delete _origDiff[k];
-    _diffModified.clear();
+    _origDiff=new WeakMap(); _diffModified=new WeakMap();
   } else {
     for(const k in _origEditor) delete _origEditor[k];
   }
@@ -946,6 +940,7 @@ let _clipboardCellCount=0;
 let _clipboardGrid=null; // null = no internal copy available
 let _lastSelKey=null; // key of anchor cell for Shift+click range
 let _cellRegistry=[];  // [{key,entry,lang,el,rowIdx,colIdx,context,isEmpty}]
+const _cellRegPos=new Map(); // chiave della cella -> posizione nel registro
 
 function selKey(entry,lang,slot){
   if(!entry) return null;
@@ -956,13 +951,26 @@ function selKeyPos(rowIdx,colIdx,ctx){return '__pos__'+ctx+'_'+rowIdx+'_'+colIdx
 
 function registerCell(entry,lang,el,rowIdx,colIdx,context,precomputedKey){
   const k=precomputedKey||(entry&&lang?selKey(entry,lang):selKeyPos(rowIdx,colIdx,context||''));
-  // Remove any stale entry with the same key (handles re-renders after edit)
-  const existing=_cellRegistry.findIndex(c=>c.key===k);
-  if(existing>=0) _cellRegistry.splice(existing,1);
-  _cellRegistry.push({key:k,entry,lang,el,rowIdx,colIdx,context:context||'editor',isEmpty:!entry});
-  if(k&&selMap.has(k)) el.classList.add('sel');
+  const rec={key:k,entry,lang,el,rowIdx,colIdx,context:context||'editor',isEmpty:!entry};
+  // Una cella ridisegnata dopo una modifica riprende il SUO posto nel registro: l'ordine
+  // serve alla selezione a intervallo, che altrimenti salterebbe la cella appena modificata.
+  const pos=_cellRegPos.get(k);
+  if(pos!==undefined) _cellRegistry[pos]=rec;
+  else{_cellRegPos.set(k,_cellRegistry.length); _cellRegistry.push(rec);}
+  // Se la cella era selezionata, la selezione deve puntare all'elemento che e' ora a schermo:
+  // altrimenti Canc o Incolla cambierebbero i dati lasciando a video il testo vecchio.
+  const s=k?selMap.get(k):null;
+  if(s){s.el=el; el.classList.add('sel');}
 }
-function clearCellRegistry(){_cellRegistry=[];}
+function clearCellRegistry(){_cellRegistry=[]; _cellRegPos.clear();}
+// Toglie dalla selezione le celle che non sono piu' a schermo (es. elenco tolto dalla Vista insieme).
+function pruneSelection(){
+  let changed=false;
+  selMap.forEach((c,k)=>{if(!_cellRegPos.has(k)){selMap.delete(k); changed=true;}});
+  if(!changed) return;
+  if(_lastSelKey&&!selMap.has(_lastSelKey)) _lastSelKey=null;
+  _updateSelToolbar();
+}
 
 function _selectRange(fromKey,toKey){
   const fromIdx=_cellRegistry.findIndex(c=>c.key===fromKey);
@@ -1054,28 +1062,31 @@ function selCopy(){
     return (v.includes('\t')||v.includes('\n'))?'"'+v.replace(/"/g,'""')+'"':v;
   }).join('\t')).join('\n');
   _clipboard=sysText;
-  navigator.clipboard.writeText(sysText).catch(()=>{});
+  // anche negli appunti di Windows, se il browser lo permette (serve per incollare in Excel)
+  try{navigator.clipboard.writeText(sysText).catch(()=>{});}catch(e){}
   showToast('📋 '+cells.length+' celle copiate ('+sortedRows.length+' righe)');
 }
 
+// Incolla. Vale sempre l'ULTIMA cosa copiata: se negli appunti di Windows c'e' ancora la
+// copia fatta dentro l'app si usa la griglia interna (conserva gli a capo dentro le celle),
+// altrimenti il testo arrivato da fuori, per esempio celle copiate da Excel.
+// text === null vuol dire "appunti di Windows non leggibili": resta solo la copia interna.
+function sameClipText(a,b){
+  const n=s=>String(s??'').replace(/\r\n/g,'\n').replace(/\r/g,'\n').replace(/\n+$/,'');
+  return n(a)===n(b);
+}
+function pasteFromText(text){
+  if(!selMap.size) return;
+  if(_clipboardGrid&&(text===null||sameClipText(text,_clipboard))) _applyPasteGrid(_clipboardGrid);
+  else if(text) _applyPasteText(text);
+  else showToast('Niente da incollare');
+}
+// Pulsante "Incolla" della barra di selezione (con Ctrl+V ci pensa l'evento "paste" del browser).
 function selPaste(){
   if(!selMap.size) return;
-  // Always use internal grid if available — it preserves \n inside cells perfectly
-  if(_clipboardGrid){
-    _applyPasteGrid(_clipboardGrid);
-  } else if(_clipboard!==''){
-    _applyPasteText(_clipboard);
-  }
-}
-
-function _applyPaste(text, fromInternal){
-  // Entry point from browser paste event
-  if(!selMap.size) return;
-  if(fromInternal&&_clipboardGrid){
-    _applyPasteGrid(_clipboardGrid);
-  } else {
-    _applyPasteText(text);
-  }
+  const cb=navigator.clipboard;
+  if(cb&&cb.readText) cb.readText().then(t=>pasteFromText(t),()=>pasteFromText(null));
+  else pasteFromText(null);
 }
 
 function _applyPasteGrid(grid){
@@ -1119,7 +1130,7 @@ function _applyPasteGrid(grid){
       });
     });
   }
-  if(isDiff){diffChangeCount+=cells.length;updateDiffChangesBadge();}
+  if(isDiff){diffChangeCount+=cells.length;updateDiffChangesBadge();filterDiffSidebar();}
   else{changeCount+=cells.length;updateChangesBadge();}
   showToast('📥 Incollato in '+cells.length+' celle');
 }
@@ -1167,7 +1178,7 @@ function _applyPasteText(text){
       }));
     }
   }
-  if(isDiff){diffChangeCount+=cells.length;updateDiffChangesBadge();}
+  if(isDiff){diffChangeCount+=cells.length;updateDiffChangesBadge();filterDiffSidebar();}
   else{changeCount+=cells.length;updateChangesBadge();}
   showToast('📥 Incollato in '+cells.length+' celle');
 }
@@ -1211,7 +1222,7 @@ function selDelete(){
     if(isDiffCtx){c.el.classList.add('modified');}
     else{c.el.classList.toggle('modified',isModified(c.entry,c.lang,c.context));}
   });
-  if(isDiff){diffChangeCount+=cells.length;updateDiffChangesBadge();}
+  if(isDiff){diffChangeCount+=cells.length;updateDiffChangesBadge();filterDiffSidebar();}
   else{changeCount+=cells.length;updateChangesBadge();}
   showToast('🗑 '+cells.length+' celle svuotate');
 }
@@ -1228,25 +1239,43 @@ function pushUndo(action){
   refreshUndoButtons();
 }
 
+// L'editor (Editor gruppi + Vista insieme) e il Confronto hanno storie di annulla separate:
+// Ctrl+Z annulla solo cio' che riguarda la schermata che si sta guardando.
+function undoCtxOf(action){return action.context==='diff'?'diff':'editor';}
+function undoContext(){
+  if(navIsVisible('diffScreen')) return 'diff';
+  if(navIsVisible('editorScreen')||navIsVisible('compareScreen')) return 'editor';
+  return null;
+}
+function clearUndo(ctx){
+  for(let i=undoStack.length-1;i>=0;i--) if(undoCtxOf(undoStack[i])===ctx) undoStack.splice(i,1);
+  refreshUndoButtons();
+}
 function refreshUndoButtons(){
-  const has=undoStack.length>0;
-  document.querySelectorAll('.undo-btn').forEach(b=>{b.disabled=!has;b.style.opacity=has?'1':'0.45';});
+  const has=ctx=>undoStack.some(a=>undoCtxOf(a)===ctx);
+  document.querySelectorAll('.undo-btn').forEach(b=>{
+    const on=has(b.closest('#diffScreen')?'diff':'editor');
+    b.disabled=!on; b.style.opacity=on?'1':'0.45';
+  });
 }
 
 function doUndo(){
-  if(!undoStack.length){showToast('Niente da annullare');return;}
-  const action=undoStack.pop();
+  const ctx=undoContext();
+  let idx=-1;
+  if(ctx) for(let i=undoStack.length-1;i>=0;i--){if(undoCtxOf(undoStack[i])===ctx){idx=i;break;}}
+  if(idx<0){showToast('Niente da annullare');return;}
+  const action=undoStack.splice(idx,1)[0];
   const navPos=navSavePos(); // la tabella viene ridisegnata: il cursore torna poi nello stesso punto
   if(action.type==='cell'){
     action.entry.texts[action.lang]=action.oldVal;
     if(action.context==='editor'){changeCount=Math.max(0,changeCount-1);updateChangesBadge();}
-    else{diffChangeCount=Math.max(0,diffChangeCount-1);updateDiffChangesBadge();}
-  } else if(action.type==='copy'){
-    action.targets.forEach(t=>{t.entry.texts[t.lang]=t.oldVal;});
-    if(action.context==='editor'){changeCount=Math.max(0,changeCount-1);updateChangesBadge();}
-    else{diffChangeCount=Math.max(0,diffChangeCount-1);updateDiffChangesBadge();}
+    else{unmarkDiffModified(action.entry,action.lang);diffChangeCount=Math.max(0,diffChangeCount-1);updateDiffChangesBadge();}
+  } else if(action.type==='copyBatch'){
+    // copia di una o piu' righe tra i due file: si annulla tutta insieme
+    action.recs.slice().reverse().forEach(undoCopyRec);
+    diffChangeCount=Math.max(0,diffChangeCount-action.recs.length);updateDiffChangesBadge();
   } else if(action.type==='multi'){
-    action.targets.forEach(t=>{t.entry.texts[t.lang]=t.oldVal;});
+    action.targets.forEach(t=>{t.entry.texts[t.lang]=t.oldVal; if(action.context==='diff') unmarkDiffModified(t.entry,t.lang);});
     if(action.context==='diff'){diffChangeCount=Math.max(0,diffChangeCount-action.targets.length);updateDiffChangesBadge();}
     else{changeCount=Math.max(0,changeCount-action.targets.length);updateChangesBadge();}
   } else if(action.type==='addRow'){
@@ -1276,7 +1305,10 @@ function doUndo(){
   const es=document.getElementById('editorScreen'),ds=document.getElementById('diffScreen'),cs=document.getElementById('compareScreen');
   if(es.style.display==='flex'&&selectedGroup) renderGroup(selectedGroup);
   if(cs.style.display==='flex'){renderCompareList(); renderCompareTable();}
-  if(ds.style.display==='flex'&&selectedDiffList) renderDiffTable(selectedDiffList);
+  if(ds.style.display==='flex'){
+    if(selectedDiffList&&diffGroups[selectedDiffList]) renderDiffTable(selectedDiffList);
+    filterDiffSidebar(); // conteggi delle differenze a sinistra e in alto
+  }
   navRestorePos(navPos);
   clearSel();
   refreshUndoButtons();
@@ -1285,28 +1317,32 @@ function doUndo(){
 
 function doResetAll(context){
   if(context==='editor'){
-    if(!allEntries.length){showToast('Nessun file caricato');return;}
-    if(!confirm('Ripristinare TUTTE le modifiche al file originale? L\'operazione non è annullabile.')) return;
-    if(!_rawBackupMain){showToast('Backup non disponibile');return;}
+    if(!_rawBackupMain){showToast('Nessun file caricato');return;}
+    if(!confirm('Ripristinare il file com\'era quando l\'hai caricato?\n\nVanno perse TUTTE le modifiche: testi cambiati, voci aggiunte e voci eliminate.\nL\'operazione non è annullabile.')) return;
+    // Si riparte dalla copia del file tenuta in memoria: tornano anche le voci eliminate
+    // e spariscono quelle aggiunte (prima venivano ripristinati solo i testi).
     const data=parseFileData(_rawBackupMain);
-    allEntries.forEach(e=>{
-      const orig=data.entries.find(o=>o.parent===e.parent&&o.value===e.value);
-      if(orig) LANGS.forEach(l=>{e.texts[l]=orig.texts[l];});
-    });
-    changeCount=0; updateChangesBadge();
-    undoStack.length=0; refreshUndoButtons();
-    clearOrigCache('editor'); clearSel();
-    if(selectedGroup) renderGroup(selectedGroup);
-    if(document.getElementById('compareScreen').style.display==='flex') renderCompareTable();
+    _layoutMain=data; allTextLists=data.textLists; allEntries=data.entries;
+    useLangs(data.langs);
+    refreshScopeKeepCompare(); // gli elenchi scelti e quelli spuntati restano come sono
+    changeCount=0; _exportedAt=0; updateChangesBadge();
+    clearUndo('editor'); clearOrigCache('editor'); clearSel();
+    if(navIsVisible('editorScreen')){
+      buildSidebar();
+      if(selectedGroup&&groups[selectedGroup]) renderGroup(selectedGroup);
+    }
+    if(navIsVisible('compareScreen')){renderCompareList(); renderCompareTable();}
     showToast('✅ Ripristinato al file originale');
   } else {
-    if(!confirm('Ripristinare TUTTE le modifiche ai file originali? L\'operazione non è annullabile.')) return;
+    if(!confirm('Ripristinare i due file com\'erano quando li hai caricati?\n\nVanno perse TUTTE le modifiche fatte nel confronto.\nL\'operazione non è annullabile.')) return;
     if(!_rawBackupA||!_rawBackupB){showToast('Backup non disponibile');return;}
     diffDataA=parseFileData(_rawBackupA);
     diffDataB=parseFileData(_rawBackupB);
-    diffChangeCount=0; updateDiffChangesBadge();
-    undoStack.length=0; refreshUndoButtons();
-    clearOrigCache('diff'); clearSel();
+    // tornano anche gli elenchi eliminati: la barra di sinistra va ricostruita
+    diffGroups=buildGroups([...new Set([...diffDataA.textLists.map(t=>t.name),...diffDataB.textLists.map(t=>t.name)])]);
+    if(selectedDiffList&&!diffGroups[selectedDiffList]) selectedDiffList=null;
+    diffChangeCount=0; _diffExportedAt={A:-1,B:-1}; updateDiffChangesBadge();
+    clearUndo('diff'); clearOrigCache('diff'); clearSel();
     if(selectedDiffList) renderDiffTable(selectedDiffList);
     filterDiffSidebar();
     showToast('✅ Ripristinati i file originali');
@@ -1320,7 +1356,8 @@ let _rawBackupMain=null,_rawBackupA=null,_rawBackupB=null;
 // Il testo viene restituito TALE E QUALE: le terminazioni di riga originali
 // (CRLF) vanno conservate, altrimenti riesportando il file risulterebbero
 // modificate centinaia di voci che nessuno ha toccato.
-const noVal=v=>{if(v===null||v===undefined||String(v).trim()===""||String(v)==="<No value>") return ""; return String(v);};
+// Un testo fatto di soli spazi NON e' vuoto: si conserva com'e' (prima diventava "<No value>").
+const noVal=v=>{if(v===null||v===undefined||String(v)===""||String(v)==="<No value>") return ""; return String(v);};
 const showLoading=msg=>{document.getElementById('loadingText').textContent=msg||'Caricamento...';document.getElementById('loadingOverlay').style.display='flex';};
 const hideLoading=()=>document.getElementById('loadingOverlay').style.display='none';
 let toastTimer=null;
@@ -1345,7 +1382,7 @@ function resumeSession(){
   else showSelectionScreen();
 }
 function showDiffUploadScreen(){hideAll();document.getElementById('diffUploadScreen').style.display='flex';}
-function showMergeScreen(){hideAll();document.getElementById('mergeScreen').style.display='flex';renderMergeFileList();}
+function showMergeScreen(){hideAll();document.getElementById('mergeScreen').style.display='flex';if(_mergeFiles.length) useLangs(mergeLangs());renderMergeFileList();}
 function showSelectionScreen(){
   hideAll();
   document.getElementById('selectionScreen').style.display='flex';
@@ -1428,9 +1465,19 @@ function parseFileData(arrayBuffer){
             valueNum:(typeof r['Value']==='number'),
             texts,fieldInfos:r['FieldInfos']||""};
   });
+  const headerTL=headerOf(ws1), headerTE=headerOf(ws2);
+  // Avvisi sul contenuto del file, da mostrare a chi lo ha caricato.
+  const avvisi=[];
+  const noteTL=new Set(['Name','ListRange',...langs.map(l=>'Comment ['+l+']')]);
+  const noteTE=new Set(['Name','Parent','DefaultEntry','Value','FieldInfos',...langs.map(l=>'Text ['+l+']')]);
+  const extra=[...headerTL.filter(h=>h.trim()&&!noteTL.has(h.trim())).map(h=>h+' (foglio TextList)'),
+               ...headerTE.filter(h=>h.trim()&&!noteTE.has(h.trim())).map(h=>h+' (foglio TextListEntry)')];
+  if(extra.length) avvisi.push('colonne che il programma non conosce e che NON verranno scritte nel file esportato: '+extra.join(', '));
+  const visti=new Set(); let doppi=0, esempio='';
+  ents.forEach(e=>{const k=e.parent+'||'+e.value; if(visti.has(k)){doppi++; if(!esempio) esempio='elenco '+e.parent+', valore '+e.value;} else visti.add(k);});
+  if(doppi) avvisi.push(doppi+(doppi===1?' voce ha':' voci hanno')+' un valore già usato da un\'altra voce dello stesso elenco (es. '+esempio+').\n  A schermo se ne vede una sola, l\'ultima; nel file esportato restano tutte, intatte.\n  Succede per esempio quando la voce predefinita di TIA ha lo stesso valore di una voce normale');
   // headerTL/headerTE: ordine originale delle colonne; custprops: marcatore TIA
-  return {textLists:tls,entries:ents,langs,
-          headerTL:headerOf(ws1),headerTE:headerOf(ws2),custprops:custPropsDaFile(wb)};
+  return {textLists:tls,entries:ents,langs,headerTL,headerTE,custprops:custPropsDaFile(wb),avvisi};
 }
 
 // Imposta le lingue attive dell'interfaccia a partire dai file caricati.
@@ -1448,6 +1495,35 @@ function applyLangs(...listeLingue){
   buildAddRowFields();
   buildMergeLangButtons();
 }
+// Ogni strumento lavora con le lingue dei PROPRI file. Entrando in una schermata si
+// rimettono le sue, perche' nel frattempo un altro strumento puo' averle cambiate
+// (era cosi' che l'export dell'editor perdeva una lingua dopo aver usato il Confronto).
+function useLangs(...liste){
+  const u=[];
+  liste.flat(Infinity).forEach(l=>{if(typeof l==='string'&&l&&!u.includes(l))u.push(l);});
+  if(!u.length) return;
+  if(u.length===LANGS.length&&u.every((l,i)=>l===LANGS[i])) return; // gia' quelle: i filtri lingua restano come sono
+  applyLangs(u);
+}
+// Lingue del file aperto nell'editor: l'export scrive sempre e solo queste.
+function editorLangs(){return (_layoutMain&&_layoutMain.langs&&_layoutMain.langs.length)?_layoutMain.langs:LANGS;}
+
+// ----- Lavoro non ancora scaricato -----
+let _exportedAt=0;                  // numero di modifiche dell'editor all'ultimo export
+let _diffExportedAt={A:-1,B:-1};    // idem per i due file del confronto
+function unsavedEditor(){return changeCount!==_exportedAt;}
+function unsavedDiff(){return diffChangeCount>0&&_diffExportedAt.A!==diffChangeCount&&_diffExportedAt.B!==diffChangeCount;}
+// Chiudere o ricaricare la pagina con modifiche non scaricate fa chiedere conferma al browser.
+window.addEventListener('beforeunload',ev=>{
+  if(unsavedEditor()||unsavedDiff()){ev.preventDefault(); ev.returnValue='';}
+});
+// Un file lasciato cadere fuori dalle zone previste verrebbe aperto dal browser AL POSTO
+// del programma, perdendo il lavoro: lo si ignora.
+['dragover','drop'].forEach(t=>window.addEventListener(t,e=>e.preventDefault()));
+// Se si sta ancora scrivendo in una cella, il testo viene confermato (serve prima di esportare).
+function commitOpenEditor(){
+  document.querySelectorAll('textarea.cell-input').forEach(ta=>{if(ta.onblur) ta.onblur();});
+}
 
 function parseFile(arrayBuffer,name){
   showLoading('Elaborazione '+name+'...'); fileName=name;
@@ -1459,12 +1535,23 @@ function parseFile(arrayBuffer,name){
     _layoutMain=data;   // ordine colonne e marcatore TIA del file aperto
     allTextLists=data.textLists; allEntries=data.entries;
     selectedListNames=allTextLists.map(t=>t.name);
-    changeCount=0; selectedGroup=null;
+    changeCount=0; _exportedAt=0; selectedGroup=null; _groupSearch={key:null,text:''};
+    clearUndo('editor'); // l'annulla del file precedente non vale piu'
     hideLoading(); showSelectionScreen();
+    if(data.avvisi.length) alert('Attenzione, nel file '+name+':\n\n- '+data.avvisi.join('\n\n- '));
   }catch(err){hideLoading();alert('Errore: '+err.message);}
 }
 
-function handleFile(file){if(!file) return; const r=new FileReader(); r.onload=e=>parseFile(new Uint8Array(e.target.result),file.name); r.readAsArrayBuffer(file);}
+function handleFile(file){
+  if(!file) return;
+  if(unsavedEditor()&&!confirm('Nel file aperto ci sono modifiche non ancora scaricate.\nCaricando un altro file vanno perse.\n\nContinuare?')) return;
+  showLoading('Lettura di '+file.name+'...');
+  const r=new FileReader();
+  // afterPaint: la rotella di attesa compare prima che parta la lettura, che blocca la pagina
+  r.onload=e=>afterPaint(()=>parseFile(new Uint8Array(e.target.result),file.name));
+  r.onerror=()=>{hideLoading(); alert('Impossibile leggere il file '+file.name);};
+  r.readAsArrayBuffer(file);
+}
 document.getElementById('fileInput').addEventListener('change',function(){handleFile(this.files[0]);this.value='';});
 document.getElementById('fileInputAlt').addEventListener('change',function(){handleFile(this.files[0]);this.value='';});
 const dropZone=document.getElementById('dropZone');
@@ -1475,6 +1562,7 @@ dropZone.addEventListener('drop',e=>{const file=e.dataTransfer.files[0];if(file)
 /* ========== DUAL FILE LOAD ========== */
 function handleDiffFile(file,slot){
   if(!file) return;
+  if(unsavedDiff()&&!confirm('Nel confronto ci sono modifiche non ancora esportate.\nCaricando un altro file vanno perse.\n\nContinuare?')) return;
   showLoading('Caricamento '+file.name+'...');
   const r=new FileReader();
   r.onload=ev=>{
@@ -1503,7 +1591,9 @@ function handleDiffFile(file,slot){
       btn.disabled=!ready;
       btn.style.opacity=ready?'1':'0.5';
       btn.style.cursor=ready?'pointer':'not-allowed';
+      diffChangeCount=0; _diffExportedAt={A:-1,B:-1};
       hideLoading();
+      if(data.avvisi.length) alert('Attenzione, nel file '+file.name+':\n\n- '+data.avvisi.join('\n\n- '));
     }catch(err){hideLoading();alert('Errore nel file '+file.name+': '+err.message);}
   };
   r.readAsArrayBuffer(file);
@@ -1513,10 +1603,17 @@ document.getElementById('diffInputB').addEventListener('change',function(){handl
 document.getElementById('mergeFileInput').addEventListener('change',function(){addMergeFiles([...this.files]);this.value='';});
 
 /* ========== DIFF LOGIC ========== */
-function getDiffForList(listName){
+// Indice delle voci per elenco: evita di ripassare tutte le voci del file per ogni elenco.
+function indexByParent(ents){
+  const m=new Map();
+  ents.forEach(e=>{let a=m.get(e.parent); if(!a){a=[]; m.set(e.parent,a);} a.push(e);});
+  return m;
+}
+// idxA / idxB: indici gia' pronti (facoltativi), quando si calcolano molti elenchi di fila.
+function getDiffForList(listName,idxA,idxB){
   const mapA={},mapB={};
-  diffDataA.entries.filter(e=>e.parent===listName).forEach(e=>{mapA[e.value]=e;});
-  diffDataB.entries.filter(e=>e.parent===listName).forEach(e=>{mapB[e.value]=e;});
+  (idxA?(idxA.get(listName)||[]):diffDataA.entries.filter(e=>e.parent===listName)).forEach(e=>{mapA[e.value]=e;});
+  (idxB?(idxB.get(listName)||[]):diffDataB.entries.filter(e=>e.parent===listName)).forEach(e=>{mapB[e.value]=e;});
   const allVals=[...new Set([...Object.keys(mapA),...Object.keys(mapB)])].sort((a,b)=>{const na=Number(a),nb=Number(b);if(!isNaN(na)&&!isNaN(nb))return na-nb;return a.localeCompare(b);});
   let diffs=0,onlyA=0,onlyB=0,changed=0;
   allVals.forEach(v=>{
@@ -1528,26 +1625,28 @@ function getDiffForList(listName){
   return{diffs,onlyA,onlyB,changed,mapA,mapB,allVals};
 }
 
-function countAllDiffs(){
-  const names=new Set([...diffDataA.entries.map(e=>e.parent),...diffDataB.entries.map(e=>e.parent)]);
-  let tot=0; names.forEach(n=>{tot+=getDiffForList(n).diffs;}); return tot;
+function countAllDiffs(idxA,idxB){
+  idxA=idxA||indexByParent(diffDataA.entries); idxB=idxB||indexByParent(diffDataB.entries);
+  let tot=0;
+  new Set([...idxA.keys(),...idxB.keys()]).forEach(n=>{tot+=getDiffForList(n,idxA,idxB).diffs;});
+  return tot;
 }
 
 function startDiff(){
   if(!diffDataA||!diffDataB){showToast('Carica entrambi i file prima');return;}
   const allNames=new Set([...diffDataA.textLists.map(t=>t.name),...diffDataB.textLists.map(t=>t.name)]);
   diffGroups=buildGroups([...allNames]);
-  diffActiveLangs=[...LANGS]; diffFilter='all'; selectedDiffList=null; diffChangeCount=0;
-  clearOrigCache('diff');
-  const tot=countAllDiffs();
+  useLangs(diffDataA.langs,diffDataB.langs); // le lingue dei due file, non quelle di un altro strumento
+  diffActiveLangs=[...LANGS]; selectedDiffList=null; diffChangeCount=0; _diffExportedAt={A:-1,B:-1};
+  clearOrigCache('diff'); clearUndo('diff');
   hideAll();
   document.getElementById('diffScreen').style.display='flex';
   document.getElementById('diffBadgeA').textContent=diffFileNameA;
   document.getElementById('diffBadgeB').textContent=diffFileNameB;
-  const badge=document.getElementById('diffDiffBadge');
-  if(tot>0){badge.style.display='';badge.textContent=tot+' differenze';}else badge.style.display='none';
+  setDiffFilter('all'); updateDiffChangesBadge();
   buildLangButtons('diffLangButtons',diffActiveLangs,l=>toggleDiffLang(l));
-  filterDiffSidebar();
+  document.getElementById('diffTableWrap').innerHTML='<div class="empty-state"><div class="icon">🔍</div><div style="font-size:15px;font-weight:500">Seleziona un elenco dalla barra laterale</div></div>';
+  filterDiffSidebar(); // aggiorna anche il totale delle differenze in alto
 }
 
 function filterDiffSidebar(){
@@ -1556,14 +1655,19 @@ function filterDiffSidebar(){
   const inB=new Set(diffDataB.textLists.map(t=>t.name));
   document.getElementById('diffSidebarHdr').textContent='Elenchi ('+Object.keys(diffGroups).length+')';
   const list=document.getElementById('diffList'); list.innerHTML='';
+  const idxA=indexByParent(diffDataA.entries), idxB=indexByParent(diffDataB.entries);
+  // totale delle differenze in alto: si aggiorna a ogni modifica, non solo all'avvio del confronto
+  const totAll=countAllDiffs(idxA,idxB), topBadge=document.getElementById('diffDiffBadge');
+  if(totAll>0){topBadge.style.display='';topBadge.textContent=totAll+(totAll===1?' differenza':' differenze');}
+  else topBadge.style.display='none';
   Object.keys(diffGroups).filter(gk=>!q||gk.toLowerCase().includes(q)).forEach(gk=>{
     const names=diffGroups[gk];
-    let tot=0; names.forEach(n=>{tot+=getDiffForList(n).diffs;});
+    let tot=0; names.forEach(n=>{tot+=getDiffForList(n,idxA,idxB).diffs;});
     const div=document.createElement('div');
     div.className='group-item'+(selectedDiffList===gk?' active':'');
     const avail=names.map(n=>(inA.has(n)?'A':'-')+'/'+(inB.has(n)?'B':'-')).join(', ');
     const badge=tot>0?'<span class="group-item-diff has-diff">'+tot+' diff</span>':'<span class="group-item-diff no-diff">✓ uguale</span>';
-    div.innerHTML='<div class="group-item-name">'+gk.replace('Z2000_','')+badge+'</div><div class="group-item-meta">'+avail+'</div>';
+    div.innerHTML='<div class="group-item-name">'+escHtml(gk.replace('Z2000_',''))+badge+'</div><div class="group-item-meta">'+avail+'</div>';
     div.onclick=()=>{selectedDiffList=gk;filterDiffSidebar();renderDiffTable(gk);};
     list.appendChild(div);
   });
@@ -1588,14 +1692,15 @@ function refreshTdDiffColor(tdEl,eA,eB,lang){
   if(!tdEl) return;
   // Remove all diff color classes
   tdEl.classList.remove('cell-diff-a','cell-diff-b','cell-only-a','cell-only-b');
-  if(!eA&&eB){tdEl.classList.add('cell-only-a');}        // solo in B → td A è arancio
-  else if(eA&&!eB){tdEl.classList.add('cell-only-a');}   // solo in A → td A è arancio
+  // voce presente in un solo file: la casella dal lato A e quella dal lato B hanno ciascuna il suo colore
+  if(!eA!==!eB){tdEl.classList.add(tdEl.dataset.slot==='B'?'cell-only-b':'cell-only-a');}
   else if(eA&&eB){
     if(!sameText(eA.texts[lang],eB.texts[lang])){tdEl.classList.add(tdEl.dataset.slot==='A'?'cell-diff-a':'cell-diff-b');}
   }
 }
 
 function makeDiffCell(entry,lang,slot,tdEl,peerEntry,rowIdx,colIdx){
+  if(tdEl) tdEl.dataset.slot=slot;
   if(!entry){
     const div=document.createElement('div');
     div.className='cell empty'; div.textContent='—';
@@ -1639,6 +1744,7 @@ function makeDiffCell(entry,lang,slot,tdEl,peerEntry,rowIdx,colIdx){
         pushUndo({type:'cell',entry,lang,oldVal:entry.texts[lang]||'',newVal:nv,context:'diff'});
         entry.texts[lang]=nv; diffChangeCount++; updateDiffChangesBadge();
         markDiffModified(entry,lang);
+        filterDiffSidebar(); // conteggi delle differenze a sinistra e in alto
       }
       const newCell=makeDiffCell(entry,lang,slot,tdEl,peerEntry,ri,ci);
       box.replaceWith(newCell);
@@ -1652,35 +1758,53 @@ function makeDiffCell(entry,lang,slot,tdEl,peerEntry,rowIdx,colIdx){
   return div;
 }
 
-function copyRow(mapA,mapB,val,listName,fromSlot){
-  // fromSlot = 'A' (copy A→B) or 'B' (copy B→A)
+// Copia UNA riga da un file all'altro (fromSlot 'A' = da A a B, 'B' = da B ad A).
+// Non ridisegna e non registra l'annulla: lo fa copyRows, una volta sola per tutte le righe.
+// Restituisce cio' che serve per annullare, oppure null se la riga era gia' uguale.
+function copyRowCore(mapA,mapB,val,listName,fromSlot){
   const eSrc=fromSlot==='A'?mapA[val]:mapB[val];
+  if(!eSrc) return null;
   const eDstMap=fromSlot==='A'?mapB:mapA;
   const dstData=fromSlot==='A'?diffDataB:diffDataA;
   const srcData=fromSlot==='A'?diffDataA:diffDataB;
-  if(!eSrc) return;
   let eDst=eDstMap[val];
-  const oldTexts=eDst?{...eDst.texts}:null;
+  const rec={targets:[],createdEntry:null,createdList:null,dstData};
   if(!eDst){
-    eDst={name:eSrc.name,parent:listName,defaultEntry:eSrc.defaultEntry,value:val,texts:{...eSrc.texts},fieldInfos:eSrc.fieldInfos};
-    dstData.entries.push(eDst);
+    // la voce non esiste nell'altro file: viene creata (e con l'annulla viene tolta di nuovo)
+    eDst={name:eSrc.name,parent:listName,defaultEntry:eSrc.defaultEntry,value:val,valueNum:eSrc.valueNum,texts:{...eSrc.texts},fieldInfos:eSrc.fieldInfos};
+    dstData.entries.push(eDst); rec.createdEntry=eDst;
     if(!dstData.textLists.find(t=>t.name===listName)){
       const tlSrc=srcData.textLists.find(t=>t.name===listName);
-      if(tlSrc) dstData.textLists.push({...tlSrc,comments:{...tlSrc.comments}});
+      if(tlSrc){const tl={...tlSrc,comments:{...tlSrc.comments}}; dstData.textLists.push(tl); rec.createdList=tl;}
     }
     eDstMap[val]=eDst;
+    LANGS.forEach(l=>markDiffModified(eDst,l));
   } else {
-    LANGS.forEach(l=>{eDst.texts[l]=eSrc.texts[l]||'';});
+    if(LANGS.every(l=>sameText(eDst.texts[l],eSrc.texts[l]))) return null; // gia' uguale: niente da fare
+    LANGS.forEach(l=>{
+      rec.targets.push({entry:eDst,lang:l,oldVal:eDst.texts[l]||''});
+      eDst.texts[l]=eSrc.texts[l]||''; markDiffModified(eDst,l);
+    });
   }
-  // Mark all langs of destination as explicitly modified by user
-  LANGS.forEach(l=>markDiffModified(eDst,l));
-  const targets=LANGS.map(l=>({entry:eDst,lang:l,oldVal:oldTexts?oldTexts[l]||'':''}));
-  pushUndo({type:'copy',targets,context:'diff'});
-  diffChangeCount++;
-  updateDiffChangesBadge();
+  return rec;
+}
+function undoCopyRec(rec){
+  rec.targets.forEach(t=>{t.entry.texts[t.lang]=t.oldVal; unmarkDiffModified(t.entry,t.lang);});
+  if(rec.createdEntry){const i=rec.dstData.entries.indexOf(rec.createdEntry); if(i>=0) rec.dstData.entries.splice(i,1);}
+  if(rec.createdList){const i=rec.dstData.textLists.indexOf(rec.createdList); if(i>=0) rec.dstData.textLists.splice(i,1);}
+}
+// Copia una o piu' righe: un solo ridisegno alla fine e UN solo annulla per tutte
+// (prima erano uno per riga: lentissimo sugli elenchi grandi e impossibile da annullare oltre le 100 righe).
+function copyRows(mapA,mapB,vals,listName,fromSlot){
+  const recs=vals.map(v=>copyRowCore(mapA,mapB,v,listName,fromSlot)).filter(Boolean);
+  if(!recs.length){showToast('Niente da copiare: le righe sono già uguali');return;}
+  pushUndo({type:'copyBatch',recs,context:'diff'});
+  diffChangeCount+=recs.length; updateDiffChangesBadge();
   if(selectedDiffList) renderDiffTable(selectedDiffList);
   filterDiffSidebar();
+  if(vals.length>1) showToast('✅ '+recs.length+(recs.length===1?' riga copiata':' righe copiate')+' — Ctrl+Z le annulla tutte insieme',4000);
 }
+function copyRow(mapA,mapB,val,listName,fromSlot){copyRows(mapA,mapB,[val],listName,fromSlot);}
 
 function renderDiffTable(gk){
   const names=diffGroups[gk];
@@ -1704,8 +1828,8 @@ function renderDiffTable(gk){
     const sA=inA.has(listName)?'<span style="background:var(--tint-blue);color:var(--blue-t);padding:1px 6px;border-radius:4px;font-size:10px;font-weight:700">A</span>':'<span style="background:var(--surface-3);color:var(--text-muted);padding:1px 6px;border-radius:4px;font-size:10px">–</span>';
     const sB=inB.has(listName)?'<span style="background:var(--tint-green);color:var(--teal-t);padding:1px 6px;border-radius:4px;font-size:10px;font-weight:700">B</span>':'<span style="background:var(--surface-3);color:var(--text-muted);padding:1px 6px;border-radius:4px;font-size:10px">–</span>';
     const diffInfo=diffs>0?'<span style="color:var(--red-t);font-weight:600">'+diffs+' diff</span>':'<span style="color:var(--green-t)">✓ identico</span>';
-    const totalEntries=getDiffForList(listName).allVals.length;
-    sec.innerHTML='<span style="font-size:13px">'+listName.replace('Z2000_','')+'</span>'+sA+sB+'<span style="font-weight:400;color:var(--text-3);font-size:11px;margin-left:4px">'+diffInfo+' · '+vals.length+' voci</span>';
+    const totalEntries=allVals.length;
+    sec.innerHTML='<span style="font-size:13px">'+escHtml(listName.replace('Z2000_',''))+'</span>'+sA+sB+'<span style="font-weight:400;color:var(--text-3);font-size:11px;margin-left:4px">'+diffInfo+' · '+vals.length+' voci</span>';
     // Add delete-section button when the section has 0 entries total
     if(totalEntries===0){
       const delSec=document.createElement('button');
@@ -1728,15 +1852,15 @@ function renderDiffTable(gk){
     // header: due pulsanti globali A→B e B→A
     const thCopy=document.createElement('th'); thCopy.style.cssText='width:64px;text-align:center';
     const btnAllAB=document.createElement('button');
-    btnAllAB.title='Copia tutte le righe da A a B';
+    btnAllAB.title='Copia in B tutte le righe mostrate che sono diverse (Ctrl+Z le annulla tutte insieme)';
     btnAllAB.style.cssText='border:none;background:var(--tint-sky);color:var(--sky-t);border-radius:4px;padding:2px 5px;cursor:pointer;font-size:10px;font-weight:700;margin-right:2px';
     btnAllAB.textContent='A→B';
-    btnAllAB.onclick=()=>{vals.forEach(v=>{if(mapA[v]) copyRow(mapA,mapB,v,listName,'A');});};
+    btnAllAB.onclick=()=>copyRows(mapA,mapB,vals.filter(v=>mapA[v]),listName,'A');
     const btnAllBA=document.createElement('button');
-    btnAllBA.title='Copia tutte le righe da B a A';
+    btnAllBA.title='Copia in A tutte le righe mostrate che sono diverse (Ctrl+Z le annulla tutte insieme)';
     btnAllBA.style.cssText='border:none;background:var(--tint-green);color:var(--green-t2);border-radius:4px;padding:2px 5px;cursor:pointer;font-size:10px;font-weight:700';
     btnAllBA.textContent='B→A';
-    btnAllBA.onclick=()=>{vals.forEach(v=>{if(mapB[v]) copyRow(mapA,mapB,v,listName,'B');});};
+    btnAllBA.onclick=()=>copyRows(mapA,mapB,vals.filter(v=>mapB[v]),listName,'B');
     thCopy.appendChild(btnAllAB); thCopy.appendChild(btnAllBA); tr1.appendChild(thCopy);
     const thVal=document.createElement('th'); thVal.className='val-col'; thVal.textContent='Valore'; tr1.appendChild(thVal);
     diffActiveLangs.forEach((lang,i)=>{
@@ -1826,9 +1950,10 @@ function exportDiffA(){
 }
 
 function exportDiffData(data, origName, slot){
-  const vp=projectVersion?'_'+projectVersion.replace(/[^a-zA-Z0-9.\-]/g,''):'';
-  const outName=(origName.replace(/\.xlsx?$/i,'')||'File'+slot)+'_modified'+vp+'_'+exportStamp()+'.xlsx';
+  commitOpenEditor(); // se si sta scrivendo in una cella, quel testo entra nel file
+  const outName=(origName.replace(/\.xlsx?$/i,'')||'File'+slot)+'_modified_'+exportStamp()+'.xlsx';
   salvaWorkbook(buildWorkbook(data,data.langs||LANGS,data),outName);
+  _diffExportedAt[slot]=diffChangeCount;
   showToast('✅ Esportato: '+outName);
 }
 
@@ -1854,15 +1979,18 @@ function renderSelectionList(){
   const list=document.getElementById('selectionList'); list.innerHTML='';
   const selectedSet=new Set(selectedListNames);
   const filtered=allTextLists.filter(t=>!q||t.name.toLowerCase().includes(q));
+  const perElenco=indexByParent(allEntries);
   filtered.forEach(t=>{
-    const cnt=allEntries.filter(e=>e.parent===t.name).length;
+    const cnt=(perElenco.get(t.name)||[]).length;
     const row=document.createElement('div'); row.className='sel-item';
-    row.innerHTML='<label><input type="checkbox" data-name="'+t.name+'" '+(selectedSet.has(t.name)?'checked':'')+'><span>'+t.name+'</span></label><span class="sel-meta">'+cnt+' voci</span>';
+    row.innerHTML='<label><input type="checkbox" data-name="'+escHtml(t.name)+'" '+(selectedSet.has(t.name)?'checked':'')+'><span>'+escHtml(t.name)+'</span></label><span class="sel-meta">'+cnt+' voci</span>';
     list.appendChild(row);
   });
   list.querySelectorAll('input[type="checkbox"]').forEach(cb=>cb.onchange=()=>{
     const n=cb.getAttribute('data-name');
-    if(cb.checked&&!selectedSet.has(n)) selectedListNames.push(n);
+    // si guarda l'elenco VERO delle scelte, non la copia fatta al disegno: altrimenti
+    // togliendo e rimettendo la spunta l'elenco restava escluso pur apparendo spuntato
+    if(cb.checked&&!selectedListNames.includes(n)) selectedListNames.push(n);
     if(!cb.checked) selectedListNames=selectedListNames.filter(x=>x!==n);
     updateSelectionInfo(filtered.length);
   });
@@ -1895,6 +2023,7 @@ function selectAllLists(yes){
 function startEditingSelected(){if(!selectedListNames.length){showToast('Seleziona almeno un elenco');return;}applySelectedScope();showEditor();}
 
 function showCompareScreen(){
+  if(_layoutMain) useLangs(_layoutMain.langs); // le lingue del file dell'editor
   if(!textLists.length&&selectedListNames.length) applySelectedScope();
   hideAll(); document.getElementById('compareScreen').style.display='flex';
   document.getElementById('compareFileLabel').textContent=fileName;
@@ -1909,7 +2038,7 @@ function renderCompareList(){
   const shown=textLists.filter(t=>!q||t.name.toLowerCase().includes(q));
   shown.forEach(t=>{
     const row=document.createElement('div'); row.className='sel-item';
-    row.innerHTML='<label><input type="checkbox" data-name="'+t.name+'" '+(set.has(t.name)?'checked':'')+'><span>'+t.name+'</span></label><span class="sel-meta" data-name="'+t.name+'"></span>';
+    row.innerHTML='<label><input type="checkbox" data-name="'+escHtml(t.name)+'" '+(set.has(t.name)?'checked':'')+'><span>'+escHtml(t.name)+'</span></label><span class="sel-meta" data-name="'+escHtml(t.name)+'"></span>';
     wrap.appendChild(row);
   });
   wrap.querySelectorAll('input[type="checkbox"]').forEach(cb=>cb.onchange=()=>{
@@ -1925,9 +2054,10 @@ function renderCompareList(){
 function refreshCompareListMeta(){
   const set=new Set(compareSelectedLists);
   const shownVals=new Set(entries.filter(e=>set.has(e.parent)).map(e=>e.value));
+  const perElenco=indexByParent(entries);
   document.querySelectorAll('#compareList .sel-meta[data-name]').forEach(m=>{
     const n=m.dataset.name;
-    const mine=entries.filter(e=>e.parent===n), own=new Set(mine.map(e=>e.value));
+    const mine=perElenco.get(n)||[], own=new Set(mine.map(e=>e.value));
     const miss=set.has(n)?[...shownVals].filter(v=>!own.has(v)).length:0;
     m.innerHTML=mine.length+' voci'+(miss?'<br><span class="missing-count">mancano '+miss+'</span>':'');
   });
@@ -1945,7 +2075,8 @@ function selectAllCompareLists(yes){
 function renderCompareTable(){
   const names=compareSelectedLists;
   const info=document.getElementById('compareInfo'); const wrap=document.getElementById('compareTableWrap');
-  if(!names.length){info.textContent='Seleziona almeno un elenco dalla colonna sinistra.';wrap.innerHTML='';return;}
+  clearCellRegistry(); // la tabella viene rifatta da capo: il registro delle celle riparte pulito
+  if(!names.length){info.textContent='Seleziona almeno un elenco dalla colonna sinistra.';wrap.innerHTML='';pruneSelection();return;}
   const eMap={}; entries.forEach(e=>{if(names.includes(e.parent)) eMap[e.parent+'|'+e.value]=e;});
   const vals=[...new Set(entries.filter(e=>names.includes(e.parent)).map(e=>e.value))].sort((a,b)=>{const na=Number(a),nb=Number(b);if(!isNaN(na)&&!isNaN(nb)) return na-nb;return a.localeCompare(b);});
   const missingTot=vals.reduce((s,v)=>s+names.filter(n=>!eMap[n+'|'+v]).length,0);
@@ -1954,7 +2085,7 @@ function renderCompareTable(){
   const thead=document.createElement('thead');
   const tr1=document.createElement('tr');
   const thVal=document.createElement('th'); thVal.className='val-col'; thVal.textContent='Valore'; tr1.appendChild(thVal);
-  names.forEach((n,i)=>{const th=document.createElement('th'); th.colSpan=activeLangs.length; if(i>0) th.className='sep'; th.innerHTML='<div style="font-size:12px;font-weight:700;color:var(--text-mid)">'+n.replace('Z2000_','')+'</div>'; tr1.appendChild(th);});
+  names.forEach((n,i)=>{const th=document.createElement('th'); th.colSpan=activeLangs.length; if(i>0) th.className='sep'; th.innerHTML='<div style="font-size:12px;font-weight:700;color:var(--text-mid)">'+escHtml(n.replace('Z2000_',''))+'</div>'; tr1.appendChild(th);});
   thead.appendChild(tr1);
   const tr2=document.createElement('tr'); tr2.className='sub'; const thE=document.createElement('th'); thE.className='val-col'; tr2.appendChild(thE);
   names.forEach((n,li)=>activeLangs.forEach((lang,idx)=>{const th=document.createElement('th'); if(idx===0&&li>0) th.className='sep'; th.style.color=langColor(lang); th.textContent=langLabel(lang); tr2.appendChild(th);}));
@@ -1978,13 +2109,17 @@ function renderCompareTable(){
   addBtn.textContent='➕ Aggiungi voce a tutti gli elenchi spuntati ('+names.length+')';
   addBtn.onclick=()=>openAddRow(names.slice(),'compare');
   wrap.appendChild(addBtn);
+  pruneSelection(); // via dalla selezione le celle che non sono piu' in tabella
 }
 
 function showEditor(){
+  if(_layoutMain) useLangs(_layoutMain.langs); // le lingue del file dell'editor
   hideAll(); document.getElementById('editorScreen').style.display='flex';
   document.getElementById('fileLabel').textContent=fileName;
   buildLangButtons('langButtons',activeLangs,l=>toggleLang(l));
   updateChangesBadge(); buildSidebar();
+  // tornando all'editor si ritrova il gruppo che era aperto, se fa ancora parte degli elenchi scelti
+  if(selectedGroup&&groups[selectedGroup]){renderGroup(selectedGroup); return;}
   const old=document.getElementById('groupView'); if(old) old.remove();
   document.getElementById('emptyState').style.display='';
 }
@@ -2008,7 +2143,6 @@ function updateChangesBadge(){
   if(changeCount>0){b1.style.display='';b2.style.display='';b1.textContent=txt;b2.textContent=txt;}else{b1.style.display='none';b2.style.display='none';}
 }
 
-function cleanCr(s){return s?String(s).replace(/\r\n/g,"\n").replace(/\r/g,"\n"):s;}
 
 /* ===== EXPORT UNIFICATO =====
    Unico punto in cui si costruisce il file .xlsx: prima erano tre copie separate
@@ -2075,9 +2209,12 @@ function exportStamp(){
 }
 
 function doExport(){
-  const vp=projectVersion?'_'+projectVersion.replace(/[^a-zA-Z0-9.\-]/g,''):'';
-  const nome='Export_modified'+vp+'_'+exportStamp()+'.xlsx';
-  salvaWorkbook(buildWorkbook({textLists:allTextLists,entries:allEntries},LANGS,_layoutMain),nome);
+  if(!allEntries.length&&!allTextLists.length){showToast('Nessun file caricato');return;}
+  commitOpenEditor(); // se si sta scrivendo in una cella, quel testo entra nel file
+  const nome='Export_modified_'+exportStamp()+'.xlsx';
+  // lingue: SEMPRE quelle del file aperto nell'editor, qualunque cosa sia stata caricata altrove
+  salvaWorkbook(buildWorkbook({textLists:allTextLists,entries:allEntries},editorLangs(),_layoutMain),nome);
+  _exportedAt=changeCount;
   showToast('✅ '+nome);
 }
 
@@ -2090,12 +2227,15 @@ function filterGroups(){
     const names=groups[gk],isMulti=names.length>1,entryCount=entries.filter(e=>names.includes(e.parent)).length;
     const div=document.createElement('div');
     div.className='group-item'+(selectedGroup===gk?' active':'');
-    div.innerHTML='<div class="group-item-name">'+gk.replace('Z2000_','')+(isMulti?'<span class="group-item-multi">×'+names.length+'</span>':'')+'</div><div class="group-item-meta">'+(isMulti?names.length+' elenchi':'1 elenco')+' · '+entryCount+' voci</div>';
+    div.innerHTML='<div class="group-item-name">'+escHtml(gk.replace('Z2000_',''))+(isMulti?'<span class="group-item-multi">×'+names.length+'</span>':'')+'</div><div class="group-item-meta">'+(isMulti?names.length+' elenchi':'1 elenco')+' · '+entryCount+' voci</div>';
     div.onclick=()=>{selectedGroup=gk;filterGroups();renderGroup(gk);};
     list.appendChild(div);
   });
 }
 
+// Testo scritto nella casella "Cerca per valore o testo" del gruppo aperto: si conserva
+// quando la tabella viene ridisegnata (prima spariva a ogni modifica).
+let _groupSearch={key:null,text:''};
 function renderGroup(gk){
   const names=groups[gk]; if(!names) return;
   clearCellRegistry();
@@ -2111,7 +2251,7 @@ function renderGroup(gk){
   const hdr=document.createElement('div'); hdr.className='content-header';
   // voci che mancano: valori presenti in un elenco del gruppo ma non in un altro
   const missingTot=isMulti?allVals.reduce((s,v)=>s+names.filter(n=>!eMap[n+'|'+v]).length,0):0;
-  hdr.innerHTML='<div style="display:flex;align-items:center;gap:12px;margin-bottom:8px"><h2>'+gk.replace('Z2000_','')+'</h2><span class="info">'+(isMulti?names.length+' elenchi · ':'')+allVals.length+' valori'+(missingTot?' · <span class="missing-count">'+missingTot+(missingTot===1?' voce mancante':' voci mancanti')+'</span>':'')+'</span></div><input type="text" class="content-search" placeholder="Cerca per valore o testo..." id="contentSearch">';
+  hdr.innerHTML='<div style="display:flex;align-items:center;gap:12px;margin-bottom:8px"><h2>'+escHtml(gk.replace('Z2000_',''))+'</h2><span class="info">'+(isMulti?names.length+' elenchi · ':'')+allVals.length+' valori'+(missingTot?' · <span class="missing-count">'+missingTot+(missingTot===1?' voce mancante':' voci mancanti')+'</span>':'')+'</span></div><input type="text" class="content-search" placeholder="Cerca per valore o testo..." id="contentSearch">';
   wrap.appendChild(hdr);
   const tableWrap=document.createElement('div'); tableWrap.className='content-table-wrap';
   function buildTable(vals){
@@ -2122,7 +2262,7 @@ function renderGroup(gk){
     const thVal=document.createElement('th'); thVal.className='val-col'; thVal.textContent='Valore'; tr1.appendChild(thVal);
     if(isMulti){
       const shortNames=names.map(n=>{const m=n.match(/_(\d+)$/);return m?('#'+m[1]):n.replace('Z2000_','');});
-      names.forEach((n,i)=>{const th=document.createElement('th'); th.colSpan=activeLangs.length; if(i>0) th.className='sep'; th.innerHTML='<div style="font-size:12px;font-weight:700;color:var(--text-mid)">'+shortNames[i]+'</div>'; tr1.appendChild(th);});
+      names.forEach((n,i)=>{const th=document.createElement('th'); th.colSpan=activeLangs.length; if(i>0) th.className='sep'; th.innerHTML='<div style="font-size:12px;font-weight:700;color:var(--text-mid)">'+escHtml(shortNames[i])+'</div>'; tr1.appendChild(th);});
       thead.appendChild(tr1);
       const tr2=document.createElement('tr'); tr2.className='sub';
       const thE=document.createElement('th'); tr2.appendChild(thE);
@@ -2149,10 +2289,15 @@ function renderGroup(gk){
   const addBtn=document.createElement('button'); addBtn.className='add-row-btn';
   addBtn.textContent='➕ Aggiungi voce';
   addBtn.onclick=()=>openAddRow(names,'editor');
-  tableWrap.appendChild(buildTable(allVals));
+  const filterVals=s=>!s?allVals:allVals.filter(v=>v.toLowerCase().includes(s)||names.some(n=>{const e=eMap[n+'|'+v];return e&&activeLangs.some(l=>(e.texts[l]||'').toLowerCase().includes(s));}));
+  const keep=(_groupSearch.key===gk)?_groupSearch.text:'';
+  _groupSearch={key:gk,text:keep};
+  tableWrap.appendChild(buildTable(filterVals(keep.toLowerCase())));
   tableWrap.appendChild(addBtn);
   wrap.appendChild(tableWrap); content.appendChild(wrap);
-  document.getElementById('contentSearch').oninput=function(){const s=this.value.toLowerCase(); const filtered=!s?allVals:allVals.filter(v=>v.toLowerCase().includes(s)||names.some(n=>{const e=eMap[n+'|'+v];return e&&activeLangs.some(l=>(e.texts[l]||'').toLowerCase().includes(s));})); clearCellRegistry(); clearSel(); tableWrap.innerHTML=''; tableWrap.appendChild(buildTable(filtered)); tableWrap.appendChild(addBtn);};
+  const searchBox=document.getElementById('contentSearch');
+  searchBox.value=keep;
+  searchBox.oninput=function(){_groupSearch.text=this.value; clearCellRegistry(); clearSel(); tableWrap.innerHTML=''; tableWrap.appendChild(buildTable(filterVals(this.value.toLowerCase()))); tableWrap.appendChild(addBtn);};
 }
 
 function mkCell(entry,lang,rowIdx,colIdx){
@@ -2168,7 +2313,6 @@ function mkCell(entry,lang,rowIdx,colIdx){
   div.tabIndex=-1; // la cella puo' ricevere il cursore della tastiera
   const ri=rowIdx??0, ci=colIdx??0;
   registerCell(entry,lang,div,ri,ci,'editor');
-  const cellIdx=_cellRegistry.length-1;
   div.onclick=ev=>{
     if(ev.ctrlKey||ev.metaKey){ev.preventDefault();addSel(k,div,entry,lang,'editor',ev);return;}
     if(selMap.size>0){clearSel();return;}
@@ -2225,7 +2369,7 @@ function askCreateMissing(listName,val,context,cell){
 function createMissingEntry(listName,val,context,at){
   if(allEntries.some(e=>e.parent===listName&&e.value===val)) return; // nel frattempo esiste gia'
   const texts={}; LANGS.forEach(l=>texts[l]='');
-  const ne={name:listName+'_'+val,parent:listName,defaultEntry:'False',value:val,texts,fieldInfos:''};
+  const ne={name:listName+'_'+val,parent:listName,defaultEntry:defaultEntryFor(allEntries,listName),value:val,texts,fieldInfos:''};
   allEntries.push(ne);
   pushUndo({type:'addRow',entries:[ne],entsArr:allEntries,context:'editor'});
   refreshScopeKeepCompare(); changeCount++; updateChangesBadge();
@@ -2233,8 +2377,9 @@ function createMissingEntry(listName,val,context,at){
   else if(selectedGroup) renderGroup(selectedGroup);
   showToast('✅ Voce "'+val+'" creata in '+listName);
   // il cursore va sulla cella appena nata e la apre: si scrive subito il testo
+  // la riga si cerca per VALORE e non per posizione: con il filtro di ricerca attivo le posizioni cambiano
   const wrap=navActiveWrap(), tb=wrap&&wrap.querySelector('tbody');
-  const tr=tb&&at?tb.rows[at.row]:null, cell=tr?navCellOf(tr.cells[at.col]):null;
+  const tr=tb?[...tb.rows].find(r=>r.dataset.val===String(val)):null, cell=tr&&at?navCellOf(tr.cells[at.col]):null;
   if(cell&&!cell.classList.contains('missing')) navOpen(cell);
 }
 
@@ -2274,7 +2419,7 @@ function buildMergeLangButtons(){
 }
 
 function openAddRow(parentNames, context){
-  _addRowTarget={parentNames, context};
+  _addRowTarget={parentNames, context, back:document.activeElement};
   buildAddRowFields();
   document.getElementById('arVal').value='';
   LANGS.forEach(l=>{const i=document.getElementById('arLang_'+l); if(i) i.value='';});
@@ -2284,7 +2429,9 @@ function openAddRow(parentNames, context){
 }
 function closeAddRow(){
   document.getElementById('addRowOverlay').classList.remove('open');
-  _addRowTarget=null;
+  const t=_addRowTarget; _addRowTarget=null;
+  // il cursore torna dov'era prima di aprire la finestra (se quella cella c'e' ancora)
+  if(t&&t.back&&t.back.isConnected&&t.back.focus) t.back.focus({preventScroll:true});
 }
 
 // Punti in cui la riga nuova puo' nascere: una coppia (file, elenco) per ciascuno.
@@ -2415,12 +2562,13 @@ function confirmAddRow(){
       showToast('Valore "'+val+'" già presente'+(parentNames.length>1?' in tutti gli elenchi':'')); return;
     }
     const newEntries=missingIn.map(pn=>({
-      name:pn+'_'+val,parent:pn,defaultEntry:'False',value:val,texts:{...texts},fieldInfos:''
+      name:pn+'_'+val,parent:pn,defaultEntry:defaultEntryFor(entsArr,pn),value:val,texts:{...texts},fieldInfos:''
     }));
     newEntries.forEach(ne=>entsArr.push(ne));
     pushUndo({type:'addRow',entries:newEntries,entsArr,context:'editor'});
     refreshScopeKeepCompare(); changeCount++; updateChangesBadge();
     closeAddRow();
+    _groupSearch.text=''; // la riga nuova deve vedersi anche se c'era un filtro di ricerca
     if(isCompare){renderCompareList(); renderCompareTable();}
     else if(selectedGroup) renderGroup(selectedGroup);
     navFocusRow(val); // porta in vista la riga nuova e ci mette il cursore: si puo' scrivere subito
@@ -2438,7 +2586,7 @@ function confirmAddRow(){
     [diffDataA.entries, diffDataB.entries].forEach((entsArr,i)=>{
       if(entsArr.some(e=>e.parent===parentNames[0]&&e.value===val)) return;
       const newEntries=parentNames.map(pn=>({
-        name:pn+'_'+val,parent:pn,defaultEntry:'False',value:val,texts:{...texts},fieldInfos:''
+        name:pn+'_'+val,parent:pn,defaultEntry:defaultEntryFor(entsArr,pn),value:val,texts:{...texts},fieldInfos:''
       }));
       newEntries.forEach(ne=>entsArr.push(ne));
       allAdded.push({entries:newEntries,entsArr});
@@ -2448,6 +2596,7 @@ function confirmAddRow(){
     diffChangeCount++; updateDiffChangesBadge();
     closeAddRow();
     if(selectedDiffList) renderDiffTable(selectedDiffList);
+    filterDiffSidebar();
     showToast('✅ Voce "'+val+'" aggiunta in A e B');
   } else {
     // single diff slot (diffA or diffB)
@@ -2456,15 +2605,31 @@ function confirmAddRow(){
       showToast('Valore "'+val+'" già presente'); return;
     }
     const newEntries=parentNames.map(pn=>({
-      name:pn+'_'+val,parent:pn,defaultEntry:'False',value:val,texts:{...texts},fieldInfos:''
+      name:pn+'_'+val,parent:pn,defaultEntry:defaultEntryFor(entsArr,pn),value:val,texts:{...texts},fieldInfos:''
     }));
     newEntries.forEach(ne=>entsArr.push(ne));
     pushUndo({type:'addRow',entries:newEntries,entsArr,context:'diff'});
     diffChangeCount++; updateDiffChangesBadge();
     closeAddRow();
     if(selectedDiffList) renderDiffTable(selectedDiffList);
+    filterDiffSidebar();
     showToast('✅ Voce "'+val+'" aggiunta');
   }
+}
+
+// Voce di un elenco con quel valore. Se nel file ce n'e' piu' d'una (es. la voce predefinita
+// di TIA con lo stesso valore di una voce normale) vale l'ULTIMA: e' quella mostrata a schermo.
+function findEntry(arr,parent,val){
+  for(let i=arr.length-1;i>=0;i--) if(arr[i].parent===parent&&arr[i].value===val) return arr[i];
+  return undefined;
+}
+// Contenuto della colonna DefaultEntry per una voce NUOVA: lo stesso che il file usa per le
+// sue voci normali. TIA lascia la cella vuota e scrive TRUE solo sulla voce predefinita;
+// lo si LEGGE dal file invece di inventarlo (prima le voci nuove uscivano con "False").
+function defaultEntryFor(entsArr,parent){
+  const normale=e=>String(e.defaultEntry??'').toUpperCase()!=='TRUE';
+  const simile=entsArr.find(e=>e.parent===parent&&normale(e))||entsArr.find(normale);
+  return simile?simile.defaultEntry:'';
 }
 
 // Toglie da un elenco gli elementi indicati ricordando la posizione di ciascuno, cosi'
@@ -2488,7 +2653,7 @@ function restoreKeepPos(arr,removed,pos){
 function deleteRow(val, parentNames, context, navPos){
   const isEditor=(context==='editor'||context==='compare');
   const entsArr=isEditor?allEntries:(context==='diffA'?diffDataA.entries:diffDataB.entries);
-  const targets=parentNames.map(pn=>entsArr.find(e=>e.parent===pn&&e.value===val)).filter(Boolean);
+  const targets=parentNames.map(pn=>findEntry(entsArr,pn,val)).filter(Boolean);
   const {removed,pos}=removeKeepPos(entsArr,targets);
   if(!removed.length) return;
   if(navPos===undefined) navPos=navSavePos();
@@ -2497,7 +2662,7 @@ function deleteRow(val, parentNames, context, navPos){
   else{diffChangeCount++; updateDiffChangesBadge();}
   if(context==='compare'){renderCompareList(); renderCompareTable();}
   else if(isEditor&&selectedGroup) renderGroup(selectedGroup);
-  else if(!isEditor&&selectedDiffList) renderDiffTable(selectedDiffList);
+  else if(!isEditor){if(selectedDiffList) renderDiffTable(selectedDiffList); filterDiffSidebar();}
   navRestorePos(navPos);
   showToast('🗑 Voce "'+val+'" eliminata'+(context==='compare'&&removed.length>1?' da '+removed.length+' elenchi':''));
 }
@@ -2549,8 +2714,8 @@ function confirmKey(ev){
 
 function deleteRowBoth(val, listName){
   // Delete from both A and B simultaneously
-  const fA=diffDataA.entries.find(e=>e.parent===listName&&e.value===val);
-  const fB=diffDataB.entries.find(e=>e.parent===listName&&e.value===val);
+  const fA=findEntry(diffDataA.entries,listName,val);
+  const fB=findEntry(diffDataB.entries,listName,val);
   const a=removeKeepPos(diffDataA.entries,fA?[fA]:[]), b=removeKeepPos(diffDataB.entries,fB?[fB]:[]);
   const removedA=a.removed, removedB=b.removed;
   if(!removedA.length&&!removedB.length) return;
@@ -2594,8 +2759,13 @@ function addMergeFiles(files){
   const arr=[...files];
   document.getElementById('loadingText').textContent='Caricamento 0/'+arr.length+'...';
   document.getElementById('loadingOverlay').style.display='flex';
+  const avvisi=[];
   function loadNext(i){
-    if(i>=arr.length){hideLoading();applyLangs(_mergeFiles.map(f=>f.data.langs||[]));renderMergeFileList();return;}
+    if(i>=arr.length){
+      hideLoading(); applyLangs(mergeLangs()); renderMergeFileList();
+      if(avvisi.length) alert('Attenzione:\n\n- '+avvisi.join('\n\n- '));
+      return;
+    }
     const file=arr[i];
     document.getElementById('loadingText').textContent='Caricamento '+(i+1)+'/'+arr.length+': '+file.name;
     const r=new FileReader();
@@ -2603,6 +2773,7 @@ function addMergeFiles(files){
       try{
         const data=parseFileData(new Uint8Array(ev.target.result));
         _mergeFiles.push({name:file.name,data});
+        data.avvisi.forEach(a=>avvisi.push('nel file '+file.name+': '+a));
       }catch(e){showToast('❌ '+file.name+': '+e.message);}
       afterPaint(()=>loadNext(i+1));
     };
@@ -2633,7 +2804,7 @@ function renderMergeFileList(){
     const tlCount=f.data.textLists.length, eCount=f.data.entries.length;
     item.innerHTML=`
       <span style="font-size:18px">📄</span>
-      <span class="mf-name" title="${f.name}">${f.name}</span>
+      <span class="mf-name" title="${escHtml(f.name)}">${escHtml(f.name)}</span>
       <span class="mf-meta">${tlCount} elenchi · ${eCount} voci</span>
       <button class="mf-del" title="Sposta su" onclick="moveMergeFile(${i},-1)" style="font-size:13px" ${i===0?'disabled':''}>▲</button>
       <button class="mf-del" title="Sposta giù" onclick="moveMergeFile(${i},1)" style="font-size:13px" ${i===_mergeFiles.length-1?'disabled':''}>▼</button>
@@ -2646,13 +2817,11 @@ function renderMergeFileList(){
   btn.style.cursor=ready?'pointer':'not-allowed';
 }
 
-let _mergeConflictPage=0;
-const MERGE_CONFLICT_PAGE_SIZE=50;
 let _mergeViewFilter='conflicts';
 let _mergeLangFilter='all';
 
 function setMergeViewFilter(f){
-  _mergeViewFilter=f; _mergeConflictPage=0;
+  _mergeViewFilter=f;
   ['conflicts','all'].forEach(function(k){
     const btn=document.getElementById('mfv-'+k);
     if(btn){btn.style.background=k===f?'var(--purple)':'var(--surface)';btn.style.color=k===f?'var(--on-accent)':'var(--text-2)';btn.style.borderColor=k===f?'var(--purple)':'var(--border)';}
@@ -2661,7 +2830,7 @@ function setMergeViewFilter(f){
 }
 
 function setMergeLangFilter(l){
-  _mergeLangFilter=l; _mergeConflictPage=0;
+  _mergeLangFilter=l;
   // anche le lingue non previste (es. en-IE) hanno il loro pulsante: si parte
   // da LANGS, non da un elenco fisso, altrimenti restano sempre spenti
   ['all'].concat(LANGS).forEach(function(k){
@@ -2677,19 +2846,30 @@ function setMergeLangFilter(l){
   renderConflictBody();
 }
 
-let _mergeAllEntries=[];
-function _buildMergeAllEntries(){
-  const entryMap=new Map();
-  const conflictKeys=new Set(_mergeConflicts.filter(function(c){return c.type==='entry';}).map(function(c){return c.key;}));
-  _mergeFiles.forEach(function(f,fi){
-    f.data.entries.forEach(function(e){
-      if(!e||!e.texts) return;
-      const k=e.parent+'||'+e.value;
-      if(!entryMap.has(k)) entryMap.set(k,{key:k,versions:[],isConflict:conflictKeys.has(k)});
-      entryMap.get(k).versions.push({fileIdx:fi,fileN:f.name,entry:e});
-    });
+// Scelta di partenza per una voce in conflitto: l'ULTIMO file che la contiene
+// (con first=true il primo). Un file dove la voce manca non puo' "vincere" da solo:
+// era cosi' che i testi presenti in un solo file uscivano vuoti.
+function mergeDefaultChoice(versions,first){
+  const idx=versions.map((v,i)=>v&&v.entry?i:-1).filter(i=>i>=0);
+  return idx.length?(first?idx[0]:idx[idx.length-1]):versions.length-1;
+}
+// Chiave di ogni voce di un file per l'unione: elenco + valore. Se nello stesso file lo stesso
+// valore compare piu' volte nello stesso elenco (es. la voce predefinita di TIA), dalla seconda
+// in poi si aggiunge il numero d'ordine: cosi' nessuna delle due viene scartata dal file unito.
+function mergeKeys(entries){
+  const seen=new Map();
+  return entries.map(e=>{
+    if(!e||!e.texts) return null;
+    const base=e.parent+'||'+e.value, n=(seen.get(base)||0)+1;
+    seen.set(base,n);
+    return n===1?base:base+'||#'+n;
   });
-  _mergeAllEntries=[...entryMap.values()];
+}
+// Lingue dell'unione: tutte quelle presenti nei file caricati, nell'ordine in cui compaiono.
+function mergeLangs(){
+  const u=[];
+  _mergeFiles.forEach(f=>(f.data.langs||[]).forEach(l=>{if(!u.includes(l))u.push(l);}));
+  return u.length?u:LANGS;
 }
 
 function closeMergeConflictModal(){
@@ -2699,6 +2879,7 @@ function closeMergeConflictModal(){
 
 function startMerge(){
   if(_mergeFiles.length<2){showToast('Carica almeno 2 file');return;}
+  useLangs(mergeLangs()); // le lingue dei file da unire, non quelle di un altro strumento
   showLoading('Analisi conflitti...');
   // Differito per far disegnare l'overlay prima del lavoro pesante
   afterPaint(()=>{
@@ -2708,7 +2889,6 @@ function startMerge(){
       const merged=buildMerged();
       exportMergedFile(merged);
     } else {
-      _mergeConflictPage=0;
       openConflictModal();
     }
   });
@@ -2724,8 +2904,9 @@ function detectConflicts(){
       if(!tlMap.has(tl.name)) tlMap.set(tl.name,[]);
       tlMap.get(tl.name).push({fileIdx:fi, fileN:f.name, tl});
     });
-    f.data.entries.forEach(e=>{
-      const k=e.parent+'||'+e.value;
+    const keys=mergeKeys(f.data.entries);
+    f.data.entries.forEach((e,i)=>{
+      const k=keys[i]; if(!k) return;
       if(!entryMap.has(k)) entryMap.set(k,[]);
       entryMap.get(k).push({fileIdx:fi, fileN:f.name, entry:e});
     });
@@ -2743,44 +2924,28 @@ function detectConflicts(){
     if(different) conflicts.push({type:'list', key:name, versions, chosen:versions.length-1});
   });
 
-  // Entry conflicts — TWO cases:
-  // 1. Same key in multiple files but with different texts
-  // 2. Key present in some files but not all (missing entries)
+  // Conflitto su una voce = la stessa voce (elenco + valore) ha testi DIVERSI in almeno due file.
+  // Una voce che c'e' in un file e manca in un altro NON e' un conflitto: entra nel file
+  // unito con il suo testo (prima era un "conflitto" la cui scelta di partenza era il file
+  // dove mancava, e il testo usciva vuoto).
   const totalFiles=_mergeFiles.length;
 
   entryMap.forEach((versions,k)=>{
-    // Case 1: present in multiple files with different texts
-    if(versions.length>=2){
-      const first=versions[0].entry;
-      if(!first||!first.texts) return;
-      // N-way: any version different from any other
-      const allTexts=versions.map(v=>LANGS.map(l=>normNL(v.entry&&v.entry.texts?v.entry.texts[l]||'':'')).join('|'));
-      const different=allTexts.some(t=>t!==allTexts[0]);
-      if(different){
-        conflicts.push({type:'entry', key:k, versions, chosen:versions.length-1});
-        return;
-      }
-    }
-    // Case 2: present in fewer files than total (missing in some)
-    if(versions.length<totalFiles){
-      // Build full versions array including placeholders for missing files
-      const fullVersions=_mergeFiles.map((f,fi)=>{
-        const found=versions.find(v=>v.fileIdx===fi);
-        return found||{fileIdx:fi, fileN:f.name, entry:null}; // null = missing
-      });
-      const hasSome=fullVersions.some(v=>v.entry!==null);
-      if(hasSome){
-        conflicts.push({type:'entry', key:k, versions:fullVersions, chosen:versions.length-1, hasMissing:true});
-      }
-    }
+    if(versions.length<2) return;
+    const first=versions[0].entry;
+    if(!first||!first.texts) return;
+    const allTexts=versions.map(v=>JSON.stringify(LANGS.map(l=>normNL(v.entry&&v.entry.texts?v.entry.texts[l]||'':''))));
+    if(!allTexts.some(t=>t!==allTexts[0])) return;
+    // Una casella per OGNI file caricato (entry null dove la voce manca): cosi' la posizione
+    // scelta nella finestra indica sempre lo stesso file, anche con tre o piu' file.
+    const fullVersions=_mergeFiles.map((f,fi)=>versions.find(v=>v.fileIdx===fi)||{fileIdx:fi, fileN:f.name, entry:null});
+    conflicts.push({type:'entry', key:k, versions:fullVersions, chosen:mergeDefaultChoice(fullVersions), hasMissing:versions.length<totalFiles});
   });
 
   return conflicts;
 }
 
 function openConflictModal(){
-  _buildMergeAllEntries();
-  _mergeConflictPage=0;
   document.getElementById('mergeConflictOverlay').style.display='flex';
   // triggers renderConflictBody via setMergeViewFilter
   setMergeViewFilter('conflicts');
@@ -2860,22 +3025,13 @@ function renderConflictBody(){
     // Apply view filter
     let entries=[...allValMap.values()];
 
-    // Count conflicts in group
-    const groupConflicts=entries.filter(e=>{
-      if(conflictEntryMap.has(e.key)) return true;
-      // missing in some files = conflict
-      return e.versions.some(v=>v.entry===null)&&e.versions.some(v=>v.entry!==null);
-    }).length;
+    // Conflitti del gruppo: solo le voci con testi diversi (quelle presenti in un solo file non lo sono)
+    const groupConflicts=entries.filter(e=>conflictEntryMap.has(e.key)).length;
 
     if(_mergeViewFilter==='conflicts'&&groupConflicts===0) return;
 
     // Filter to only conflicts if needed
-    if(_mergeViewFilter==='conflicts'){
-      entries=entries.filter(e=>{
-        if(conflictEntryMap.has(e.key)) return true;
-        return e.versions.some(v=>v.entry===null)&&e.versions.some(v=>v.entry!==null);
-      });
-    }
+    if(_mergeViewFilter==='conflicts') entries=entries.filter(e=>conflictEntryMap.has(e.key));
 
     // Apply language filter
     if(langFilter!=='all'){
@@ -2903,11 +3059,8 @@ function renderConflictBody(){
     arrow.style.cssText='font-size:10px;color:var(--text-muted);flex-shrink:0;transition:transform .15s';
     secHdr.appendChild(arrow);
     const titleSpan=document.createElement('span');
-    titleSpan.innerHTML=gk.replace('Z2000_','').replace('Z1000_','')+badge+'<span style="font-weight:400;color:var(--text-3);font-size:11px;margin-left:4px">'+entries.length+' voci</span>';
+    titleSpan.innerHTML=escHtml(gk.replace('Z2000_','').replace('Z1000_',''))+badge+'<span style="font-weight:400;color:var(--text-3);font-size:11px;margin-left:4px">'+entries.length+' voci</span>';
     secHdr.appendChild(titleSpan);
-    // Collapse all / expand all buttons
-    const actSpan=document.createElement('span');
-    actSpan.style.cssText='margin-left:auto;display:flex;gap:4px';
     body.appendChild(secHdr);
 
     // Collapsible container
@@ -2952,12 +3105,12 @@ function renderConflictBody(){
       const versions=entryInfo.versions; // array of length fileCount
       const conf=conflictEntryMap.get(entryInfo.key);
       const isMissingConflict=!conf&&versions.some(v=>v.entry===null)&&versions.some(v=>v.entry!==null);
-      const isConflict=!!conf||isMissingConflict;
+      const isConflict=!!conf; // il pallino rosso segna solo i conflitti veri
 
       // Init chosenLangs if needed
       if(conf&&!conf.chosenLangs){
         conf.chosenLangs={};
-        LANGS.forEach(l=>{conf.chosenLangs[l]=versions.length-1;});
+        LANGS.forEach(l=>{conf.chosenLangs[l]=mergeDefaultChoice(conf.versions);});
       }
       if(conf&&!conf.customTexts) conf.customTexts={};
 
@@ -3061,7 +3214,7 @@ function renderConflictBody(){
             if(existingRow){
               existingRow.remove();
               if(entConf.chosenLangs[lg]===-1){
-                entConf.chosenLangs[lg]=entConf.versions.length-1;
+                entConf.chosenLangs[lg]=mergeDefaultChoice(entConf.versions);
                 delete entConf.customTexts[lg];
               }
               custBtn.style.background='var(--surface-2)'; custBtn.style.color='var(--text-muted)'; custBtn.style.borderColor='var(--border)';
@@ -3161,10 +3314,11 @@ function collapseAllSections(collapse){
 
 function resolveAll(strategy){
   _mergeConflicts.forEach(function(c){
-    const idx=strategy==='first'?0:c.versions.length-1;
     if(c.type==='list'){
-      c.chosen=idx;
+      c.chosen=strategy==='first'?0:c.versions.length-1;
     } else {
+      // primo / ultimo file CHE CONTIENE la voce
+      const idx=mergeDefaultChoice(c.versions,strategy==='first');
       if(!c.chosenLangs) c.chosenLangs={};
       if(!c.customTexts) c.customTexts={};
       LANGS.forEach(function(l){
@@ -3201,8 +3355,9 @@ function buildMerged(){
       const langMap=c.chosenLangs||{};
       const customTexts=c.customTexts||{};
       const resolved={};
+      const def=mergeDefaultChoice(c.versions);
       LANGS.forEach(lang=>{
-        const fi=langMap[lang]??c.versions.length-1;
+        const fi=langMap[lang]??def;
         if(fi===-1){
           resolved[lang]=customTexts[lang]||'';
         } else {
@@ -3224,33 +3379,23 @@ function buildMerged(){
   const seenTl=new Set();
   const seenEntry=new Set();
 
-  // First: add chosen conflict resolutions
-  chosenTl.forEach((tl,name)=>{
-    if(!seenTl.has(name)){
-      mergedTls.push({...tl, comments:{...(tl.comments||{})}});
-      seenTl.add(name);
-    }
-  });
-  chosenEntryLangs.forEach((e,k)=>{
-    if(!seenEntry.has(k)&&e&&e.texts){
-      mergedEntries.push({...e, texts:{...e.texts}});
-      seenEntry.add(k);
-    }
-  });
-
-  // Second: add all non-conflicting items from each file in order
+  // Ordine del file unito: quello del primo file, poi in coda cio' che esiste solo nei file
+  // successivi. Le voci in conflitto restano al loro posto, con i testi scelti
+  // (prima finivano tutte in testa al foglio, staccate dal loro elenco).
   _mergeFiles.forEach(f=>{
     f.data.textLists.forEach(tl=>{
       if(seenTl.has(tl.name)) return;
-      mergedTls.push({...tl, comments:{...(tl.comments||{})}});
       seenTl.add(tl.name);
+      const t=chosenTl.get(tl.name)||tl;
+      mergedTls.push({...t, comments:{...(t.comments||{})}});
     });
-    f.data.entries.forEach(e=>{
-      if(!e||!e.texts) return;
-      const k=e.parent+'||'+e.value;
+    const keys=mergeKeys(f.data.entries);
+    f.data.entries.forEach((e,i)=>{
+      const k=keys[i]; if(!k) return;
       if(seenEntry.has(k)) return;
-      mergedEntries.push({...e, texts:{...e.texts}});
       seenEntry.add(k);
+      const c=chosenEntryLangs.get(k)||e;
+      mergedEntries.push({...c, texts:{...c.texts}});
     });
   });
 
@@ -3261,9 +3406,9 @@ function exportMergedFile(data){
   showLoading('Esportazione...');
   afterPaint(()=>{
     try{
-      const vp=projectVersion?'_'+projectVersion.replace(/[^a-zA-Z0-9.\-]/g,''):'';
-      const fileName='Export_merged'+vp+'_'+exportStamp()+'.xlsx';
-      salvaWorkbook(buildWorkbook(data,LANGS,(_mergeFiles[0]&&_mergeFiles[0].data)||_layoutMain),fileName);
+      const fileName='Export_merged_'+exportStamp()+'.xlsx';
+      // lingue: tutte quelle dei file uniti, qualunque cosa sia stata caricata negli altri strumenti
+      salvaWorkbook(buildWorkbook(data,mergeLangs(),(_mergeFiles[0]&&_mergeFiles[0].data)||_layoutMain),fileName);
       hideLoading();
       showToast('✅ '+fileName+' — '+data.textLists.length+' elenchi, '+data.entries.length+' voci');
     }catch(err){
@@ -3275,9 +3420,28 @@ function exportMergedFile(data){
 }
 
 /* ========== HELP MODAL ========== */
-const APP_VERSION='5.22';
+const APP_VERSION='5.23';
 const CHANGELOG=[
-  {ver:'5.22',date:'2026-11-12',cur:true,items:[
+  {ver:'5.23',date:'2026-11-12',cur:true,items:[
+    'Corretto: l\'export dell\'editor poteva perdere una lingua (o aggiungerne una vuota) dopo aver caricato file con lingue diverse nel Confronto o nell\'Unione',
+    'Unisci file: le voci presenti in un solo file entrano nel file unito con il loro testo (prima uscivano vuote) e le righe restano nell\'ordine del primo file',
+    'Ripristina tutto riporta davvero il file com\'era: tornano le voci eliminate e spariscono quelle aggiunte',
+    'Incolla (Ctrl+V) funziona anche con celle copiate da Excel',
+    'Seleziona elenchi: togliendo e rimettendo la spunta l\'elenco non resta piu\' escluso',
+    'Vista insieme: svuotare o incollare su celle selezionate aggiorna sempre lo schermo',
+    'La selezione a intervallo (Ctrl+Shift+clic) non salta piu\' la cella appena modificata',
+    'Confronto: A→B e B→A su tutte le righe sono immediati, copiano solo le righe diverse e si annullano con un solo Ctrl+Z',
+    'Confronto: il giallo segna solo le celle cambiate da te, il totale delle differenze si aggiorna a ogni modifica, annullare una copia toglie anche la riga creata',
+    'Ctrl+S mentre scrivi in una cella esporta anche quel testo',
+    'Avviso prima di perdere modifiche non scaricate (caricando un altro file, ricaricando o chiudendo la pagina)',
+    'Annulla separato tra editor e Confronto, azzerato quando carichi un altro file',
+    'Il filtro di ricerca dell\'Editor gruppi resta attivo dopo le modifiche',
+    'Le voci nuove escono con la colonna DefaultEntry scritta come nel file di partenza (prima sempre False)',
+    'Avviso al caricamento se il file ha colonne sconosciute o due voci con lo stesso valore nello stesso elenco',
+    'L\'app si apre subito anche dove internet e\' filtrato',
+    'Tolto il cartellino della versione progetto, non piu\' usato. Manuale aggiornato e date del registro versioni corrette',
+  ]},
+  {ver:'5.22',date:'2026-11-12',cur:false,items:[
     'Vista insieme: nuovo cestino su ogni riga (o Ctrl+Canc) per eliminare la voce da tutti gli elenchi spuntati in un colpo solo',
     'Prima di eliminare compare una finestra che elenca gli elenchi coinvolti e quelli dove la voce non c\'era: Invio elimina, Esc annulla',
     'Ctrl+Z rimette la voce in tutti gli elenchi insieme',
@@ -3301,7 +3465,7 @@ const CHANGELOG=[
     'Corretto: nell\'Editor gruppi, con piu\' elenchi affiancati, una voce poteva nascere doppia nello stesso elenco',
     'Il file esportato non cambia: le righe nuove escono nello stesso formato delle altre',
   ]},
-  {ver:'5.20',date:'2026-11-12',cur:false,items:[
+  {ver:'5.20',date:'2026-08-26',cur:false,items:[
     'Nuovo tema scuro grigio-blu: ora e\' quello di partenza',
     'Col pulsante sole accanto ad Aiuto si torna al tema chiaro, e la scelta resta memorizzata',
     'Tutti i colori sono ora raccolti in un unico punto del file',
@@ -3315,7 +3479,7 @@ const CHANGELOG=[
     'File esportati circa 3 volte piu\' piccoli (compressione attiva)',
     'Lingue non previste distinguibili: en-US ed en-IE ora mostrano EN e IE',
   ]},
-  {ver:'5.18',date:'2026-08-26',cur:false,items:[
+  {ver:'5.18',date:'2026-08-04',cur:false,items:[
     'Funziona senza internet: libreria Excel inclusa nel programma (prima veniva scaricata da un CDN)',
     'Export fedele: si scrivono solo le lingue presenti nel file, niente colonna DE inventata',
     'Export fedele: gli a capo originali (CRLF) non vengono piu\' alterati',
@@ -3334,16 +3498,16 @@ const CHANGELOG=[
   {ver:'5.15',date:'2026-08-04',cur:false,items:[
     'App desktop TiaTextEditor.exe con aggiornamento automatico all\'avvio',
   ]},
-  {ver:'5.14',date:'2026-08-04',cur:false,items:[
+  {ver:'5.14',date:'2026-06-18',cur:false,items:[
     'Aggiunto pulsante controllo aggiornamenti manuale in tutti i topbar',
   ]},
   {ver:'5.13',date:'2026-06-18',cur:false,items:[
     'Repo sorgente privata, release su repo pubblica dist - auto-update senza token',
   ]},
-  {ver:'5.12',date:'2026-06-18',cur:false,items:[
+  {ver:'5.12',date:'2026-05-20',cur:false,items:[
     'Aggiunta icona SVG embedded nella tab del browser',
   ]},
-  {ver:'5.11',date:'2026-05-20',cur:false,items:[
+  {ver:'5.11',date:'2026-05-19',cur:false,items:[
     'Allineamento nome file e versione interna (ora entrambi v5.11)',
   ]},
   {ver:'5.10',date:'2026-05-19',cur:false,items:[
@@ -3568,7 +3732,7 @@ const KEY_GROUPS=[
     ['Ctrl+clic','Seleziona o deseleziona una cella con il mouse.'],
     ['Ctrl+Shift+clic','Seleziona l\'intervallo fino alla cella cliccata (stessa lingua).'],
     ['Ctrl+C','Copia le celle selezionate. Senza selezione copia la cella sotto il cursore.'],
-    ['Ctrl+V','Incolla nelle celle selezionate. Senza selezione incolla nella cella sotto il cursore.'],
+    ['Ctrl+V','Incolla l\'ultima cosa copiata, anche se arriva da Excel, nelle celle selezionate. Senza selezione incolla nella cella sotto il cursore.'],
     ['Canc','Svuota le celle selezionate.'],
     ['Esc','Toglie la selezione.'],
   ]],
@@ -3580,8 +3744,8 @@ const KEY_GROUPS=[
     ['Invio / Esc','Invio conferma, Esc annulla.','nelle finestre Elimina voce e Crea voce'],
   ]],
   ['🗂 Comandi',[
-    ['Ctrl+Z','Annulla l\'ultima modifica.'],
-    ['Ctrl+S','Scarica il file Export_modified.xlsx.','Editor gruppi e Vista insieme'],
+    ['Ctrl+Z','Annulla l\'ultima modifica della schermata che stai guardando (l\'editor e il Confronto hanno annulla separati).'],
+    ['Ctrl+S','Scarica il file Export_modified.xlsx. Se stai scrivendo in una cella, quel testo viene prima confermato.','Editor gruppi e Vista insieme'],
     ['Ctrl+O','Apre la scelta del file da caricare.','schermata iniziale ed Editor gruppi'],
     ['Ctrl+F','Va alla casella di ricerca della schermata. Da lì <span class="kbd">↓</span> o <span class="kbd">Invio</span> portano al risultato.'],
     ['Alt+↓ / Alt+↑','Gruppo successivo / precedente, oppure elenco successivo / precedente.','Editor gruppi e Confronta due file'],
@@ -3623,7 +3787,7 @@ const MANUAL_HTML=`
 
 <h3>📋 Indice</h3>
 <ol style="font-size:13px;color:var(--text-mid);padding-left:20px;line-height:2">
-  <li><a href="#s1" onclick="document.getElementById('s1').scrollIntoView({behavior:'smooth'})" style="color:var(--blue-t);text-decoration:none">Schermata iniziale e versione progetto</a></li>
+  <li><a href="#s1" onclick="document.getElementById('s1').scrollIntoView({behavior:'smooth'})" style="color:var(--blue-t);text-decoration:none">Schermata iniziale</a></li>
   <li><a href="#s2" onclick="document.getElementById('s2').scrollIntoView({behavior:'smooth'})" style="color:var(--blue-t);text-decoration:none">Strumento 1 — Carica Export (editor singolo file)</a></li>
   <li><a href="#s3" onclick="document.getElementById('s3').scrollIntoView({behavior:'smooth'})" style="color:var(--blue-t);text-decoration:none">Strumento 2 — Confronta due file</a></li>
   <li><a href="#s4" onclick="document.getElementById('s4').scrollIntoView({behavior:'smooth'})" style="color:var(--blue-t);text-decoration:none">Strumento 3 — Unisci file</a></li>
@@ -3636,15 +3800,20 @@ const MANUAL_HTML=`
 
 <hr style="border:none;border-top:1px solid var(--border);margin:16px 0">
 
-<h3 id="s1">🏠 1 — Schermata iniziale e versione progetto</h3>
+<h3 id="s1">🏠 1 — Schermata iniziale</h3>
 <p>All'apertura del programma vengono mostrati tre pulsanti principali:</p>
 <ul>
   <li><strong>📂 Carica Export.xlsx</strong> — apre e modifica un singolo file Excel esportato dal TIA Portal.</li>
   <li><strong>🔀 Confronta due file</strong> — carica due file Excel e mostra le differenze affiancate.</li>
   <li><strong>🔗 Unisci file</strong> — carica due o più file Excel e crea un unico file unificato.</li>
 </ul>
-<p style="margin-top:8px"><strong>🏷 Versione progetto</strong> — il campo di testo (es. <span class="kbd">v1.2.3</span>) identifica la revisione su cui si lavora. Viene mostrato nella topbar e aggiunto al nome di ogni file esportato.</p>
-<div class="tip">Inserisci la versione progetto prima di caricare il file. Puoi cambiarla in qualsiasi momento dalla schermata iniziale.</div>
+<p style="margin-top:8px"><strong>⚠️ Avvisi al caricamento.</strong> Appena letto un file, il programma apre una finestra di avviso se trova una di queste due cose. Leggi l'avviso e premi OK: puoi lavorare lo stesso.</p>
+<ul>
+  <li><strong>Colonne che il programma non conosce</strong> — il file ha una colonna in più rispetto a quelle solite. Quella colonna <strong>non verrà scritta</strong> nel file esportato: prima di importare in TIA Portal controlla che non ti serva.</li>
+  <li><strong>Due voci con lo stesso valore nello stesso elenco</strong> — succede per esempio quando la <em>voce predefinita</em> di TIA ha lo stesso valore di una voce normale. A schermo se ne vede una sola (l'ultima). Nel file esportato restano tutte e due, intatte.</li>
+</ul>
+<p style="margin-top:8px"><strong>💾 Lavoro non ancora scaricato.</strong> Se hai fatto delle modifiche e non hai ancora scaricato il file, il programma ti ferma con una domanda prima di perderle, in tre casi: quando <strong>carichi un altro file</strong>, quando <strong>ricarichi la pagina</strong> e quando <strong>chiudi la scheda</strong> del browser.</p>
+<div class="warn">Nell'applicazione desktop (TiaTextEditor.exe) la domanda <strong>non</strong> compare chiudendo la finestra con la X: lì scarica sempre il file prima di chiudere.</div>
 
 <hr style="border:none;border-top:1px solid var(--border);margin:16px 0">
 
@@ -3673,7 +3842,7 @@ const MANUAL_HTML=`
 
 <p style="margin-top:8px"><strong>Pulsanti lingua (IT / EN / GB / DE)</strong> — nella topbar, attiva o disattiva le colonne lingua. Almeno una lingua deve rimanere visibile.</p>
 
-<p style="margin-top:8px"><strong>Ricerca voci</strong> — la casella sopra la tabella filtra le righe per valore numerico o per testo in qualsiasi lingua visibile.</p>
+<p style="margin-top:8px"><strong>Ricerca voci</strong> — la casella sopra la tabella filtra le righe per valore numerico o per testo in qualsiasi lingua visibile. Il filtro <strong>resta attivo</strong> anche dopo una modifica, un'eliminazione o un annulla; aggiungendo una voce nuova il filtro viene tolto, per fartela vedere.</p>
 
 <p style="margin-top:8px"><strong>📊 Vista insieme</strong> — mette più elenchi uno accanto all'altro nella stessa tabella, così li leggi e li modifichi tutti insieme senza aprirli uno alla volta. Si apre dall'Editor gruppi con il pulsante <em>📊 Vista insieme</em> in alto.</p>
 <ul>
@@ -3755,69 +3924,75 @@ const MANUAL_HTML=`
 
 <p><strong>Passo 1 — Caricamento.</strong> Clicca <em>🔀 Confronta due file</em>. Carica il <strong>File A</strong> (originale o di riferimento) e il <strong>File B</strong> (versione modificata o più recente).</p>
 
-<p style="margin-top:8px"><strong>Passo 2 — Avvia confronto.</strong> Clicca <em>Avvia confronto</em>. Il programma calcola tutte le differenze e mostra il conteggio totale in topbar.</p>
+<p style="margin-top:8px"><strong>Passo 2 — Avvia confronto.</strong> Clicca <em>Avvia confronto</em>. Il programma calcola tutte le differenze e mostra il totale in alto (es. <em>12 differenze</em>). Il totale e i numeri accanto a ogni elenco, nella colonna di sinistra, <strong>si aggiornano da soli</strong> a ogni modifica e a ogni annulla.</p>
 
 <p style="margin-top:8px"><strong>Colori della tabella:</strong></p>
 <ul>
-  <li style="margin-bottom:4px"><span style="display:inline-block;width:12px;height:12px;background:var(--dot-a);border-radius:2px;vertical-align:middle;margin-right:4px"></span><strong>Rosso</strong> — testo diverso nella colonna A</li>
-  <li style="margin-bottom:4px"><span style="display:inline-block;width:12px;height:12px;background:var(--dot-b);border-radius:2px;vertical-align:middle;margin-right:4px"></span><strong>Verde</strong> — testo diverso nella colonna B</li>
-  <li style="margin-bottom:4px"><span style="display:inline-block;width:12px;height:12px;background:var(--dot-onlya);border-radius:2px;vertical-align:middle;margin-right:4px"></span><strong>Arancione</strong> — voce presente solo in A</li>
-  <li style="margin-bottom:4px"><span style="display:inline-block;width:12px;height:12px;background:var(--dot-onlyb);border-radius:2px;vertical-align:middle;margin-right:4px"></span><strong>Verde chiaro</strong> — voce presente solo in B</li>
-  <li style="margin-bottom:4px"><span style="display:inline-block;width:12px;height:12px;background:var(--tint-amber);border-radius:2px;vertical-align:middle;margin-right:4px"></span><strong>Giallo</strong> — cella modificata in questa sessione</li>
+  <li><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:var(--dot-a);margin-right:5px"></span><strong>Rosso</strong> — testo diverso nella colonna A</li>
+  <li><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:var(--dot-b);margin-right:5px"></span><strong>Verde</strong> — testo diverso nella colonna B</li>
+  <li><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:var(--dot-onlya);margin-right:5px"></span><strong>Arancione</strong> — voce presente solo in A</li>
+  <li><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:var(--dot-onlyb);margin-right:5px"></span><strong>Verde chiaro</strong> — voce presente solo in B</li>
+  <li><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:var(--tint-amber-3);border:1px solid var(--amber-d);margin-right:5px"></span><strong>Giallo</strong> — cella che <strong>hai cambiato tu</strong> in questa sessione (scrivendo, incollando o copiando una riga). Una cella che è solo diversa tra A e B non è gialla. Se annulli la modifica, il giallo sparisce.</li>
 </ul>
 
 <p style="margin-top:8px"><strong>Filtri:</strong> Tutti / Solo differenze / Solo in A / Solo in B.</p>
 
-<p style="margin-top:8px"><strong>Modificare le celle.</strong> <strong>Doppio clic</strong> su qualsiasi cella di A o B per modificarla direttamente. La cella diventa gialla dopo la modifica.</p>
+<p style="margin-top:8px"><strong>Modificare le celle.</strong> <strong>Doppio clic</strong> (o <span class="kbd">Invio</span>) su qualsiasi cella di A o B per modificarla direttamente. La cella diventa gialla dopo la modifica.</p>
 
 <p style="margin-top:8px"><strong>Copiare righe tra i file:</strong></p>
 <ul>
-  <li><strong>→B</strong> — copia la riga da A a B</li>
-  <li><strong>←A</strong> — copia la riga da B ad A</li>
-  <li><strong>A→B / B→A</strong> (in testa alla tabella) — copia tutte le righe visibili in un clic</li>
+  <li><strong>→B</strong> — copia la riga da A a B. Se in B quella voce non esiste, viene creata.</li>
+  <li><strong>←A</strong> — copia la riga da B ad A. Se in A quella voce non esiste, viene creata.</li>
+  <li><strong>A→B / B→A</strong> (in testa alla tabella) — copiano in un colpo solo tutte le righe mostrate <strong>che sono diverse</strong>. Le righe già uguali non vengono toccate. Un messaggio dice quante righe sono state copiate.</li>
 </ul>
-<div class="tip">Usa il filtro <em>Solo differenze</em> prima di A→B o B→A per copiare solo le voci diverse, senza sovrascrivere quelle già uguali.</div>
-<div class="warn">Le copie di riga sono annullabili con Ctrl+Z. Ripristina tutto azzera entrambi i file.</div>
+<div class="tip">La copia in blocco è una sola operazione anche su un elenco da mille righe: è immediata, e <strong>un solo Ctrl+Z la annulla tutta</strong>, comprese le voci che erano state create nell'altro file.</div>
 
-<p style="margin-top:8px"><strong>➕ Aggiungere una voce</strong> — <em>➕ Aggiungi voce (in A e B)</em> in fondo alla sezione: aggiunge la voce in entrambi i file simultaneamente. Annullabile con Ctrl+Z.</p>
+<p style="margin-top:8px"><strong>➕ Aggiungere una voce</strong> — <em>➕ Aggiungi voce (in A e B)</em> in fondo alla sezione: aggiunge la voce in entrambi i file. Annullabile con Ctrl+Z.</p>
 
-<p style="margin-top:8px"><strong>🗑 Eliminare una voce</strong> — pulsante 🗑 per riga: elimina da A e B insieme. Annullabile con Ctrl+Z.</p>
+<p style="margin-top:8px"><strong>🗑 Eliminare una voce</strong> — pulsante 🗑 per riga: elimina da A e B insieme. Annullabile con Ctrl+Z, che la rimette al suo posto nel file.</p>
 
 <p style="margin-top:8px"><strong>🗑 Eliminare una sezione vuota</strong> — quando una sezione arriva a 0 voci, appare il pulsante <em>🗑 Elimina sezione</em> nell'intestazione. Annullabile con Ctrl+Z.</p>
+
+<div class="warn"><em>Ripristina tutto</em> riporta i due file com'erano al caricamento: tornano anche le voci e le sezioni eliminate. Chiede conferma e non è annullabile.</div>
 
 <hr style="border:none;border-top:1px solid var(--border);margin:16px 0">
 
 <h3 id="s4">🔗 4 — Strumento 3: Unisci file</h3>
 
-<p>Permette di combinare due o più file Excel in un unico Export unificato, con controllo completo su come gestire i conflitti.</p>
+<p>Mette insieme due o più file Excel in un unico Export. Serve per esempio quando due persone hanno lavorato su due copie dello stesso progetto.</p>
 
-<p style="margin-top:8px"><strong>Passo 1 — Carica i file.</strong> Clicca <em>🔗 Unisci file</em> dalla schermata iniziale. Trascina i file nella zona di caricamento oppure clicca <em>Seleziona file</em>. Puoi caricare quanti file vuoi (minimo 2). Per ogni file viene mostrato il nome, il numero di elenchi e di voci. Il caricamento avviene uno alla volta con barra di avanzamento.</p>
+<p style="margin-top:8px"><strong>Passo 1 — Carica i file.</strong> Clicca <em>🔗 Unisci file</em> dalla schermata iniziale. Trascina i file nella zona di caricamento oppure clicca <em>Seleziona file</em>. Puoi caricare quanti file vuoi (minimo 2). Per ogni file viene mostrato il nome, il numero di elenchi e di voci.</p>
 
-<p style="margin-top:8px"><strong>Riordinare i file.</strong> Usa i pulsanti <strong>▲</strong> e <strong>▼</strong> accanto a ogni file per cambiarne l'ordine. L'ordine è importante: determina quale versione viene considerata "prima" e quale "ultima" in caso di conflitto.</p>
+<p style="margin-top:8px"><strong>Riordinare i file.</strong> Usa i pulsanti <strong>▲</strong> e <strong>▼</strong> accanto a ogni file per cambiarne l'ordine. L'ordine conta: decide quale file è il "primo" e quale l'"ultimo" quando due file dicono cose diverse, e l'ordine delle righe nel file unito.</p>
 
-<p style="margin-top:8px"><strong>Passo 2 — Avvia unione.</strong> Clicca <em>🔗 Avvia unione</em>. Il programma analizza tutti i file e rileva automaticamente due tipi di conflitti:</p>
+<p style="margin-top:8px"><strong>Cosa finisce nel file unito:</strong></p>
 <ul>
-  <li><strong>Conflitti su elenchi</strong> — stesso nome di elenco presente in file diversi con ListRange o commenti differenti.</li>
-  <li><strong>Conflitti su voci</strong> — stessa voce (elenco + valore) in file diversi con testi diversi in almeno una lingua.</li>
+  <li><strong>Una voce che c'è in un solo file</strong> — entra nel file unito <strong>con il suo testo</strong>. Non devi fare niente: non è un conflitto.</li>
+  <li><strong>Una voce uguale in tutti i file</strong> — entra una volta sola.</li>
+  <li><strong>Una voce che ha testi diversi in due file</strong> — questo è un <strong>conflitto</strong>: devi dire tu quale testo tenere (Passo 3).</li>
+  <li><strong>Un elenco con tipo o commenti diversi in due file</strong> — vale la versione dell'ultimo file.</li>
 </ul>
-<p style="margin-top:6px">Se non ci sono conflitti, il file unito viene scaricato direttamente senza ulteriori passi.</p>
 
-<p style="margin-top:8px"><strong>Passo 3 — Risoluzione conflitti.</strong> Se ci sono conflitti, appare la finestra di risoluzione con le voci divise in pagine (50 per pagina). Per ogni voce in conflitto:</p>
+<p style="margin-top:8px"><strong>Passo 2 — Avvia unione.</strong> Clicca <em>🔗 Avvia unione</em>. Se non c'è nessun conflitto il file unito viene scaricato subito. Se ci sono conflitti si apre la finestra <em>⚠️ Risoluzione conflitti</em>.</p>
+
+<p style="margin-top:8px"><strong>Passo 3 — Risoluzione conflitti.</strong> In alto è scritto quanti conflitti ci sono. Le voci sono raggruppate per elenco; ogni gruppo si apre e si chiude cliccando sul suo titolo.</p>
 <ul>
-  <li>Viene mostrata una <strong>riga per ogni lingua</strong> (IT, EN, GB, DE).</li>
-  <li>Le lingue <strong>identiche</strong> in tutti i file mostrano <em>✓ identico</em> — nessuna scelta richiesta.</li>
-  <li>Le lingue <strong>diverse</strong> mostrano il testo di ogni file come pulsante — <strong>clicca il pulsante del file che vuoi tenere</strong> per quella lingua.</li>
-  <li>Puoi scegliere lingue diverse da file diversi per la stessa voce: es. IT dal file 1, EN dal file 2, DE dal file 3.</li>
+  <li><strong>Una riga per ogni lingua</strong> della voce in conflitto, e <strong>una colonna per ogni file</strong> caricato.</li>
+  <li>La casella <strong>azzurra</strong> è il testo che verrà tenuto per quella lingua. All'inizio è quello dell'<strong>ultimo file che contiene la voce</strong>.</li>
+  <li><strong>Clicca la casella di un altro file</strong> per tenere quel testo. Puoi scegliere file diversi per lingue diverse: es. italiano dal file 1, inglese dal file 2.</li>
+  <li><strong>— assente</strong> (arancione) vuol dire che in quel file la voce non c'è. Se la clicchi, per quella lingua il testo resta vuoto.</li>
+  <li><strong>✏</strong> a destra apre una casella dove scrivere a mano un testo diverso da tutti.</li>
 </ul>
+<p style="margin-top:8px"><strong>Filtri della finestra:</strong> <em>Solo conflitti</em> mostra solo le voci da decidere; <em>Tutte le voci</em> mostra anche quelle senza conflitto (in sola lettura: quelle presenti in un solo file hanno il trattino nella colonna del file dove mancano). <em>Filtra per elenco</em> cerca per nome; i pulsanti lingua mostrano una lingua alla volta.</p>
 
 <p style="margin-top:8px"><strong>Risoluzione rapida (in blocco):</strong></p>
 <ul>
-  <li><strong>Tieni tutti i primi</strong> — applica il primo file per tutte le lingue di tutti i conflitti</li>
-  <li><strong>Tieni tutti gli ultimi</strong> — applica l'ultimo file per tutte le lingue di tutti i conflitti</li>
+  <li><strong>Tieni tutti i primi</strong> — per ogni conflitto sceglie il primo file che contiene la voce.</li>
+  <li><strong>Tieni tutti gli ultimi</strong> — per ogni conflitto sceglie l'ultimo file che contiene la voce.</li>
 </ul>
-<div class="tip">Con molti conflitti: usa prima <em>Tieni tutti gli ultimi</em> per impostare un default, poi sfoglia le pagine e correggi manualmente solo le eccezioni.</div>
+<div class="tip">Con molti conflitti: premi prima <em>Tieni tutti gli ultimi</em>, poi correggi a mano solo le eccezioni.</div>
 
-<p style="margin-top:8px"><strong>Passo 4 — Esportazione.</strong> Clicca <em>✅ Conferma e scarica</em>. Il file unito viene scaricato come <span class="kbd">Export_merged_vX.X_AAAA-MM-GG_HHMM.xlsx</span>, compatibile con il TIA Portal.</p>
+<p style="margin-top:8px"><strong>Passo 4 — Esportazione.</strong> Clicca <em>✅ Conferma e scarica</em>. Il file unito viene scaricato come <span class="kbd">Export_merged_AAAA-MM-GG_HHMM.xlsx</span>. Le righe seguono l'ordine del primo file; quello che esiste solo negli altri file viene dopo. Le lingue sono tutte quelle presenti nei file uniti.</p>
 
 <hr style="border:none;border-top:1px solid var(--border);margin:16px 0">
 
@@ -3835,7 +4010,7 @@ const MANUAL_HTML=`
 <p style="margin-top:8px"><strong>Azioni dalla toolbar e tasti rapidi:</strong></p>
 <ul>
   <li><strong>📋 Copia</strong> (<span class="kbd">Ctrl+C</span>) — copia in formato tabulare (tab tra colonne, a capo tra righe), compatibile con Excel. I testi con a capo interno vengono preservati correttamente.</li>
-  <li><strong>📥 Incolla</strong> (<span class="kbd">Ctrl+V</span>) — se il testo copiato è una griglia (ha tabulazioni), i valori vengono distribuiti cella per cella in base alla posizione. Un valore singolo viene incollato in tutte le celle selezionate.</li>
+  <li><strong>📥 Incolla</strong> (<span class="kbd">Ctrl+V</span>) — incolla <strong>l'ultima cosa che hai copiato</strong>: celle copiate dentro il programma oppure celle copiate da <strong>Excel</strong>. Se hai copiato più celle (una griglia), i valori vengono distribuiti cella per cella a partire dalla prima cella selezionata. Se hai copiato un valore solo, viene scritto in tutte le celle selezionate. Senza selezione, incolla nella cella dove sta il cursore.</li>
   <li><strong>🗑 Svuota</strong> (<span class="kbd">Canc</span>) — cancella il contenuto di tutte le celle selezionate.</li>
   <li><strong>↩ Annulla</strong> (<span class="kbd">Ctrl+Z</span>) — annulla l'ultima operazione multi-cella.</li>
   <li><strong>✕ Esc</strong> (<span class="kbd">Esc</span>) — deseleziona tutto e chiude la toolbar.</li>
@@ -3844,29 +4019,39 @@ const MANUAL_HTML=`
 <hr style="border:none;border-top:1px solid var(--border);margin:16px 0">
 
 <h3 id="s6">↩ 6 — Annulla modifiche (Undo) e Ripristina tutto</h3>
-<p>Il programma mantiene uno storico delle ultime <strong>100 operazioni</strong> nella sessione corrente.</p>
+<p>Il programma tiene a mente le ultime <strong>100 operazioni</strong> della sessione.</p>
 <ul>
-  <li><strong>↩ Annulla</strong> (topbar o <span class="kbd">Ctrl+Z</span>) — annulla un'operazione alla volta: modifiche singole, incolla multi-cella, copie di riga (→B/←A), aggiunta e eliminazione voci.</li>
-  <li><strong>🔄 Ripristina tutto</strong> (pulsante rosso in topbar) — riporta tutti i testi esattamente al file originale caricato. Chiede conferma. <em>Non è annullabile.</em></li>
+  <li><strong>↩ Annulla</strong> (in alto, oppure <span class="kbd">Ctrl+Z</span>) — torna indietro di un'operazione alla volta: modifica di una cella, incolla o svuota su più celle, copia di righe nel Confronto (anche in blocco), aggiunta ed eliminazione di voci.</li>
+  <li><strong>L'annulla vale per la schermata che stai guardando.</strong> Nell'Editor gruppi e nella Vista insieme annulla le modifiche al file dell'editor; nel Confronto annulla quelle ai due file confrontati. Non può succedere che un Ctrl+Z nel Confronto annulli di nascosto una modifica fatta nell'editor.</li>
+  <li><strong>Caricando un altro file</strong> l'annulla del file precedente viene azzerato.</li>
+  <li><strong>🔄 Ripristina tutto</strong> (in alto) — riporta il file <strong>esattamente com'era quando l'hai caricato</strong>: i testi tornano quelli di prima, le voci che avevi aggiunto spariscono, le voci che avevi eliminato tornano. Chiede conferma. <em>Non è annullabile.</em></li>
 </ul>
 <div class="warn">Ctrl+Z funziona solo quando il cursore non si trova dentro un campo di testo (altrimenti il browser gestisce il proprio undo interno).</div>
 
 <hr style="border:none;border-top:1px solid var(--border);margin:16px 0">
 
 <h3 id="s7">💾 7 — Esportazione file</h3>
-<p>Tutti i file esportati sono .xlsx compatibili con il TIA Portal, con la stessa struttura del file originale.</p>
+<p>Tutti i file esportati sono .xlsx compatibili con il TIA Portal, con la stessa struttura del file originale: stesse colonne nello stesso ordine, stesse lingue, stesso ordine delle righe.</p>
 
-<p style="margin-top:8px"><strong>Editor singolo file:</strong> <em>💾 Scarica Export_modified.xlsx</em> nella topbar.</p>
+<p style="margin-top:8px"><strong>Editor singolo file:</strong> <em>💾 Scarica Export_modified.xlsx</em> in alto, oppure <span class="kbd">Ctrl+S</span>.</p>
 
-<p style="margin-top:8px"><strong>Confronto due file:</strong> due pulsanti separati — <em>💾 Esporta B modificato</em> e <em>💾 Esporta A modificato</em> (azzurro).</p>
+<p style="margin-top:8px"><strong>Confronto due file:</strong> due pulsanti separati — <em>💾 Esporta B modificato</em> e <em>💾 Esporta A modificato</em>.</p>
 
 <p style="margin-top:8px"><strong>Unisci file:</strong> <em>✅ Conferma e scarica</em> al termine della risoluzione conflitti.</p>
 
-<p style="margin-top:8px"><strong>Formato nomi file:</strong></p>
+<p style="margin-top:8px"><strong>Nomi dei file:</strong></p>
 <ul>
-  <li>Editor: <span class="kbd">Export_modified_vX.X_AAAA-MM-GG_HHMM.xlsx</span></li>
-  <li>Confronto: <span class="kbd">NomeFile_modified_vX.X_AAAA-MM-GG_HHMM.xlsx</span></li>
-  <li>Unione: <span class="kbd">Export_merged_vX.X_AAAA-MM-GG_HHMM.xlsx</span></li>
+  <li>Editor: <span class="kbd">Export_modified_AAAA-MM-GG_HHMM.xlsx</span></li>
+  <li>Confronto: <span class="kbd">NomeFile_modified_AAAA-MM-GG_HHMM.xlsx</span></li>
+  <li>Unione: <span class="kbd">Export_merged_AAAA-MM-GG_HHMM.xlsx</span></li>
+</ul>
+
+<p style="margin-top:8px"><strong>Cose che il programma garantisce:</strong></p>
+<ul>
+  <li><strong>Le lingue sono quelle del file di partenza</strong>, né una in più né una in meno, anche se nel frattempo hai aperto file con altre lingue nel Confronto o nell'Unione.</li>
+  <li><strong>Se stai ancora scrivendo in una cella</strong> quando esporti, quel testo viene confermato ed entra nel file.</li>
+  <li><strong>Le voci nuove</strong> escono scritte come le altre voci del file, anche nella colonna <em>DefaultEntry</em> (che TIA lascia vuota per le voci normali).</li>
+  <li><strong>Nessun ritorno a carrello</strong> nei testi: nel file non compare mai la sequenza <span class="kbd">_x000d_</span>, che sul pannello si vedrebbe scritta in mezzo alle frasi.</li>
 </ul>
 <div class="warn">I browser salvano nella cartella Download predefinita. Per scegliere la cartella di destinazione, attiva nelle impostazioni del browser l'opzione "Chiedi dove salvare ogni file" (Chrome/Edge: Impostazioni → Download).</div>
 
@@ -3941,15 +4126,17 @@ document.addEventListener('copy',ev=>{
     selCopy();
   }
 });
+// Ctrl+V: e' il browser a consegnare cio' che c'e' negli appunti di Windows. Cosi' si
+// incolla sia la copia fatta dentro l'app sia quella fatta fuori (es. celle di Excel).
 document.addEventListener('paste',ev=>{
-  if(selMap.size>0&&!(document.activeElement&&(document.activeElement.tagName==='INPUT'||document.activeElement.tagName==='TEXTAREA'))){
-    ev.preventDefault();
-    if(_clipboardGrid){
-      _applyPasteGrid(_clipboardGrid);
-    } else {
-      const txt=ev.clipboardData?.getData('text')||'';
-      _applyPasteText(txt);
-    }
+  const a=document.activeElement;
+  if(a&&(a.tagName==='INPUT'||a.tagName==='TEXTAREA')) return; // nei campi di testo incolla il browser
+  if(document.querySelector('.addrow-overlay.open,.help-overlay.open')) return;
+  const txt=ev.clipboardData?ev.clipboardData.getData('text'):'';
+  if(selMap.size>0){ev.preventDefault(); pasteFromText(txt); return;}
+  // nessuna selezione: si incolla nella cella sotto il cursore, che poi non resta selezionata
+  if(a&&a.matches&&a.matches(navSel)&&!a.classList.contains('missing')){
+    ev.preventDefault(); navSelect(a,true); pasteFromText(txt); clearSel();
   }
 });
 document.addEventListener('keydown',ev=>{
@@ -3957,7 +4144,7 @@ document.addEventListener('keydown',ev=>{
   if((ev.ctrlKey||ev.metaKey)&&ev.key==='z'&&!ev.shiftKey&&!inInput){ev.preventDefault();doUndo();return;}
   if(selMap.size>0&&!inInput){
     if((ev.ctrlKey||ev.metaKey)&&ev.key==='c'){ev.preventDefault();selCopy();return;}
-    if((ev.ctrlKey||ev.metaKey)&&ev.key==='v'){ev.preventDefault();selPaste();return;}
+    // (Ctrl+V non si intercetta qui: lo gestisce l'evento "paste", che riceve gli appunti di Windows)
     if(ev.key==='Delete'||ev.key==='Backspace'){ev.preventDefault();selDelete();return;}
     if(ev.key==='Escape'){clearSel();return;}
   }
@@ -4081,7 +4268,7 @@ function navSearchBox(){
 }
 
 document.addEventListener('keydown',ev=>{
-  if(ev.defaultPrevented) return;
+  if(ev.defaultPrevented||!ev.key) return; // (alcuni riempimenti automatici mandano tasti senza nome)
   const t=ev.target, tag=t&&t.tagName, ctrl=ev.ctrlKey||ev.metaKey;
   const inField=tag==='INPUT'||tag==='TEXTAREA'||tag==='SELECT';
   const helpOpen=document.getElementById('helpOverlay').classList.contains('open');
@@ -4182,9 +4369,10 @@ document.addEventListener('keydown',ev=>{
       navSelect(cell,true); selDelete(); clearSel();
       return;
   }
-  // senza selezione, copia e incolla lavorano sulla cella sotto il cursore (che poi non resta selezionata)
+  // senza selezione, la copia lavora sulla cella sotto il cursore (che poi non resta selezionata);
+  // l'incolla arriva dall'evento "paste" del browser, piu' sotto la stessa regola
   if(ctrl&&!ev.altKey&&!ev.shiftKey&&ev.key.toLowerCase()==='c'){ev.preventDefault(); navSelect(cell,true); selCopy(); clearSel(); return;}
-  if(ctrl&&!ev.altKey&&!ev.shiftKey&&ev.key.toLowerCase()==='v'){ev.preventDefault(); navSelect(cell,true); selPaste(); clearSel(); return;}
+  if(ctrl&&!ev.altKey&&!ev.shiftKey&&ev.key.toLowerCase()==='v') return;
   // un carattere digitato apre la cella e sostituisce il testo (AltGr = Ctrl+Alt insieme)
   // (su una cella rossa "non esiste" scrivere non fa niente: per crearla si usa Invio o F2)
   if(ev.key.length===1&&!ev.metaKey&&ev.ctrlKey===ev.altKey){ev.preventDefault(); if(!cell.classList.contains('missing')) navOpen(cell,{replace:ev.key});}
