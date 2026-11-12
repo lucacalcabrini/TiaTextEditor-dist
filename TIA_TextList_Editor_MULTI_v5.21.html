@@ -2,7 +2,7 @@
 <html lang="it">
 <head>
 <meta charset="utf-8">
-<title>TIA Portal Text List Editor v5.20</title>
+<title>TIA Portal Text List Editor v5.21</title>
 <script>
 /* Tema chiaro/scuro. Questo pezzo sta qui in alto apposta: deve girare prima
    che il browser disegni la pagina, altrimenti aprendo con il tema scuro si
@@ -213,9 +213,16 @@ thead tr.sub th{background:var(--surface-3);font-size:10px}
 .cell:hover{border-color:var(--border-strong)}
 .cell .nl{color:var(--text-muted);font-size:10px;margin:0 1px}
 .cell.empty{color:var(--text-muted)}
-.cell.modified{background:var(--tint-amber) !important;border-left:3px solid var(--amber-d) !important}
-.cell.sel{background:var(--tint-blue) !important;border:1.5px solid var(--blue-br) !important}
-.cell.sel.modified{background:var(--tint-amber-3) !important;border:1.5px solid var(--amber-d) !important}
+/* I bordi di evidenziazione sono disegnati DENTRO la cella (box-shadow inset):
+   selezionare o modificare una cella non deve mai cambiare la larghezza della colonna. */
+.cell.modified{background:var(--tint-amber) !important;border-left-color:var(--amber-d) !important;box-shadow:inset 2px 0 0 var(--amber-d)}
+.cell.sel{background:var(--tint-blue) !important;border-color:var(--blue-br) !important;box-shadow:inset 0 0 0 1px var(--blue-br)}
+.cell.sel.modified{background:var(--tint-amber-3) !important;border-color:var(--amber-d) !important;box-shadow:inset 0 0 0 1px var(--amber-d)}
+/* Cursore della tastiera: contorno disegnato sopra la cella, non cambia le misure */
+.cell:focus{outline:2px solid var(--focus);outline-offset:-2px}
+/* Segnaposto della cella in scrittura: contiene la cella originale resa invisibile, che tiene le misure; la casella si apre sopra la tabella. */
+.cell-edit{position:relative;z-index:4}
+.cell-edit .cell-input{position:absolute;top:0;left:0;box-shadow:0 6px 18px var(--shadow)}
 .cell-input{width:100%;min-height:28px;max-height:90px;border-radius:4px;padding:3px 6px;font-size:12px;font-family:'JetBrains Mono','Cascadia Mono',Consolas,monospace;outline:none;background:var(--surface);resize:none;overflow-y:auto;line-height:1.4}
 .version-badge{display:inline-flex;align-items:center;gap:5px;background:var(--ver-bg);border:1px solid var(--blue-br);border-radius:6px;padding:3px 10px;font-size:11px;font-weight:700;color:var(--ver-fg);white-space:nowrap}
 .version-badge span{color:var(--ver-fg-2);font-family:'JetBrains Mono','Cascadia Mono',Consolas,monospace}
@@ -240,6 +247,8 @@ tr:hover .row-del-btn{opacity:1}
 .row-del-btn:hover{color:var(--red-soft);background:var(--tint-red)}
 .add-row-btn{display:block;width:100%;padding:6px;border:1px dashed var(--border-strong);background:var(--surface-2);color:var(--text-3);font-size:11px;font-weight:600;cursor:pointer;border-radius:0 0 6px 6px;text-align:center;transition:.15s}
 .add-row-btn:hover{background:var(--tint-blue-2);border-color:var(--blue-br);color:var(--blue-t)}
+/* Vista insieme: la tabella scorre in orizzontale, il pulsante resta sempre a portata di mano */
+.add-row-btn.compare-add{position:sticky;left:0}
 /* ADD ROW MODAL */
 .addrow-overlay{display:none;position:fixed;inset:0;background:var(--veil);z-index:7000;align-items:center;justify-content:center}
 .addrow-overlay.open{display:flex}
@@ -252,6 +261,15 @@ tr:hover .row-del-btn{opacity:1}
 .addrow-body input{width:100%;padding:7px 10px;border:1px solid var(--border);border-radius:7px;font-size:13px;font-family:'JetBrains Mono','Cascadia Mono',Consolas,monospace;outline:none}
 .addrow-body input:focus{border-color:var(--blue-br)}
 .addrow-footer{display:flex;justify-content:flex-end;gap:8px;padding:10px 18px;border-top:1px solid var(--border-soft)}
+/* Esito del controllo sul valore, mostrato mentre si scrive: verde = libero, giallo = avviso, rosso = non si puo' aggiungere */
+.addrow-msg{font-size:11px;font-weight:600;margin-top:5px;min-height:16px;line-height:1.45;white-space:pre-line;color:var(--text-3)}
+.addrow-msg.ok{color:var(--green-t)}
+.addrow-msg.warn{color:var(--amber-t)}
+.addrow-msg.err{color:var(--red-t)}
+.addrow-body input.ok{border-color:var(--green)}
+.addrow-body input.warn{border-color:var(--amber-d)}
+.addrow-body input.err{border-color:var(--red)}
+.addrow-footer .btn:disabled{opacity:.45;cursor:not-allowed}
 .empty-state{flex:1;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px;color:var(--text-muted)}
 .empty-state .icon{font-size:48px;opacity:.3}
 .upload-zone,.selector-zone{background:var(--surface);border-radius:16px;padding:36px 42px;text-align:center;box-shadow:0 25px 50px var(--shadow-soft);width:min(960px,92vw)}
@@ -344,6 +362,10 @@ tr:hover .row-del-btn{opacity:1}
 .help-body p,.help-body li{font-size:13px;color:var(--text-mid);line-height:1.7}
 .help-body ul{padding-left:20px;margin:4px 0 10px}
 .help-body .kbd{display:inline-block;background:var(--surface-3);border:1px solid var(--border-strong);border-radius:4px;padding:1px 6px;font-family:'JetBrains Mono','Cascadia Mono',Consolas,monospace;font-size:11px;color:var(--text-mid)}
+.help-body .keys-table{width:100%;border-collapse:collapse;font-size:12px;margin:4px 0 14px}
+.help-body .keys-table td{padding:6px 10px;border-bottom:1px solid var(--border-soft);vertical-align:top;color:var(--text-mid);line-height:1.6}
+.help-body .keys-table td:first-child{width:36%}
+.help-body .keys-table .ctx{display:block;color:var(--text-3);font-size:11px;margin-top:2px}
 .help-body .tip{background:var(--tint-blue-2);border-left:3px solid var(--blue);border-radius:0 6px 6px 0;padding:8px 12px;margin:8px 0;font-size:12px;color:var(--blue-deep-t)}
 .help-body .warn{background:var(--tint-amber);border-left:3px solid var(--amber-y);border-radius:0 6px 6px 0;padding:8px 12px;margin:8px 0;font-size:12px;color:var(--amber-t)}
 /* Changelog */
@@ -368,7 +390,7 @@ tr:hover .row-del-btn{opacity:1}
     <div style="font-size:40px;margin-bottom:16px">⚙️</div>
     <h1>TIA Portal Text List Editor</h1>
     <p style="margin-bottom:6px">Carica il file Excel esportato dal TIA Portal.<br>Dopo il caricamento puoi scegliere quali elenchi aprire.</p>
-    <p style="font-size:12px;color:var(--text-3);margin-bottom:18px">versione app: <span style="font-family:'JetBrains Mono','Cascadia Mono',Consolas,monospace;color:var(--ver-fg-2)" id="appVerLabel">v5.20</span> &nbsp;·&nbsp; <button onclick="openHelp()" style="background:none;border:none;color:var(--ver-fg-2);cursor:pointer;font-size:12px;text-decoration:underline">❓ Manuale & Changelog</button> &nbsp;·&nbsp; <button class="btn-tema" onclick="toggleTema()" title="Tema chiaro / scuro" style="border:none;border-radius:6px;cursor:pointer;padding:3px 9px">☀️</button></p>
+    <p style="font-size:12px;color:var(--text-3);margin-bottom:18px">versione app: <span style="font-family:'JetBrains Mono','Cascadia Mono',Consolas,monospace;color:var(--ver-fg-2)" id="appVerLabel">v5.21</span> &nbsp;·&nbsp; <button onclick="openHelp()" style="background:none;border:none;color:var(--ver-fg-2);cursor:pointer;font-size:12px;text-decoration:underline">❓ Manuale & Changelog</button> &nbsp;·&nbsp; <button class="btn-tema" onclick="toggleTema()" title="Tema chiaro / scuro" style="border:none;border-radius:6px;cursor:pointer;padding:3px 9px">☀️</button></p>
     <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap">
       <label class="upload-btn">📂 Carica Export.xlsx<input type="file" accept=".xlsx,.xls" id="fileInput" style="display:none"></label>
       <button class="upload-btn" style="background:var(--cyan);box-shadow:0 4px 12px rgba(8,145,178,.35)" onclick="showDiffUploadScreen()">🔀 Confronta due file</button>
@@ -530,6 +552,7 @@ tr:hover .row-del-btn{opacity:1}
       <button class="btn btn-load" onclick="showUploadScreen()">🏠 Home</button>
       <button class="btn btn-tema" onclick="toggleTema()" title="Tema chiaro / scuro">☀️</button>
       <button class="btn" style="background:var(--chip);color:var(--chip-fg-2)" onclick="openHelp()">❓ Aiuto</button>
+      <button class="btn" style="background:var(--chip);color:var(--chip-fg-2)" onclick="openHelp('keys')" title="Legenda dei tasti (F1)">⌨️ Tasti</button>
       <button class="btn update-check-btn" style="background:var(--ver-bg);color:var(--ver-fg);border:1px solid var(--blue-br)" onclick="manualCheckForUpdate()" title="Controlla aggiornamenti">↑ Aggiornamenti</button>
     </div>
   </div>
@@ -570,7 +593,8 @@ tr:hover .row-del-btn{opacity:1}
       <button class="btn btn-export" onclick="doExport()">💾 Scarica Export_modified.xlsx</button>
       <button class="btn btn-load" onclick="showUploadScreen()">🏠 Home</button>
       <button class="btn btn-tema" onclick="toggleTema()" title="Tema chiaro / scuro">☀️</button>
-      <button class="btn" style="background:var(--chip);color:var(--chip-fg-2)" onclick="openHelp()" title="Manuale e Changelog">❓ Aiuto</button>
+      <button class="btn" style="background:var(--chip);color:var(--chip-fg-2)" onclick="openHelp()" title="Manuale, tasti e Changelog">❓ Aiuto</button>
+      <button class="btn" style="background:var(--chip);color:var(--chip-fg-2)" onclick="openHelp('keys')" title="Legenda dei tasti (F1)">⌨️ Tasti</button>
       <button class="btn update-check-btn" style="background:var(--ver-bg);color:var(--ver-fg);border:1px solid var(--blue-br)" onclick="manualCheckForUpdate()" title="Controlla aggiornamenti">↑ Aggiornamenti</button>
     </div>
   </div>
@@ -608,6 +632,7 @@ tr:hover .row-del-btn{opacity:1}
       <button class="btn btn-load" onclick="showUploadScreen()">🏠 Home</button>
       <button class="btn btn-tema" onclick="toggleTema()" title="Tema chiaro / scuro">☀️</button>
       <button class="btn" style="background:var(--chip);color:var(--chip-fg-2)" onclick="openHelp()">❓ Aiuto</button>
+      <button class="btn" style="background:var(--chip);color:var(--chip-fg-2)" onclick="openHelp('keys')" title="Legenda dei tasti (F1)">⌨️ Tasti</button>
       <button class="btn update-check-btn" style="background:var(--ver-bg);color:var(--ver-fg);border:1px solid var(--blue-br)" onclick="manualCheckForUpdate()" title="Controlla aggiornamenti">↑ Aggiornamenti</button>
     </div>
   </div>
@@ -638,20 +663,20 @@ tr:hover .row-del-btn{opacity:1}
 </div>
 
 <!-- ADD ROW MODAL -->
-<div class="addrow-overlay" id="addRowOverlay" onclick="if(event.target===this)closeAddRow()">
+<div class="addrow-overlay" id="addRowOverlay" onclick="if(event.target===this)closeAddRow()" onkeydown="addRowKey(event)">
   <div class="addrow-modal">
     <div class="addrow-header">
       <h3>➕ Aggiungi voce</h3>
       <button class="addrow-close" onclick="closeAddRow()">✕</button>
     </div>
     <div class="addrow-body">
-      <div><label>Valore (numerico o testo)</label><input id="arVal" type="text" placeholder="es. 10"></div>
+      <div><label>Valore</label><input id="arVal" type="text" placeholder="es. 10" autocomplete="off" oninput="updateAddRowCheck()"><div class="addrow-msg" id="arValMsg"></div></div>
       <!-- i campi lingua vengono creati da buildAddRowFields() secondo le lingue del file -->
       <div id="arLangFields"></div>
     </div>
     <div class="addrow-footer">
       <button class="btn btn-load" onclick="closeAddRow()">Annulla</button>
-      <button class="btn btn-export" onclick="confirmAddRow()">➕ Aggiungi</button>
+      <button class="btn btn-export" id="arConfirmBtn" onclick="confirmAddRow()">➕ Aggiungi</button>
     </div>
   </div>
 </div>
@@ -665,6 +690,7 @@ tr:hover .row-del-btn{opacity:1}
     </div>
     <div class="help-tabs">
       <button class="help-tab active" onclick="switchHelpTab('manual',this)">📘 Manuale</button>
+      <button class="help-tab" onclick="switchHelpTab('keys',this)">⌨️ Tasti</button>
       <button class="help-tab" onclick="switchHelpTab('changelog',this)">📋 Changelog</button>
     </div>
     <div class="help-body" id="helpBody"></div>
@@ -794,12 +820,55 @@ function makeCellTextarea(currentVal, borderColor, onDone){
   const resize=()=>{ta.style.height='28px'; ta.style.height=Math.min(ta.scrollHeight,90)+'px';};
   ta.addEventListener('input',resize);
   setTimeout(resize,0);
+  // Il secondo argomento di onDone dice che la chiusura arriva dalla tastiera: in quel
+  // caso il cursore resta sulla cella, cosi' si puo' proseguire senza mouse.
   ta.onkeydown=ev=>{
-    if(ev.key==='Enter'&&!ev.shiftKey){ev.preventDefault(); onDone(ta.value);}
-    if(ev.key==='Escape'){onDone(null);}
+    if(ev.key==='Enter'&&!ev.shiftKey){ev.preventDefault(); ev.stopPropagation(); onDone(ta.value,true);}
+    else if(ev.key==='Escape'){ev.stopPropagation(); onDone(null,true);}
+    else if(ev.key==='Tab'){
+      // Tab = conferma e apre in scrittura la cella accanto (Shift+Tab = quella prima)
+      ev.preventDefault(); ev.stopPropagation();
+      const next=navNeighbourTd(ta.closest('td'),ev.shiftKey?'prev':'next');
+      onDone(ta.value,true);
+      if(next) navOpen(navCellOf(next));
+    }
     // Shift+Enter = newline (default textarea behaviour, no override needed)
   };
   return ta;
+}
+
+// Apre la casella di scrittura SOPRA la cella, come in Excel. La cella originale
+// resta al suo posto, invisibile, dentro un segnaposto: e' lei a tenere le misure,
+// quindi colonna e riga non cambiano dimensione mentre si scrive e le scritte delle
+// altre celle restano ferme (vale sia con la tabella larga sia con quella stirata).
+// Restituisce il segnaposto: a fine modifica va sostituito con la cella nuova.
+const cellEditMinWidth=200;
+let cellEditOpenMode=null; // null = seleziona tutto | 'end' = cursore in fondo | {replace:'x'} = sostituisce il testo
+function openCellEditor(cell,ta){
+  const r=cell.getBoundingClientRect();
+  const box=document.createElement('div');
+  box.className='cell-edit';
+  const w=Math.max(r.width,cellEditMinWidth);
+  ta.style.width=w+'px';
+  // Vicino al bordo destro la casella si apre verso sinistra, per non uscire dalla tabella.
+  const wrap=cell.closest('.content-table-wrap');
+  if(wrap){
+    const wr=wrap.getBoundingClientRect();
+    if(r.left+w>wr.left+wrap.clientWidth&&r.right-w>=wr.left){ta.style.left='auto'; ta.style.right='0';}
+  }
+  cell.replaceWith(box);
+  cell.style.visibility='hidden';
+  box.appendChild(cell);
+  box.appendChild(ta);
+  // Come si entra in scrittura: doppio clic e Invio selezionano tutto il testo,
+  // F2 mette il cursore in fondo, un carattere digitato sostituisce il testo.
+  const mode=cellEditOpenMode; cellEditOpenMode=null;
+  ta.focus({preventScroll:true});
+  if(mode&&typeof mode==='object'){ta.value=mode.replace; ta.setSelectionRange(ta.value.length,ta.value.length); ta.dispatchEvent(new Event('input'));}
+  else if(mode==='end') ta.setSelectionRange(ta.value.length,ta.value.length);
+  else ta.select();
+  navReveal(ta);
+  return box;
 }
 // Two separate caches: one for editor, one for diff
 const _origEditor={};
@@ -1141,6 +1210,7 @@ function refreshUndoButtons(){
 function doUndo(){
   if(!undoStack.length){showToast('Niente da annullare');return;}
   const action=undoStack.pop();
+  const navPos=navSavePos(); // la tabella viene ridisegnata: il cursore torna poi nello stesso punto
   if(action.type==='cell'){
     action.entry.texts[action.lang]=action.oldVal;
     if(action.context==='editor'){changeCount=Math.max(0,changeCount-1);updateChangesBadge();}
@@ -1155,7 +1225,7 @@ function doUndo(){
     else{changeCount=Math.max(0,changeCount-action.targets.length);updateChangesBadge();}
   } else if(action.type==='addRow'){
     action.entries.forEach(e=>{const i=action.entsArr.indexOf(e);if(i>=0)action.entsArr.splice(i,1);});
-    if(action.context==='editor'){changeCount=Math.max(0,changeCount-1);updateChangesBadge();applySelectedScope();}
+    if(action.context==='editor'){changeCount=Math.max(0,changeCount-1);updateChangesBadge();refreshScopeKeepCompare();}
     else{diffChangeCount=Math.max(0,diffChangeCount-1);updateDiffChangesBadge();}
   } else if(action.type==='addRowMulti'){
     action.added.forEach(({entries,entsArr})=>{
@@ -1164,7 +1234,7 @@ function doUndo(){
     diffChangeCount=Math.max(0,diffChangeCount-1);updateDiffChangesBadge();
   } else if(action.type==='deleteRow'){
     action.entries.forEach(e=>action.entsArr.push(e));
-    if(action.context==='editor'){changeCount=Math.max(0,changeCount-1);updateChangesBadge();applySelectedScope();}
+    if(action.context==='editor'){changeCount=Math.max(0,changeCount-1);updateChangesBadge();refreshScopeKeepCompare();}
     else{diffChangeCount=Math.max(0,diffChangeCount-1);updateDiffChangesBadge();}
   } else if(action.type==='deleteRowBoth'){
     action.removedA.forEach(e=>diffDataA.entries.push(e));
@@ -1179,8 +1249,9 @@ function doUndo(){
   }
   const es=document.getElementById('editorScreen'),ds=document.getElementById('diffScreen'),cs=document.getElementById('compareScreen');
   if(es.style.display==='flex'&&selectedGroup) renderGroup(selectedGroup);
-  if(cs.style.display==='flex') renderCompareTable();
+  if(cs.style.display==='flex'){renderCompareList(); renderCompareTable();}
   if(ds.style.display==='flex'&&selectedDiffList) renderDiffTable(selectedDiffList);
+  navRestorePos(navPos);
   clearSel();
   refreshUndoButtons();
   showToast('↩ Modifica annullata');
@@ -1226,7 +1297,8 @@ let _rawBackupMain=null,_rawBackupA=null,_rawBackupB=null;
 const noVal=v=>{if(v===null||v===undefined||String(v).trim()===""||String(v)==="<No value>") return ""; return String(v);};
 const showLoading=msg=>{document.getElementById('loadingText').textContent=msg||'Caricamento...';document.getElementById('loadingOverlay').style.display='flex';};
 const hideLoading=()=>document.getElementById('loadingOverlay').style.display='none';
-const showToast=msg=>{const t=document.getElementById('toast');t.textContent=msg;t.classList.remove('hidden');setTimeout(()=>t.classList.add('hidden'),2400);};
+let toastTimer=null;
+const showToast=(msg,ms=2400)=>{const t=document.getElementById('toast');t.textContent=msg;t.classList.remove('hidden');clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.add('hidden'),ms);};
 
 function hideAll(){['uploadScreen','selectionScreen','compareScreen','editorScreen','diffUploadScreen','diffScreen','mergeScreen'].forEach(id=>document.getElementById(id).style.display='none');clearSel();}
 function showUploadScreen(){
@@ -1513,7 +1585,8 @@ function makeDiffCell(entry,lang,slot,tdEl,peerEntry,rowIdx,colIdx){
   const div=document.createElement('div');
   div.className='cell'+(mod?' modified':'')+(isSel?' sel':'');
   renderCellContent(div,val);
-  div.title=(mod?'✏️ Modificata  ':'')+'Clic=seleziona  DblClic=modifica  Ctrl+Shift+Clic=range ('+slot+')';
+  div.title=(mod?'✏️ Modificata  ':'')+'DblClic o Invio=modifica  Tab=cella accanto  Ctrl+Clic=seleziona  F1=tutti i tasti ('+slot+')';
+  div.tabIndex=-1; // la cella puo' ricevere il cursore della tastiera
   const ri=rowIdx??0, ci=colIdx??0;
   registerCell(entry,lang,div,ri,ci,'diff'+slot,k);
   div.onclick=ev=>{
@@ -1532,19 +1605,23 @@ function makeDiffCell(entry,lang,slot,tdEl,peerEntry,rowIdx,colIdx){
         if(peerTd) refreshTdDiffColor(peerTd,eA,eB,lang);
       }
     };
-    const commit=nv=>{
-      if(nv===null){ta.replaceWith(makeDiffCell(entry,lang,slot,tdEl,peerEntry,ri,ci));refreshColors();return;}
-      if(!sameText(nv,entry.texts[lang])){
+    let closed=false;
+    const commit=(nv,viaKey)=>{
+      // Dopo Invio, Esc o Tab arriva anche la perdita del fuoco: la cella si chiude una volta sola.
+      if(closed) return; closed=true;
+      if(nv!==null&&!sameText(nv,entry.texts[lang])){
         pushUndo({type:'cell',entry,lang,oldVal:entry.texts[lang]||'',newVal:nv,context:'diff'});
         entry.texts[lang]=nv; diffChangeCount++; updateDiffChangesBadge();
         markDiffModified(entry,lang);
       }
-      ta.replaceWith(makeDiffCell(entry,lang,slot,tdEl,peerEntry,ri,ci));
+      const newCell=makeDiffCell(entry,lang,slot,tdEl,peerEntry,ri,ci);
+      box.replaceWith(newCell);
       refreshColors();
+      if(viaKey) navFocus(newCell);
     };
     const ta=makeCellTextarea(entry.texts[lang]||'',slot==='A'?'var(--cyan)':'var(--teal)',commit);
     ta.onblur=()=>commit(ta.value);
-    div.replaceWith(ta); ta.focus(); ta.select();
+    const box=openCellEditor(div,ta);
   };
   return div;
 }
@@ -1737,6 +1814,14 @@ function applySelectedScope(){
   groups=buildGroups(textLists.map(t=>t.name));
   compareSelectedLists=[...textLists.map(t=>t.name)];
 }
+// Dopo aver aggiunto o tolto righe l'ambito va ricalcolato, ma gli elenchi spuntati
+// nella Vista insieme devono restare quelli scelti dall'utente (e nello stesso ordine).
+function refreshScopeKeepCompare(){
+  const keep=compareSelectedLists.slice();
+  applySelectedScope();
+  const valid=new Set(textLists.map(t=>t.name));
+  compareSelectedLists=keep.filter(n=>valid.has(n));
+}
 
 function renderSelectionList(){
   const q=(document.getElementById('selectionSearch').value||'').toLowerCase();
@@ -1808,13 +1893,18 @@ function renderCompareTable(){
   thead.appendChild(tr2); table.appendChild(thead);
   const tbody=document.createElement('tbody');
   vals.forEach((val,rowIdx)=>{
-    const tr=document.createElement('tr');
+    const tr=document.createElement('tr'); tr.dataset.val=val;
     const tdVal=document.createElement('td'); tdVal.className='val-col'; tdVal.textContent=val; tr.appendChild(tdVal);
     let colIdx=0;
     names.forEach((n,li)=>activeLangs.forEach((lang,idx)=>{const td=document.createElement('td'); if(idx===0&&li>0) td.className='sep'; const e=eMap[n+'|'+val]; if(e) td.appendChild(mkCell(e,lang,rowIdx,colIdx++)); else{td.innerHTML='<span style="color:var(--text-muted);font-size:11px">—</span>';colIdx++;} tr.appendChild(td);}));
     tbody.appendChild(tr);
   });
   table.appendChild(tbody); wrap.innerHTML=''; wrap.appendChild(table);
+  // Aggiunge una voce a tutti gli elenchi spuntati, come nell'Editor gruppi.
+  const addBtn=document.createElement('button'); addBtn.className='add-row-btn compare-add';
+  addBtn.textContent='➕ Aggiungi voce a tutti gli elenchi spuntati ('+names.length+')';
+  addBtn.onclick=()=>openAddRow(names.slice(),'compare');
+  wrap.appendChild(addBtn);
 }
 
 function showEditor(){
@@ -1968,7 +2058,7 @@ function renderGroup(gk){
     table.appendChild(thead);
     const tbody=document.createElement('tbody');
     vals.forEach((val,rowIdx)=>{
-      const tr=document.createElement('tr');
+      const tr=document.createElement('tr'); tr.dataset.val=val;
       // delete button cell
       const tdDel=document.createElement('td'); tdDel.style.cssText='padding:0 2px;text-align:center';
       const delBtn=document.createElement('button'); delBtn.className='row-del-btn'; delBtn.textContent='🗑'; delBtn.title='Elimina voce "'+val+'"';
@@ -1999,7 +2089,8 @@ function mkCell(entry,lang,rowIdx,colIdx){
   const div=document.createElement('div');
   div.className='cell'+(mod?' modified':'')+(isSel?' sel':'');
   renderCellContent(div,val);
-  div.title=(mod?'✏️ Modificata  ':'')+'Clic=seleziona  DblClic=modifica  Ctrl+Shift+Clic=range';
+  div.title=(mod?'✏️ Modificata  ':'')+'DblClic o Invio=modifica  Tab=cella accanto  Ctrl+Clic=seleziona  F1=tutti i tasti';
+  div.tabIndex=-1; // la cella puo' ricevere il cursore della tastiera
   const ri=rowIdx??0, ci=colIdx??0;
   registerCell(entry,lang,div,ri,ci,'editor');
   const cellIdx=_cellRegistry.length-1;
@@ -2010,19 +2101,23 @@ function mkCell(entry,lang,rowIdx,colIdx){
   div.ondblclick=ev=>{
     ev.preventDefault();
     clearSel();
-    const commit=nv=>{
-      if(nv===null){ta.replaceWith(mkCell(entry,lang,ri,ci));return;}
+    let closed=false;
+    const commit=(nv,viaKey)=>{
+      // Dopo Invio, Esc o Tab arriva anche la perdita del fuoco: la cella si chiude una volta sola.
+      if(closed) return; closed=true;
       // I textarea restituiscono sempre \n: se cambiano solo le terminazioni di
       // riga il testo non e' stato modificato davvero, si tiene l'originale.
-      if(!sameText(nv,entry.texts[lang])){
+      if(nv!==null&&!sameText(nv,entry.texts[lang])){
         pushUndo({type:'cell',entry,lang,oldVal:entry.texts[lang]||'',newVal:nv,context:'editor'});
         entry.texts[lang]=nv; changeCount++; updateChangesBadge();
       }
-      ta.replaceWith(mkCell(entry,lang,ri,ci));
+      const newCell=mkCell(entry,lang,ri,ci);
+      box.replaceWith(newCell);
+      if(viaKey) navFocus(newCell);
     };
     const ta=makeCellTextarea(entry.texts[lang]||'',langSolid(lang),commit);
     ta.onblur=()=>commit(ta.value);
-    div.replaceWith(ta); ta.focus(); ta.select();
+    const box=openCellEditor(div,ta);
   };
   return div;
 }
@@ -2068,36 +2163,159 @@ function openAddRow(parentNames, context){
   document.getElementById('arVal').value='';
   LANGS.forEach(l=>{const i=document.getElementById('arLang_'+l); if(i) i.value='';});
   document.getElementById('addRowOverlay').classList.add('open');
+  updateAddRowCheck();
   setTimeout(()=>document.getElementById('arVal').focus(),60);
 }
 function closeAddRow(){
   document.getElementById('addRowOverlay').classList.remove('open');
   _addRowTarget=null;
 }
+
+// Punti in cui la riga nuova puo' nascere: una coppia (file, elenco) per ciascuno.
+// 'label' e' il nome mostrato nei messaggi, 'listRange' il tipo dell'elenco letto dal file.
+function addRowTargets(){
+  if(!_addRowTarget) return [];
+  const {parentNames,context}=_addRowTarget;
+  const mk=(data,tag)=>!data?[]:parentNames.map(pn=>({
+    entsArr:data.entries, parent:pn,
+    label:tag?(parentNames.length>1?pn+' ('+tag+')':tag):pn,
+    listRange:(data.textLists.find(t=>t.name===pn)||{}).listRange||''
+  }));
+  if(context==='diffAB') return [...mk(diffDataA,'file A'),...mk(diffDataB,'file B')];
+  if(context==='diffA') return mk(diffDataA,'file A');
+  if(context==='diffB') return mk(diffDataB,'file B');
+  return mk({entries:allEntries,textLists:allTextLists},'');
+}
+
+// Legge un valore di un elenco Decimal: numero intero ("83") oppure intervallo
+// ("15 - 16", scritto come lo scrive TIA). Restituisce null se non e' valido.
+function parseDecimalValue(s){
+  const t=String(s??'').trim();
+  if(/^-?\d+$/.test(t)){const n=Number(t); return Number.isSafeInteger(n)?{lo:n,hi:n,text:String(n),range:false}:null;}
+  const m=t.match(/^(-?\d+)\s*-\s*(-?\d+)$/);
+  if(!m) return null;
+  const a=Number(m[1]),b=Number(m[2]);
+  return Number.isSafeInteger(a)&&Number.isSafeInteger(b)?{lo:a,hi:b,text:a+' - '+b,range:true}:null;
+}
+
+// Controlla il valore scritto nella finestra "Aggiungi voce" e dice cosa succedera'.
+// ok = si puo' aggiungere; level = 'ok' | 'warn' | 'err'; val = valore nella forma da salvare;
+// alreadyIn / missingIn = dove il valore c'e' gia' e dove invece verra' creato.
+function checkAddRowValue(){
+  const res={ok:false,level:'',msg:'Scrivi il valore della riga nuova.',val:'',alreadyIn:[],missingIn:[]};
+  const raw=document.getElementById('arVal').value.trim();
+  const targets=addRowTargets();
+  if(!raw||!targets.length) return res;
+  const isDiff=String(_addRowTarget.context).startsWith('diff');
+  // Il controllo "e' un numero" vale solo per gli elenchi Decimal: degli altri tipi non
+  // conosciamo le regole, quindi li si lascia liberi come prima.
+  const ranges=targets.map(t=>String(t.listRange).toLowerCase()).filter(Boolean);
+  const decimal=ranges.length>0&&ranges.every(r=>r==='decimal');
+  let val=raw, parsed=null;
+  if(decimal){
+    parsed=parseDecimalValue(raw);
+    if(!parsed){res.level='err'; res.msg='✖ Scrivi un numero intero (es. 83) oppure un intervallo (es. 15 - 16).'; return res;}
+    if(parsed.range&&parsed.lo>=parsed.hi){res.level='err'; res.msg='✖ Nell\'intervallo il primo numero deve essere più piccolo del secondo.'; return res;}
+    val=parsed.text;
+  }
+  res.val=val;
+  const norm=v=>{const p=decimal?parseDecimalValue(v):null; return p?p.text:String(v??'').trim();};
+  const overlaps=[];
+  targets.forEach(t=>{
+    let found=false, over=null;
+    t.entsArr.forEach(e=>{
+      if(e.parent!==t.parent) return;
+      if(norm(e.value)===val){found=true; return;}
+      if(decimal&&!over){const p=parseDecimalValue(e.value); if(p&&(p.range||parsed.range)&&p.lo<=parsed.hi&&parsed.lo<=p.hi) over=p.text;}
+    });
+    if(found) res.alreadyIn.push(t.label);
+    else{res.missingIn.push(t.label); if(over) overlaps.push(t.label+' ha già '+over);}
+  });
+  const names=a=>a.slice(0,3).join(', ')+(a.length>3?' e altri '+(a.length-3):'');
+  const count=n=>n+(n===1?' elenco':' elenchi');
+  const lines=[];
+  if(!res.missingIn.length){
+    res.level='err';
+    lines.push('✖ Il valore '+val+' c\'è già in '+(targets.length===1?(isDiff?'questo file':'questo elenco'):(isDiff?'entrambi i file':'tutti i '+targets.length+' elenchi'))+'.');
+  } else if(res.alreadyIn.length){
+    res.ok=true; res.level='warn';
+    lines.push('⚠ C\'è già in '+(isDiff?'':count(res.alreadyIn.length)+': ')+names(res.alreadyIn)+'.');
+    lines.push('La riga nasce solo in '+(isDiff?names(res.missingIn):(res.missingIn.length===1?res.missingIn[0]:'altri '+res.missingIn.length+' elenchi'))+'.');
+  } else {
+    res.ok=true; res.level='ok';
+    if(!overlaps.length) lines.push('✔ Valore libero'+(targets.length>1?': la riga nasce in '+(isDiff?'entrambi i file':count(targets.length)):'')+'.');
+  }
+  if(res.ok&&overlaps.length){
+    // Solo un avviso: non sappiamo se TIA rifiuta la sovrapposizione, quindi non si blocca.
+    res.level='warn';
+    lines.push('⚠ Si sovrappone a un valore esistente: '+overlaps.slice(0,2).join('; ')+(overlaps.length>2?' e altri '+(overlaps.length-2):'')+'.');
+    if(!res.alreadyIn.length) lines.push('Se va bene così, la riga nasce comunque'+(targets.length>1?' in '+(isDiff?'entrambi i file':count(targets.length)):'')+'.');
+  }
+  if(res.ok&&val!==raw) lines.push('Verrà scritto così: '+val);
+  res.msg=lines.join('\n');
+  return res;
+}
+
+// Aggiorna la riga colorata sotto il campo Valore e accende o spegne il pulsante Aggiungi.
+function updateAddRowCheck(){
+  const res=checkAddRowValue();
+  const inp=document.getElementById('arVal'), box=document.getElementById('arValMsg');
+  box.textContent=res.msg; box.className='addrow-msg'+(res.level?' '+res.level:'');
+  inp.classList.remove('ok','warn','err'); if(res.level) inp.classList.add(res.level);
+  document.getElementById('arConfirmBtn').disabled=!res.ok;
+  return res;
+}
+
+// Tasti nella finestra: Invio fa come il clic su Aggiungi, Esc chiude.
+function addRowKey(ev){
+  if(ev.key==='Escape'){ev.preventDefault(); closeAddRow(); return;}
+  if(ev.key!=='Enter'||ev.isComposing) return;
+  if(ev.target&&ev.target.tagName==='BUTTON') return; // Invio su un pulsante attiva quel pulsante
+  ev.preventDefault(); confirmAddRow();
+}
+
 function confirmAddRow(){
   if(!_addRowTarget) return;
-  const val=document.getElementById('arVal').value.trim();
-  if(!val){showToast('Inserisci un valore');return;}
+  const chk=updateAddRowCheck();
+  if(!chk.ok){
+    document.getElementById('arVal').focus();
+    showToast(chk.msg.split('\n')[0].replace(/^[✖⚠✔]\s*/,'')); return;
+  }
+  const val=chk.val;
   const texts={};
   LANGS.forEach(l=>{const i=document.getElementById('arLang_'+l); texts[l]=i?i.value:'';});
   const {parentNames, context}=_addRowTarget;
+  const isCompare=(context==='compare');
   const isEditor=(context==='editor');
   const isDiffAB=(context==='diffAB');
 
-  if(isEditor){
+  if(isEditor||isCompare){
+    // Editor gruppi e Vista insieme: la voce va in TUTTI gli elenchi indicati, ma solo
+    // dove quel valore manca. Il controllo e' fatto elenco per elenco: due voci con lo
+    // stesso valore nello stesso elenco non devono mai nascere.
     const entsArr=allEntries;
-    if(entsArr.some(e=>e.parent===parentNames[0]&&e.value===val)){
-      showToast('Valore "'+val+'" già presente'); return;
+    const alreadyIn=chk.alreadyIn, missingIn=chk.missingIn;
+    if(!missingIn.length){
+      showToast('Valore "'+val+'" già presente'+(parentNames.length>1?' in tutti gli elenchi':'')); return;
     }
-    const newEntries=parentNames.map(pn=>({
+    const newEntries=missingIn.map(pn=>({
       name:pn+'_'+val,parent:pn,defaultEntry:'False',value:val,texts:{...texts},fieldInfos:''
     }));
     newEntries.forEach(ne=>entsArr.push(ne));
     pushUndo({type:'addRow',entries:newEntries,entsArr,context:'editor'});
-    applySelectedScope(); changeCount++; updateChangesBadge();
+    refreshScopeKeepCompare(); changeCount++; updateChangesBadge();
     closeAddRow();
-    if(selectedGroup) renderGroup(selectedGroup);
-    showToast('✅ Voce "'+val+'" aggiunta');
+    if(isCompare){renderCompareList(); renderCompareTable();}
+    else if(selectedGroup) renderGroup(selectedGroup);
+    navFocusRow(val); // porta in vista la riga nuova e ci mette il cursore: si puo' scrivere subito
+    let msg='✅ Voce "'+val+'" aggiunta';
+    if(parentNames.length>1) msg+=' in '+missingIn.length+(missingIn.length===1?' elenco':' elenchi');
+    if(alreadyIn.length){
+      const shown=alreadyIn.slice(0,3).join(', ');
+      msg+=' · c\'era già in '+alreadyIn.length+': '+shown+(alreadyIn.length>3?' e altri '+(alreadyIn.length-3):'');
+    }
+    // il messaggio con i nomi degli elenchi e' piu' lungo: resta a schermo piu' a lungo
+    showToast(msg,alreadyIn.length?6000:2400);
   } else if(isDiffAB){
     // Add to both A and B
     const allAdded=[];
@@ -2142,11 +2360,13 @@ function deleteRow(val, parentNames, context){
     if(idx>=0) removed.push(...entsArr.splice(idx,1));
   });
   if(!removed.length) return;
+  const navPos=navSavePos();
   pushUndo({type:'deleteRow', entries:removed, entsArr, context:isEditor?'editor':'diff'});
-  if(isEditor){applySelectedScope(); changeCount++; updateChangesBadge();}
+  if(isEditor){refreshScopeKeepCompare(); changeCount++; updateChangesBadge();}
   else{diffChangeCount++; updateDiffChangesBadge();}
   if(isEditor&&selectedGroup) renderGroup(selectedGroup);
   else if(!isEditor&&selectedDiffList) renderDiffTable(selectedDiffList);
+  navRestorePos(navPos);
   showToast('🗑 Voce "'+val+'" eliminata');
 }
 
@@ -2881,9 +3101,22 @@ function exportMergedFile(data){
 }
 
 /* ========== HELP MODAL ========== */
-const APP_VERSION='5.20';
+const APP_VERSION='5.21';
 const CHANGELOG=[
-  {ver:'5.20',date:'2026-08-26',cur:true,items:[
+  {ver:'5.21',date:'2026-11-12',cur:true,items:[
+    'Vista insieme: nuovo pulsante Aggiungi voce in fondo alla tabella, crea la riga in tutti gli elenchi spuntati in un colpo solo',
+    'Se il valore esiste gia\' in qualche elenco, la riga viene aggiunta solo dove manca e un messaggio dice dove c\'era gia\'',
+    'Ctrl+Z toglie la riga nuova da tutti gli elenchi insieme, e gli elenchi spuntati restano spuntati',
+    'Finestra Aggiungi voce: il valore viene controllato mentre lo scrivi (verde libero, giallo avviso, rosso non valido o gia\' presente)',
+    'Finestra Aggiungi voce: Invio fa come il clic su Aggiungi, Esc chiude',
+    'Uso senza mouse: cursore sulle celle con le frecce, Invio o F2 per scrivere, Tab passa alla cella accanto restando in scrittura',
+    'Nuove scorciatoie: Ins aggiunge una voce, Ctrl+S scarica il file, Ctrl+F cerca, Alt+frecce cambia gruppo, Alt+V passa alla Vista insieme',
+    'Nuova legenda dei tasti: pulsante Tasti in alto oppure F1',
+    'Le colonne non si spostano piu\' mentre scrivi: la casella di scrittura si apre sopra la tabella, come in Excel',
+    'Corretto: nell\'Editor gruppi, con piu\' elenchi affiancati, una voce poteva nascere doppia nello stesso elenco',
+    'Il file esportato non cambia: le righe nuove escono nello stesso formato delle altre',
+  ]},
+  {ver:'5.20',date:'2026-11-12',cur:false,items:[
     'Nuovo tema scuro grigio-blu: ora e\' quello di partenza',
     'Col pulsante sole accanto ad Aiuto si torna al tema chiaro, e la scelta resta memorizzata',
     'Tutti i colori sono ora raccolti in un unico punto del file',
@@ -3123,6 +3356,74 @@ const CHANGELOG=[
   ]},
 ];
 
+// Legenda dei tasti: un solo elenco, mostrato nella scheda "Tasti" dell'Aiuto (F1)
+// e nel capitolo 8 del manuale. Ogni riga: [tasti separati da " / ", cosa fa, quando vale].
+const KEY_GROUPS=[
+  ['🧭 Muovere il cursore tra le celle',[
+    ['Frecce','Sposta il cursore di una cella. Se nessuna cella ha il cursore, una freccia lo porta nella tabella.'],
+    ['Tab / Shift+Tab','Cella dopo / cella prima. A fine riga passa alla riga sotto (o a quella sopra).'],
+    ['Home / Fine','Prima / ultima cella della riga.'],
+    ['Ctrl+Home / Ctrl+Fine','Prima / ultima cella della tabella.'],
+    ['Pag↓ / Pag↑','Dieci righe più giù / più su.'],
+  ]],
+  ['✏️ Scrivere in una cella',[
+    ['Invio','Apre la cella con tutto il testo selezionato, come il doppio clic.'],
+    ['F2','Apre la cella con il cursore in fondo al testo, per aggiungere o correggere.'],
+    ['Lettera o numero','Apre la cella e sostituisce il testo con quello che scrivi.'],
+    ['Invio','Conferma. Il cursore resta sulla cella.','mentre scrivi'],
+    ['Tab / Shift+Tab','Conferma e apre subito in scrittura la cella dopo / prima.','mentre scrivi'],
+    ['Shift+Invio','Va a capo dentro il testo.','mentre scrivi'],
+    ['Esc','Butta via quello che hai scritto. Il cursore resta sulla cella.','mentre scrivi'],
+    ['Canc','Svuota la cella sotto il cursore.'],
+  ]],
+  ['☑️ Selezionare più celle',[
+    ['Spazio','Seleziona o deseleziona la cella sotto il cursore.'],
+    ['Shift+Frecce','Allarga la selezione nella direzione della freccia.'],
+    ['Ctrl+clic','Seleziona o deseleziona una cella con il mouse.'],
+    ['Ctrl+Shift+clic','Seleziona l\'intervallo fino alla cella cliccata (stessa lingua).'],
+    ['Ctrl+C','Copia le celle selezionate. Senza selezione copia la cella sotto il cursore.'],
+    ['Ctrl+V','Incolla nelle celle selezionate. Senza selezione incolla nella cella sotto il cursore.'],
+    ['Canc','Svuota le celle selezionate.'],
+    ['Esc','Toglie la selezione.'],
+  ]],
+  ['➕ Aggiungere ed eliminare righe',[
+    ['Ins / Alt+A','Apre la finestra Aggiungi voce.'],
+    ['Invio','Aggiunge la voce. Il cursore va sulla riga nuova, pronta da scrivere.','nella finestra'],
+    ['Esc','Chiude senza aggiungere.','nella finestra'],
+    ['Ctrl+Canc','Elimina la voce (tutta la riga) sotto il cursore.','dove c\'è il cestino 🗑'],
+  ]],
+  ['🗂 Comandi',[
+    ['Ctrl+Z','Annulla l\'ultima modifica.'],
+    ['Ctrl+S','Scarica il file Export_modified.xlsx.','Editor gruppi e Vista insieme'],
+    ['Ctrl+O','Apre la scelta del file da caricare.','schermata iniziale ed Editor gruppi'],
+    ['Ctrl+F','Va alla casella di ricerca della schermata. Da lì <span class="kbd">↓</span> o <span class="kbd">Invio</span> portano al risultato.'],
+    ['Alt+↓ / Alt+↑','Gruppo successivo / precedente, oppure elenco successivo / precedente.','Editor gruppi e Confronta due file'],
+    ['Alt+V','Passa da Editor gruppi a Vista insieme, e ritorno.'],
+    ['Ctrl+Invio','Apre l\'Editor gruppi con gli elenchi spuntati.','schermata Seleziona elenchi'],
+    ['Tab / Spazio','Tab passa al pulsante o alla casella successiva, Spazio spunta la casella o preme il pulsante.','fuori dalla tabella'],
+    ['F1','Apre e chiude questa legenda.'],
+  ]],
+];
+const KEYS_HTML=KEY_GROUPS.map(([title,rows])=>'<h3>'+title+'</h3><table class="keys-table"><tbody>'+
+  rows.map(([keys,what,when])=>'<tr><td>'+keys.split(' / ').map(k=>'<span class="kbd">'+k+'</span>').join(' ')+
+    (when?'<span class="ctx">'+when+'</span>':'')+'</td><td>'+what+'</td></tr>').join('')+'</tbody></table>').join('');
+// Procedura passo passo per lavorare senza mouse, mostrata sopra la legenda.
+const KEYS_INTRO_HTML=`
+<p>Quasi tutto si può fare dalla tastiera. Il <strong>cursore</strong> è il contorno azzurro attorno a una cella: dice dove ti trovi, come in Excel.</p>
+<p style="margin-top:8px"><strong>Un giro completo senza mouse, passo passo:</strong></p>
+<ol style="font-size:13px;color:var(--text-mid);padding-left:20px;line-height:2">
+  <li>Nella schermata iniziale premi <span class="kbd">Ctrl+O</span> e scegli il file esportato da TIA Portal.</li>
+  <li>Nella schermata <em>Seleziona elenchi</em> premi <span class="kbd">Ctrl+F</span> e scrivi un pezzo del nome per filtrare. Con <span class="kbd">↓</span> vai sulla prima casella, con <span class="kbd">Tab</span> passi alle successive, con <span class="kbd">Spazio</span> le spunti. Poi <span class="kbd">Ctrl+Invio</span> apre l'Editor gruppi.</li>
+  <li>Premi <span class="kbd">Alt+↓</span>: si apre il primo gruppo e il cursore va sulla prima cella. Con <span class="kbd">Alt+↓</span> e <span class="kbd">Alt+↑</span> cambi gruppo.</li>
+  <li>Muoviti con le <span class="kbd">Frecce</span>. Sulla cella giusta premi <span class="kbd">Invio</span> e scrivi, oppure comincia direttamente a scrivere.</li>
+  <li>Premi <span class="kbd">Tab</span>: il testo viene confermato e si apre subito la cella a destra. A fine riga <span class="kbd">Tab</span> passa alla riga sotto. Così riempi una tabella intera senza mai staccare le mani.</li>
+  <li>Per una riga nuova premi <span class="kbd">Ins</span>, scrivi il valore e premi <span class="kbd">Invio</span>: il cursore va sulla riga nuova e puoi scrivere subito i testi.</li>
+  <li>Con <span class="kbd">Alt+V</span> passi alla Vista insieme, dove gli stessi tasti valgono su più elenchi affiancati.</li>
+  <li>Se sbagli, <span class="kbd">Ctrl+Z</span> annulla. Alla fine <span class="kbd">Ctrl+S</span> scarica il file da importare in TIA Portal.</li>
+</ol>
+<div class="tip">Se un tasto sembra non funzionare, guarda dov'è il cursore: i tasti delle celle valgono quando il contorno azzurro è su una cella. Una <span class="kbd">Freccia</span> lo riporta nella tabella.</div>
+`;
+
 const MANUAL_HTML=`
 <div class="app-ver-info">
   <span style="font-size:20px">⚙️</span>
@@ -3142,7 +3443,7 @@ const MANUAL_HTML=`
   <li><a href="#s5" onclick="document.getElementById('s5').scrollIntoView({behavior:'smooth'})" style="color:var(--blue-t);text-decoration:none">Selezione multi-cella stile Excel</a></li>
   <li><a href="#s6" onclick="document.getElementById('s6').scrollIntoView({behavior:'smooth'})" style="color:var(--blue-t);text-decoration:none">Annulla modifiche (Undo) e Ripristina tutto</a></li>
   <li><a href="#s7" onclick="document.getElementById('s7').scrollIntoView({behavior:'smooth'})" style="color:var(--blue-t);text-decoration:none">Esportazione file</a></li>
-  <li><a href="#s8" onclick="document.getElementById('s8').scrollIntoView({behavior:'smooth'})" style="color:var(--blue-t);text-decoration:none">Riepilogo tasti rapidi</a></li>
+  <li><a href="#s8" onclick="document.getElementById('s8').scrollIntoView({behavior:'smooth'})" style="color:var(--blue-t);text-decoration:none">Lavorare senza mouse e riepilogo dei tasti</a></li>
   <li><a href="#s9" onclick="document.getElementById('s9').scrollIntoView({behavior:'smooth'})" style="color:var(--blue-t);text-decoration:none">Tema chiaro e tema scuro</a></li>
 </ol>
 
@@ -3174,17 +3475,54 @@ const MANUAL_HTML=`
 
 <p style="margin-top:8px"><strong>Modificare una cella</strong> — <strong>doppio clic</strong> per aprire la modifica. Il bordo diventa colorato (blu=IT, rosso=EN, viola=GB, giallo=DE). <span class="kbd">Invio</span> conferma, <span class="kbd">Esc</span> annulla. <span class="kbd">Shift+Invio</span> inserisce un a capo. La cella modificata diventa <strong>gialla</strong>.</p>
 
+<p style="margin-top:8px"><strong>Scrivere senza mouse</strong> — un clic su una cella ci mette il <strong>cursore</strong> (contorno azzurro). Da lì ti muovi con le <span class="kbd">Frecce</span> e apri la cella con <span class="kbd">Invio</span>. Mentre scrivi, <span class="kbd">Tab</span> conferma e apre subito la cella a destra; a fine riga passa alla riga sotto. <span class="kbd">Shift+Tab</span> fa lo stesso all'indietro. Tutti i tasti sono spiegati nel capitolo 8 e nella scheda <em>⌨️ Tasti</em> (<span class="kbd">F1</span>).</p>
+
+<p style="margin-top:8px"><strong>Le colonne restano ferme mentre scrivi</strong> — la casella di scrittura si apre <em>sopra</em> la tabella, come in Excel: non allarga la colonna e non sposta le altre scritte. Puoi passare da una cella all'altra e il testo intorno resta sempre nello stesso punto. Nelle colonne strette (per esempio una lingua ancora vuota) la casella è comunque larga abbastanza per scrivere comodi. Solo quando <strong>confermi</strong> con Invio un testo più lungo della colonna, la colonna si allarga una volta per farcelo stare.</p>
+
 <p style="margin-top:8px"><strong>Pulsanti lingua (IT / EN / GB / DE)</strong> — nella topbar, attiva o disattiva le colonne lingua. Almeno una lingua deve rimanere visibile.</p>
 
 <p style="margin-top:8px"><strong>Ricerca voci</strong> — la casella sopra la tabella filtra le righe per valore numerico o per testo in qualsiasi lingua visibile.</p>
 
-<p style="margin-top:8px"><strong>📊 Vista insieme</strong> — affianca più elenchi della stessa sessione per un confronto rapido senza uscire dall'editor.</p>
+<p style="margin-top:8px"><strong>📊 Vista insieme</strong> — mette più elenchi uno accanto all'altro nella stessa tabella, così li leggi e li modifichi tutti insieme senza aprirli uno alla volta. Si apre dall'Editor gruppi con il pulsante <em>📊 Vista insieme</em> in alto.</p>
+<ul>
+  <li><strong>Colonna di sinistra</strong> — c'è una riga per ogni elenco aperto, con una casella da spuntare e il numero delle sue voci (es. <em>37 voci</em>). Gli elenchi <strong>spuntati</strong> compaiono nella tabella. Togli la spunta per nasconderne uno, rimettila per farlo tornare. <em>Seleziona tutti</em> e <em>Deseleziona tutti</em> spuntano o svuotano tutto in un colpo. La casella <em>Filtra elenchi</em> cerca un elenco per nome.</li>
+  <li><strong>Tabella</strong> — la prima colonna è il <em>Valore</em>. Poi, per ogni elenco spuntato, c'è una colonna per ogni lingua attiva. Ogni riga è un valore: sulla stessa riga leggi il testo di quel valore in tutti gli elenchi.</li>
+  <li><strong>Il trattino —</strong> vuol dire che lì non c'è testo. Se la voce esiste ma è vuota, fai doppio clic e scrivi. Se in quell'elenco la voce non esiste proprio, il doppio clic non fa niente: aggiungila con il pulsante <em>➕ Aggiungi voce</em> spiegato qui sotto.</li>
+  <li><strong>Modificare</strong> — doppio clic sulla cella, come nell'Editor gruppi. Valgono gli stessi tasti: <span class="kbd">Invio</span> conferma, <span class="kbd">Esc</span> annulla, <span class="kbd">Shift+Invio</span> va a capo.</li>
+</ul>
+
+<p style="margin-top:8px"><strong>➕ Aggiungere una voce a più elenchi insieme (dalla Vista insieme)</strong> — serve quando la stessa riga nuova deve nascere in tanti elenchi: la crei una volta sola invece di ripetere l'aggiunta elenco per elenco.</p>
+<ol style="font-size:13px;color:var(--text-mid);padding-left:20px;line-height:2">
+  <li>Nella colonna di sinistra <strong>spunta</strong> gli elenchi che devono ricevere la riga nuova. Togli la spunta a quelli che non la devono avere.</li>
+  <li>Scorri la tabella <strong>fino in fondo</strong>. Sotto l'ultima riga c'è il pulsante <em>➕ Aggiungi voce a tutti gli elenchi spuntati (10)</em>. Il numero tra parentesi dice quanti elenchi riceveranno la riga.</li>
+  <li>Clicca il pulsante: si apre la finestra <em>➕ Aggiungi voce</em>.</li>
+  <li>Nel campo <strong>Valore</strong> scrivi il numero della riga nuova (es. <em>83</em>). <strong>Mentre scrivi</strong>, sotto il campo compare subito una riga colorata che ti dice se quel valore va bene (i colori sono spiegati qui sotto).</li>
+  <li>I campi <strong>Testo</strong> sono facoltativi. Se li compili, <strong>lo stesso testo</strong> finisce in tutti gli elenchi. Se ogni elenco deve avere un testo diverso, lasciali vuoti: la riga nasce vuota e la riempi dopo.</li>
+  <li>Clicca <em>➕ Aggiungi</em> oppure premi <span class="kbd">Invio</span>: fanno la stessa cosa. La riga compare nella tabella al suo posto in ordine di valore, e la tabella si sposta da sola per fartela vedere. A sinistra il numero di voci di ogni elenco sale di uno.</li>
+  <li>Fai <strong>doppio clic</strong> sulle celle della riga nuova e scrivi il testo giusto per ogni elenco.</li>
+</ol>
+<ul>
+  <li><strong>Se il valore c'è già in qualche elenco</strong> — la riga viene aggiunta <strong>solo dove manca</strong>. Gli elenchi che l'avevano già non vengono toccati, e un messaggio in basso dice quanti e quali erano. Così non nascono mai due voci con lo stesso valore nello stesso elenco.</li>
+  <li><strong>Se il valore c'è già in tutti gli elenchi spuntati</strong> — non viene aggiunto niente e compare il messaggio <em>Valore già presente in tutti gli elenchi</em>.</li>
+  <li><strong>Per tornare indietro</strong> — <span class="kbd">Ctrl+Z</span> (o il pulsante <em>↩ Annulla</em>) toglie la riga nuova da tutti gli elenchi in un colpo solo. Gli elenchi spuntati restano spuntati.</li>
+  <li><strong>Nel conteggio delle modifiche</strong> l'aggiunta vale come una modifica sola, anche se la riga è finita in dieci elenchi.</li>
+</ul>
+<p style="margin-top:8px"><strong>🚦 Il controllo del valore mentre scrivi</strong> — nella finestra <em>➕ Aggiungi voce</em> non devi premere niente per sapere se il valore va bene: la riga sotto il campo <em>Valore</em> cambia colore a ogni tasto. Funziona allo stesso modo nell'Editor gruppi, nella Vista insieme e in Confronta due file.</p>
+<ul>
+  <li><strong>Verde ✔</strong> — <em>Valore libero</em>. Il valore non esiste ancora: la riga nasce in tutti gli elenchi indicati. Il pulsante <em>➕ Aggiungi</em> è acceso.</li>
+  <li><strong>Giallo ⚠</strong> — il valore c'è già in qualche elenco, oppure cade dentro un intervallo che esiste già (per esempio scrivi <em>50</em> e l'elenco ha già <em>1 - 99</em>). Il messaggio dice in quali elenchi. Puoi aggiungere lo stesso: la riga nasce solo dove manca. Per la sovrapposizione con un intervallo è solo un avviso: guarda tu se in quell'elenco va bene.</li>
+  <li><strong>Rosso ✖</strong> — il valore non si può aggiungere, e il pulsante <em>➕ Aggiungi</em> è spento. Succede in tre casi: il valore c'è già in tutti gli elenchi; hai scritto qualcosa che non è un numero intero (lettere, virgole); hai scritto un intervallo al contrario (<em>20 - 10</em>).</li>
+  <li><strong>Cosa puoi scrivere</strong> — negli elenchi di tipo <em>Decimal</em> un numero intero (<em>83</em>) oppure un intervallo, cioè due numeri separati da un trattino (<em>15 - 16</em>). Se scrivi l'intervallo senza spazi (<em>15-16</em>) il programma lo sistema da solo come lo scrive TIA Portal, e te lo mostra: <em>Verrà scritto così: 15 - 16</em>.</li>
+  <li><strong>Tasti</strong> — <span class="kbd">Invio</span> da qualsiasi campo della finestra fa come il clic su <em>➕ Aggiungi</em> (se il valore è rosso non succede niente e il cursore torna sul campo). <span class="kbd">Esc</span> chiude la finestra senza aggiungere.</li>
+</ul>
+
+<div class="tip">Esempio: hai dieci elenchi di comandi manuali e ti serve il comando numero 83 in tutti. Spunti i dieci elenchi, aggiungi la voce 83 lasciando i testi vuoti, poi scrivi i dieci testi sulla stessa riga della tabella.</div>
 
 <p style="margin-top:8px"><strong>📑 Seleziona elenchi</strong> — cambia la selezione degli elenchi visibili senza ricaricare il file.</p>
 
 <p style="margin-top:8px"><strong>📂 Carica altro</strong> — sostituisce il file corrente con uno nuovo, azzerando le modifiche non salvate.</p>
 
-<p style="margin-top:8px"><strong>➕ Aggiungere una voce</strong> — pulsante <em>➕ Aggiungi voce</em> in fondo alla tabella. Inserisci il valore (numerico o testo) e i testi per tutte le lingue. Annullabile con Ctrl+Z.</p>
+<p style="margin-top:8px"><strong>➕ Aggiungere una voce</strong> — pulsante <em>➕ Aggiungi voce</em> in fondo alla tabella. Inserisci il valore e i testi per tutte le lingue, poi clicca <em>➕ Aggiungi</em> o premi <span class="kbd">Invio</span>. Mentre scrivi il valore, una riga colorata sotto il campo dice subito se va bene (vedi <em>🚦 Il controllo del valore mentre scrivi</em>). Annullabile con Ctrl+Z. Se il gruppo affianca più elenchi (suffissi _1, _2…), la voce viene aggiunta a tutti gli elenchi del gruppo in cui quel valore manca; quelli che l'avevano già non vengono toccati. Per aggiungere la stessa voce a elenchi di gruppi diversi usa la <em>📊 Vista insieme</em>.</p>
 
 <p style="margin-top:8px"><strong>🗑 Eliminare una voce</strong> — passa il mouse su una riga: appare il pulsante <strong>🗑</strong> a sinistra del valore. Cliccalo per eliminare la voce. Annullabile con Ctrl+Z.</p>
 
@@ -3270,6 +3608,7 @@ const MANUAL_HTML=`
   <li><strong>Ctrl+Shift+clic</strong> — seleziona tutte le celle dall'ultima selezionata fino a quella cliccata, <strong>della stessa lingua</strong>. Nel confronto seleziona solo celle dello stesso slot (A oppure B) e della stessa lingua.</li>
   <li><strong>Doppio clic</strong> — apre la modifica della cella.</li>
   <li><strong>Clic semplice</strong> — se ci sono celle selezionate, le deseleziona tutte.</li>
+  <li><strong>Dalla tastiera</strong> — con il cursore su una cella, <span class="kbd">Spazio</span> la seleziona o la deseleziona, e <span class="kbd">Shift+Frecce</span> allarga la selezione. L'elenco completo dei tasti è nel capitolo 8.</li>
 </ul>
 <div class="tip">Flusso tipico: Ctrl+clic sulla prima cella → Ctrl+Shift+clic sull'ultima → le celle in mezzo della stessa lingua vengono selezionate. Poi Ctrl+C per copiare o Ctrl+V per incollare.</div>
 
@@ -3313,26 +3652,10 @@ const MANUAL_HTML=`
 
 <hr style="border:none;border-top:1px solid var(--border);margin:16px 0">
 
-<h3 id="s8">⌨️ 8 — Riepilogo tasti rapidi</h3>
-<table style="width:100%;border-collapse:collapse;font-size:12px">
-  <thead><tr style="background:var(--surface-2)">
-    <th style="padding:6px 10px;text-align:left;border-bottom:2px solid var(--border);color:var(--text-3)">Tasto</th>
-    <th style="padding:6px 10px;text-align:left;border-bottom:2px solid var(--border);color:var(--text-3)">Azione</th>
-    <th style="padding:6px 10px;text-align:left;border-bottom:2px solid var(--border);color:var(--text-3)">Contesto</th>
-  </tr></thead>
-  <tbody>
-    <tr style="border-bottom:1px solid var(--border-soft)"><td style="padding:5px 10px"><span class="kbd">Doppio clic</span></td><td style="padding:5px 10px">Apre modifica cella</td><td style="padding:5px 10px;color:var(--text-3)">Su una cella di testo</td></tr>
-    <tr style="border-bottom:1px solid var(--border-soft)"><td style="padding:5px 10px"><span class="kbd">Invio</span></td><td style="padding:5px 10px">Conferma modifica</td><td style="padding:5px 10px;color:var(--text-3)">Durante modifica singola</td></tr>
-    <tr style="border-bottom:1px solid var(--border-soft)"><td style="padding:5px 10px"><span class="kbd">Shift+Invio</span></td><td style="padding:5px 10px">A capo nel testo</td><td style="padding:5px 10px;color:var(--text-3)">Durante modifica singola</td></tr>
-    <tr style="border-bottom:1px solid var(--border-soft)"><td style="padding:5px 10px"><span class="kbd">Esc</span></td><td style="padding:5px 10px">Annulla modifica / Deseleziona celle</td><td style="padding:5px 10px;color:var(--text-3)">Durante modifica o selezione</td></tr>
-    <tr style="border-bottom:1px solid var(--border-soft)"><td style="padding:5px 10px"><span class="kbd">Ctrl+clic</span></td><td style="padding:5px 10px">Seleziona / deseleziona cella</td><td style="padding:5px 10px;color:var(--text-3)">Su una cella di testo</td></tr>
-    <tr style="border-bottom:1px solid var(--border-soft)"><td style="padding:5px 10px"><span class="kbd">Ctrl+Shift+clic</span></td><td style="padding:5px 10px">Seleziona intervallo (stessa lingua e slot)</td><td style="padding:5px 10px;color:var(--text-3)">Su una cella di testo</td></tr>
-    <tr style="border-bottom:1px solid var(--border-soft)"><td style="padding:5px 10px"><span class="kbd">Ctrl+C</span></td><td style="padding:5px 10px">Copia celle selezionate</td><td style="padding:5px 10px;color:var(--text-3)">Con celle selezionate</td></tr>
-    <tr style="border-bottom:1px solid var(--border-soft)"><td style="padding:5px 10px"><span class="kbd">Ctrl+V</span></td><td style="padding:5px 10px">Incolla nelle celle selezionate</td><td style="padding:5px 10px;color:var(--text-3)">Con celle selezionate</td></tr>
-    <tr style="border-bottom:1px solid var(--border-soft)"><td style="padding:5px 10px"><span class="kbd">Canc</span></td><td style="padding:5px 10px">Svuota le celle selezionate</td><td style="padding:5px 10px;color:var(--text-3)">Con celle selezionate</td></tr>
-    <tr style="border-bottom:1px solid var(--border-soft)"><td style="padding:5px 10px"><span class="kbd">Ctrl+Z</span></td><td style="padding:5px 10px">Annulla ultima modifica</td><td style="padding:5px 10px;color:var(--text-3)">Fuori dai campi di testo</td></tr>
-  </tbody>
-</table>
+<h3 id="s8">⌨️ 8 — Lavorare senza mouse e riepilogo dei tasti</h3>
+<p>Questa stessa legenda si apre in qualsiasi momento con <span class="kbd">F1</span> o con il pulsante <em>⌨️ Tasti</em> in alto.</p>
+${KEYS_INTRO_HTML}
+${KEYS_HTML}
 <hr style="border:none;border-top:1px solid var(--border);margin:16px 0">
 
 <h3 id="s9">🌙 9 — Tema chiaro e tema scuro</h3>
@@ -3377,7 +3700,8 @@ function buildChangelogHTML(){
 
 function openHelp(tab){
   document.getElementById('helpOverlay').classList.add('open');
-  switchHelpTab(tab||'manual', document.querySelector('.help-tab'));
+  switchHelpTab(tab||'manual');
+  document.getElementById('helpBody').scrollTop=0;
 }
 function closeHelp(){document.getElementById('helpOverlay').classList.remove('open');}
 function switchHelpTab(tab,btn){
@@ -3386,6 +3710,7 @@ function switchHelpTab(tab,btn){
   else{const tabs=document.querySelectorAll('.help-tab');tabs.forEach(t=>{if(t.getAttribute('onclick').includes(tab))t.classList.add('active');});}
   const body=document.getElementById('helpBody');
   if(tab==='manual') body.innerHTML=MANUAL_HTML;
+  else if(tab==='keys') body.innerHTML='<h3>⌨️ Lavorare senza mouse</h3>'+KEYS_INTRO_HTML+KEYS_HTML;
   else body.innerHTML=buildChangelogHTML();
 }
 document.addEventListener('keydown',ev=>{if(ev.key==='Escape'&&document.getElementById('helpOverlay').classList.contains('open')){closeHelp();}});
@@ -3416,6 +3741,223 @@ document.addEventListener('keydown',ev=>{
     if(ev.key==='Delete'||ev.key==='Backspace'){ev.preventDefault();selDelete();return;}
     if(ev.key==='Escape'){clearSel();return;}
   }
+});
+
+/* ========== TASTIERA: cursore sulle celle e scorciatoie ========== */
+// Il cursore e' il fuoco vero del browser, messo sulla cella. Ci possono andare solo le
+// celle modificabili (hanno tabindex): i trattini delle voci che non esistono vengono saltati.
+const navSel='.cell[tabindex]';
+function navCellOf(td){return td?td.querySelector(navSel):null;}
+function navRows(tbody){return [...tbody.rows].filter(r=>r.querySelector(navSel));}
+function navActiveWrap(){return [...document.querySelectorAll('.content-table-wrap')].find(w=>w.offsetParent!==null)||null;}
+function navIsVisible(id){const el=document.getElementById(id); return !!el&&el.style.display==='flex';}
+
+// Casella (td) vicina a quella data nella direzione chiesta; null se non c'e'.
+function navNeighbourTd(td,dir){
+  if(!td) return null;
+  const tr=td.parentNode, rows=navRows(tr.parentNode), ri=rows.indexOf(tr), col=td.cellIndex;
+  const tds=r=>r?[...r.cells].filter(c=>navCellOf(c)):[];
+  const here=tds(tr), ci=here.indexOf(td);
+  // in verticale si resta nella stessa colonna, saltando le righe dove li' non c'e' la voce
+  const vert=(step,count)=>{let found=null; for(let i=ri+step,n=0;i>=0&&i<rows.length&&n<count;i+=step){const c=rows[i].cells[col]; if(c&&navCellOf(c)){found=c;n++;}} return found;};
+  switch(dir){
+    case 'right': return here[ci+1]||null;
+    case 'left': return here[ci-1]||null;
+    case 'next': return here[ci+1]||tds(rows[ri+1])[0]||null;
+    case 'prev': return here[ci-1]||tds(rows[ri-1]).pop()||null;
+    case 'down': return vert(1,1);
+    case 'up': return vert(-1,1);
+    case 'pageDown': return vert(1,10);
+    case 'pageUp': return vert(-1,10);
+    case 'rowStart': return here[0]||null;
+    case 'rowEnd': return here[here.length-1]||null;
+    case 'first': return tds(rows[0])[0]||null;
+    case 'last': return tds(rows[rows.length-1]).pop()||null;
+  }
+  return null;
+}
+
+// Fa scorrere la tabella quanto basta perche' l'elemento sia tutto visibile, senza
+// lasciarlo nascosto sotto l'intestazione o sotto la colonna Valore (che restano fisse).
+function navReveal(el){
+  const wrap=el.closest('.content-table-wrap'); if(!wrap) return;
+  const r=el.getBoundingClientRect(), w=wrap.getBoundingClientRect();
+  const head=wrap.querySelector('thead'), tr=el.closest('tr'), valCol=tr?tr.querySelector('.val-col'):null;
+  const top=w.top+(head?head.offsetHeight:0), bottom=w.top+wrap.clientHeight;
+  const left=valCol?Math.max(w.left,valCol.getBoundingClientRect().right):w.left, right=w.left+wrap.clientWidth;
+  if(r.left<left) wrap.scrollLeft-=left-r.left; else if(r.right>right) wrap.scrollLeft+=Math.min(r.right-right,r.left-left);
+  if(r.top<top) wrap.scrollTop-=top-r.top; else if(r.bottom>bottom) wrap.scrollTop+=Math.min(r.bottom-bottom,r.top-top);
+}
+function navFocus(cell){
+  if(!cell) return false;
+  cell.focus({preventScroll:true}); navReveal(cell);
+  return true;
+}
+// Apre la cella in scrittura. mode: vedi cellEditOpenMode.
+function navOpen(cell,mode){
+  if(!navFocus(cell)) return;
+  cellEditOpenMode=mode||null;
+  cell.dispatchEvent(new MouseEvent('dblclick',{bubbles:true,cancelable:true}));
+  cellEditOpenMode=null;
+}
+function navFocusFirst(){
+  const wrap=navActiveWrap(), tb=wrap&&wrap.querySelector('tbody');
+  return navFocus(tb?tb.querySelector(navSel):null);
+}
+// Mette il cursore sulla prima cella modificabile della riga con quel valore.
+function navFocusRow(val){
+  const wrap=navActiveWrap(); if(!wrap) return;
+  const tr=[...wrap.querySelectorAll('tbody tr')].find(r=>r.dataset.val===String(val));
+  if(!tr) return;
+  if(!navFocus(tr.querySelector(navSel))) tr.scrollIntoView({block:'nearest'});
+}
+// Posizione del cursore (riga e colonna) da ritrovare dopo che la tabella e' stata ridisegnata.
+function navSavePos(){
+  const a=document.activeElement;
+  if(!a||!a.matches||!a.matches(navSel)) return null;
+  const td=a.closest('td');
+  return td?{row:td.parentNode.sectionRowIndex,col:td.cellIndex}:null;
+}
+function navRestorePos(pos){
+  if(!pos) return;
+  const wrap=navActiveWrap(), tb=wrap&&wrap.querySelector('tbody');
+  const rows=tb?navRows(tb):[];
+  if(!rows.length) return;
+  const tr=tb.rows[Math.min(pos.row,tb.rows.length-1)];
+  navFocus(navCellOf(tr&&tr.cells[pos.col])||(tr&&tr.querySelector(navSel))||rows[rows.length-1].querySelector(navSel));
+}
+// Dati di selezione di una cella (gli stessi usati da Ctrl+Clic).
+function navSelInfo(cell){return _cellRegistry.find(c=>c.el===cell)||null;}
+function navSelect(cell,on){
+  const c=navSelInfo(cell); if(!c||!c.entry) return;
+  if(selMap.has(c.key)===!!on) return;
+  addSel(c.key,c.el,c.entry,c.lang,c.context);
+}
+// Gruppo (Editor gruppi) o elenco (Confronta due file) precedente / successivo.
+function navSwitchGroup(step){
+  const items=[...document.querySelectorAll('.group-item')].filter(i=>i.offsetParent!==null);
+  if(!items.length) return;
+  const cur=items.findIndex(i=>i.classList.contains('active'));
+  const next=items[Math.max(0,Math.min(items.length-1,cur<0?(step>0?0:items.length-1):cur+step))];
+  if(!next||next.classList.contains('active')) return;
+  next.click();
+  const act=[...document.querySelectorAll('.group-item.active')].find(i=>i.offsetParent!==null);
+  if(act) act.scrollIntoView({block:'nearest'});
+  navFocusFirst();
+}
+// Casella di ricerca della schermata visibile.
+function navSearchBox(){
+  return ['contentSearch','compareSearch','diffSidebarSearch','sidebarSearch','selectionSearch']
+    .map(id=>document.getElementById(id)).find(el=>el&&el.offsetParent!==null)||null;
+}
+
+document.addEventListener('keydown',ev=>{
+  if(ev.defaultPrevented) return;
+  const t=ev.target, tag=t&&t.tagName, ctrl=ev.ctrlKey||ev.metaKey;
+  const inField=tag==='INPUT'||tag==='TEXTAREA'||tag==='SELECT';
+  const helpOpen=document.getElementById('helpOverlay').classList.contains('open');
+  const modalOpen=helpOpen||document.getElementById('addRowOverlay').classList.contains('open');
+  const onEditor=navIsVisible('editorScreen'), onCompare=navIsVisible('compareScreen'), onDiff=navIsVisible('diffScreen'), onSelection=navIsVisible('selectionScreen');
+
+  // ----- F1: legenda dei tasti (si apre e si chiude) -----
+  if(ev.key==='F1'){ev.preventDefault(); if(helpOpen) closeHelp(); else openHelp('keys'); return;}
+
+  // ----- comandi che valgono ovunque -----
+  if(ctrl&&!ev.altKey&&ev.key.toLowerCase()==='s'){
+    ev.preventDefault(); // mai la finestra "Salva pagina" del browser
+    if(modalOpen) return;
+    if(onEditor||onCompare) doExport();
+    else if(onDiff) showToast('Nel confronto scegli quale file scaricare: Scarica A o Scarica B');
+    return;
+  }
+  if(modalOpen) return;
+  if(ctrl&&!ev.altKey&&ev.key.toLowerCase()==='o'){
+    const pick=navIsVisible('uploadScreen')?'fileInput':(onEditor?'fileInputAlt':null);
+    if(pick){ev.preventDefault(); document.getElementById(pick).click();}
+    return;
+  }
+  if(ctrl&&!ev.altKey&&ev.key.toLowerCase()==='f'){
+    const box=navSearchBox();
+    if(box){ev.preventDefault(); box.focus(); box.select();}
+    return;
+  }
+  if(ctrl&&ev.key==='Enter'&&onSelection){ev.preventDefault(); startEditingSelected(); return;}
+  if(ev.altKey&&!ctrl&&ev.key.toLowerCase()==='v'&&(onEditor||onCompare)){
+    ev.preventDefault();
+    if(onEditor) showCompareScreen(); else showEditor();
+    navFocusFirst();
+    return;
+  }
+  if(ev.altKey&&!ctrl&&(ev.key==='ArrowDown'||ev.key==='ArrowUp')&&(onEditor||onDiff)){
+    ev.preventDefault(); navSwitchGroup(ev.key==='ArrowDown'?1:-1); return;
+  }
+  if((ev.key==='Insert'&&!inField)||(ev.altKey&&!ctrl&&ev.key.toLowerCase()==='a')){
+    const btn=[...document.querySelectorAll('.add-row-btn')].find(b=>b.offsetParent!==null);
+    if(btn){ev.preventDefault(); btn.click();}
+    return;
+  }
+
+  // ----- dentro una casella di ricerca: freccia giu' o Invio portano al risultato -----
+  if(inField){
+    if(tag==='INPUT'&&(ev.key==='ArrowDown'||ev.key==='Enter')&&!ctrl&&!ev.altKey){
+      if(t.id==='contentSearch'){if(navFocusFirst()) ev.preventDefault();}
+      else if(t.id==='sidebarSearch'||t.id==='diffSidebarSearch'){
+        const first=[...document.querySelectorAll('.group-item')].find(i=>i.offsetParent!==null);
+        if(first){ev.preventDefault(); first.click(); navFocusFirst();}
+      }
+      else if(t.id==='compareSearch'||t.id==='selectionSearch'){
+        const list=document.getElementById(t.id==='compareSearch'?'compareList':'selectionList');
+        const cb=list&&list.querySelector('input[type="checkbox"]');
+        if(cb){ev.preventDefault(); cb.focus();}
+      }
+    }
+    return;
+  }
+
+  // ----- il cursore non e' su una cella: una freccia lo porta nella tabella -----
+  const cell=t&&t.matches&&t.matches(navSel)?t:null;
+  if(!cell){
+    if(!ctrl&&!ev.altKey&&['ArrowDown','ArrowUp','ArrowLeft','ArrowRight'].includes(ev.key)){
+      if(navFocusFirst()) ev.preventDefault();
+    }
+    return;
+  }
+
+  // ----- il cursore e' su una cella -----
+  const td=cell.closest('td');
+  const go=dir=>{
+    const to=navCellOf(navNeighbourTd(td,dir));
+    ev.preventDefault();
+    if(!to) return;
+    if(ev.shiftKey&&dir!=='next'&&dir!=='prev'){navSelect(cell,true); navSelect(to,true);}
+    navFocus(to);
+  };
+  if(ev.altKey&&!ev.ctrlKey) return; // Alt da solo non e' un tasto delle celle (AltGr = Ctrl+Alt passa)
+  if(!(ev.altKey&&ev.ctrlKey)) switch(ev.key){
+    case 'ArrowRight': go('right'); return;
+    case 'ArrowLeft': go('left'); return;
+    case 'ArrowDown': go('down'); return;
+    case 'ArrowUp': go('up'); return;
+    case 'Tab': go(ev.shiftKey?'prev':'next'); return;
+    case 'Home': go(ctrl?'first':'rowStart'); return;
+    case 'End': go(ctrl?'last':'rowEnd'); return;
+    case 'PageDown': go('pageDown'); return;
+    case 'PageUp': go('pageUp'); return;
+    case 'Enter': ev.preventDefault(); navOpen(cell); return;
+    case 'F2': ev.preventDefault(); navOpen(cell,'end'); return;
+    case ' ': ev.preventDefault(); {const c=navSelInfo(cell); if(c&&c.entry) addSel(c.key,c.el,c.entry,c.lang,c.context);} return;
+    case 'Delete': case 'Backspace':
+      ev.preventDefault();
+      if(ctrl){const del=cell.closest('tr').querySelector('.row-del-btn'); if(del) del.click(); return;}
+      // nessuna selezione attiva: svuota la cella sotto il cursore (annullabile con Ctrl+Z)
+      navSelect(cell,true); selDelete(); clearSel();
+      return;
+  }
+  // senza selezione, copia e incolla lavorano sulla cella sotto il cursore (che poi non resta selezionata)
+  if(ctrl&&!ev.altKey&&!ev.shiftKey&&ev.key.toLowerCase()==='c'){ev.preventDefault(); navSelect(cell,true); selCopy(); clearSel(); return;}
+  if(ctrl&&!ev.altKey&&!ev.shiftKey&&ev.key.toLowerCase()==='v'){ev.preventDefault(); navSelect(cell,true); selPaste(); clearSel(); return;}
+  // un carattere digitato apre la cella e sostituisce il testo (AltGr = Ctrl+Alt insieme)
+  if(ev.key.length===1&&!ev.metaKey&&ev.ctrlKey===ev.altKey){ev.preventDefault(); navOpen(cell,{replace:ev.key});}
 });
 
 /* ========== AUTO-UPDATE CHECK (dist repo pubblica — no token needed) ========== */

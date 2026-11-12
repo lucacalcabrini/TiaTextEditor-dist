@@ -1,12 +1,18 @@
 {
-  "version": "5.20",
-  "filename": "TIA_TextList_Editor_MULTI_v5.20.html",
-  "date": "2026-08-26",
+  "version": "5.21",
+  "filename": "TIA_TextList_Editor_MULTI_v5.21.html",
+  "date": "2026-11-12",
   "notes": [
-    "Nuovo tema scuro grigio-blu: ora e' quello di partenza",
-    "Col pulsante sole accanto ad Aiuto si torna al tema chiaro, e la scelta resta memorizzata",
-    "Tutti i colori sono ora raccolti in un unico punto del file",
-    "Nella finestra Unisci file anche le lingue non previste (es. en-IE) hanno il filtro funzionante",
-    "Il file esportato non cambia in nessun modo: il tema riguarda solo la visualizzazione"
+    "Vista insieme: nuovo pulsante Aggiungi voce in fondo alla tabella, crea la riga in tutti gli elenchi spuntati in un colpo solo",
+    "Se il valore esiste gia' in qualche elenco, la riga viene aggiunta solo dove manca e un messaggio dice dove c'era gia'",
+    "Ctrl+Z toglie la riga nuova da tutti gli elenchi insieme, e gli elenchi spuntati restano spuntati",
+    "Finestra Aggiungi voce: il valore viene controllato mentre lo scrivi (verde libero, giallo avviso, rosso non valido o gia' presente)",
+    "Finestra Aggiungi voce: Invio fa come il clic su Aggiungi, Esc chiude",
+    "Uso senza mouse: cursore sulle celle con le frecce, Invio o F2 per scrivere, Tab passa alla cella accanto restando in scrittura",
+    "Nuove scorciatoie: Ins aggiunge una voce, Ctrl+S scarica il file, Ctrl+F cerca, Alt+frecce cambia gruppo, Alt+V passa alla Vista insieme",
+    "Nuova legenda dei tasti: pulsante Tasti in alto oppure F1",
+    "Le colonne non si spostano piu' mentre scrivi: la casella di scrittura si apre sopra la tabella, come in Excel",
+    "Corretto: nell'Editor gruppi, con piu' elenchi affiancati, una voce poteva nascere doppia nello stesso elenco",
+    "Il file esportato non cambia: le righe nuove escono nello stesso formato delle altre"
   ]
 }
