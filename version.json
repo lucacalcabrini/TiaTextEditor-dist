@@ -1,18 +1,16 @@
 {
-  "version": "5.21",
-  "filename": "TIA_TextList_Editor_MULTI_v5.21.html",
+  "version": "5.22",
+  "filename": "TIA_TextList_Editor_MULTI_v5.22.html",
   "date": "2026-11-12",
   "notes": [
-    "Vista insieme: nuovo pulsante Aggiungi voce in fondo alla tabella, crea la riga in tutti gli elenchi spuntati in un colpo solo",
-    "Se il valore esiste gia' in qualche elenco, la riga viene aggiunta solo dove manca e un messaggio dice dove c'era gia'",
-    "Ctrl+Z toglie la riga nuova da tutti gli elenchi insieme, e gli elenchi spuntati restano spuntati",
-    "Finestra Aggiungi voce: il valore viene controllato mentre lo scrivi (verde libero, giallo avviso, rosso non valido o gia' presente)",
-    "Finestra Aggiungi voce: Invio fa come il clic su Aggiungi, Esc chiude",
-    "Uso senza mouse: cursore sulle celle con le frecce, Invio o F2 per scrivere, Tab passa alla cella accanto restando in scrittura",
-    "Nuove scorciatoie: Ins aggiunge una voce, Ctrl+S scarica il file, Ctrl+F cerca, Alt+frecce cambia gruppo, Alt+V passa alla Vista insieme",
-    "Nuova legenda dei tasti: pulsante Tasti in alto oppure F1",
-    "Le colonne non si spostano piu' mentre scrivi: la casella di scrittura si apre sopra la tabella, come in Excel",
-    "Corretto: nell'Editor gruppi, con piu' elenchi affiancati, una voce poteva nascere doppia nello stesso elenco",
-    "Il file esportato non cambia: le righe nuove escono nello stesso formato delle altre"
+    "Vista insieme: nuovo cestino su ogni riga (o Ctrl+Canc) per eliminare la voce da tutti gli elenchi spuntati in un colpo solo",
+    "Prima di eliminare compare una finestra che elenca gli elenchi coinvolti e quelli dove la voce non c'era: Invio elimina, Esc annulla",
+    "Ctrl+Z rimette la voce in tutti gli elenchi insieme",
+    "Vista insieme ed Editor gruppi: le voci che non esistono in un elenco ora si vedono rosse con la scritta non esiste, diverse dal trattino grigio delle voci senza testo",
+    "Sopra la tabella il totale delle voci mancanti, e a sinistra quante ne mancano in ogni elenco",
+    "Doppio clic o Invio su una cella rossa crea la voce solo in quell'elenco, dopo una conferma; Ctrl+Z la toglie",
+    "Corretto: dopo Ctrl+Z una voce eliminata tornava in fondo al file esportato, ora torna esattamente al suo posto (Editor gruppi, Vista insieme e Confronta due file)",
+    "Seleziona tutto / Deseleziona tutto: con un filtro scritto agiscono solo sugli elenchi visibili (schermata Seleziona elenchi e Vista insieme), e la scritta del pulsante lo dice",
+    "Il file esportato non cambia: le righe rimaste escono nello stesso ordine e formato di prima"
   ]
 }

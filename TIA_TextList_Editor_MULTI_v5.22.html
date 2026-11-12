@@ -2,7 +2,7 @@
 <html lang="it">
 <head>
 <meta charset="utf-8">
-<title>TIA Portal Text List Editor v5.21</title>
+<title>TIA Portal Text List Editor v5.22</title>
 <script>
 /* Tema chiaro/scuro. Questo pezzo sta qui in alto apposta: deve girare prima
    che il browser disegni la pagina, altrimenti aprendo con il tema scuro si
@@ -244,6 +244,18 @@ thead tr.sub th{background:var(--surface-3);font-size:10px}
 /* ROW ACTIONS */
 .row-del-btn{border:none;background:none;cursor:pointer;color:var(--text-muted);font-size:13px;padding:0 3px;border-radius:3px;opacity:0;transition:.15s;line-height:1}
 tr:hover .row-del-btn{opacity:1}
+tr:focus-within .row-del-btn{opacity:1} /* visibile anche quando il cursore della tastiera e' sulla riga */
+.row-del-btn.row-del-right{float:right;margin-left:4px}
+/* Finestra di conferma "Elimina voce" (Vista insieme) */
+.delrow-list{max-height:180px;overflow:auto;margin:6px 0 4px;padding-left:20px;font-size:12px;font-family:'JetBrains Mono','Cascadia Mono',Consolas,monospace;color:var(--text-2)}
+.delrow-note{font-size:11px;color:var(--text-3);margin-top:6px}
+#confirmMsg p{font-size:13px;color:var(--text-mid)}
+#confirmMsg .kbd{display:inline-block;background:var(--surface-3);border:1px solid var(--border-strong);border-radius:4px;padding:0 5px;font-family:'JetBrains Mono','Cascadia Mono',Consolas,monospace;font-size:10px}
+.btn-danger{background:var(--red);color:var(--on-accent)}
+/* Voce che non esiste in quell'elenco (Vista insieme, Editor gruppi): rossa, diversa dal "—" del testo vuoto */
+.cell.missing{background:var(--tint-red);color:var(--red-t);font-style:italic;font-size:11px;font-family:inherit;justify-content:center;cursor:pointer;border-color:var(--tint-red)}
+.cell.missing:hover{border-color:var(--red)}
+.missing-count{color:var(--red-t);font-weight:600}
 .row-del-btn:hover{color:var(--red-soft);background:var(--tint-red)}
 .add-row-btn{display:block;width:100%;padding:6px;border:1px dashed var(--border-strong);background:var(--surface-2);color:var(--text-3);font-size:11px;font-weight:600;cursor:pointer;border-radius:0 0 6px 6px;text-align:center;transition:.15s}
 .add-row-btn:hover{background:var(--tint-blue-2);border-color:var(--blue-br);color:var(--blue-t)}
@@ -390,7 +402,7 @@ tr:hover .row-del-btn{opacity:1}
     <div style="font-size:40px;margin-bottom:16px">⚙️</div>
     <h1>TIA Portal Text List Editor</h1>
     <p style="margin-bottom:6px">Carica il file Excel esportato dal TIA Portal.<br>Dopo il caricamento puoi scegliere quali elenchi aprire.</p>
-    <p style="font-size:12px;color:var(--text-3);margin-bottom:18px">versione app: <span style="font-family:'JetBrains Mono','Cascadia Mono',Consolas,monospace;color:var(--ver-fg-2)" id="appVerLabel">v5.21</span> &nbsp;·&nbsp; <button onclick="openHelp()" style="background:none;border:none;color:var(--ver-fg-2);cursor:pointer;font-size:12px;text-decoration:underline">❓ Manuale & Changelog</button> &nbsp;·&nbsp; <button class="btn-tema" onclick="toggleTema()" title="Tema chiaro / scuro" style="border:none;border-radius:6px;cursor:pointer;padding:3px 9px">☀️</button></p>
+    <p style="font-size:12px;color:var(--text-3);margin-bottom:18px">versione app: <span style="font-family:'JetBrains Mono','Cascadia Mono',Consolas,monospace;color:var(--ver-fg-2)" id="appVerLabel">v5.22</span> &nbsp;·&nbsp; <button onclick="openHelp()" style="background:none;border:none;color:var(--ver-fg-2);cursor:pointer;font-size:12px;text-decoration:underline">❓ Manuale & Changelog</button> &nbsp;·&nbsp; <button class="btn-tema" onclick="toggleTema()" title="Tema chiaro / scuro" style="border:none;border-radius:6px;cursor:pointer;padding:3px 9px">☀️</button></p>
     <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap">
       <label class="upload-btn">📂 Carica Export.xlsx<input type="file" accept=".xlsx,.xls" id="fileInput" style="display:none"></label>
       <button class="upload-btn" style="background:var(--cyan);box-shadow:0 4px 12px rgba(8,145,178,.35)" onclick="showDiffUploadScreen()">🔀 Confronta due file</button>
@@ -516,8 +528,8 @@ tr:hover .row-del-btn{opacity:1}
     <p>Questa selezione definisce l'insieme su cui lavorare.</p>
     <div class="selector-actions">
       <div class="left">
-        <button class="pill-btn" onclick="selectAllLists(true)">Seleziona tutto</button>
-        <button class="pill-btn" onclick="selectAllLists(false)">Deseleziona tutto</button>
+        <button class="pill-btn" id="selAllBtn" data-label="Seleziona tutto" onclick="selectAllLists(true)">Seleziona tutto</button>
+        <button class="pill-btn" id="selNoneBtn" data-label="Deseleziona tutto" onclick="selectAllLists(false)">Deseleziona tutto</button>
       </div>
       <div class="right"><input class="selector-search" id="selectionSearch" placeholder="Filtra elenchi..." oninput="renderSelectionList()"></div>
     </div>
@@ -559,8 +571,8 @@ tr:hover .row-del-btn{opacity:1}
   <div class="compare-layout">
     <div class="compare-panel">
       <div class="compare-actions">
-        <button class="pill-btn" onclick="selectAllCompareLists(true)">Seleziona tutti</button>
-        <button class="pill-btn" onclick="selectAllCompareLists(false)">Deseleziona tutti</button>
+        <button class="pill-btn" id="cmpAllBtn" data-label="Seleziona tutti" onclick="selectAllCompareLists(true)">Seleziona tutti</button>
+        <button class="pill-btn" id="cmpNoneBtn" data-label="Deseleziona tutti" onclick="selectAllCompareLists(false)">Deseleziona tutti</button>
       </div>
       <input class="selector-search" id="compareSearch" placeholder="Filtra elenchi..." oninput="renderCompareList()">
       <div class="compare-list" id="compareList"></div>
@@ -663,6 +675,20 @@ tr:hover .row-del-btn{opacity:1}
 </div>
 
 <!-- ADD ROW MODAL -->
+<!-- finestra di conferma generica: titolo, testo e pulsante li imposta openConfirm() -->
+<div class="addrow-overlay" id="confirmOverlay" onclick="if(event.target===this)closeConfirm()" onkeydown="confirmKey(event)">
+  <div class="addrow-modal">
+    <div class="addrow-header">
+      <h3 id="confirmTitle"></h3>
+      <button class="addrow-close" onclick="closeConfirm()">✕</button>
+    </div>
+    <div class="addrow-body"><div id="confirmMsg"></div></div>
+    <div class="addrow-footer">
+      <button class="btn btn-load" onclick="closeConfirm()">Annulla</button>
+      <button class="btn btn-export" id="confirmOkBtn" onclick="confirmOk()">OK</button>
+    </div>
+  </div>
+</div>
 <div class="addrow-overlay" id="addRowOverlay" onclick="if(event.target===this)closeAddRow()" onkeydown="addRowKey(event)">
   <div class="addrow-modal">
     <div class="addrow-header">
@@ -1233,16 +1259,16 @@ function doUndo(){
     });
     diffChangeCount=Math.max(0,diffChangeCount-1);updateDiffChangesBadge();
   } else if(action.type==='deleteRow'){
-    action.entries.forEach(e=>action.entsArr.push(e));
+    restoreKeepPos(action.entsArr,action.entries,action.pos);
     if(action.context==='editor'){changeCount=Math.max(0,changeCount-1);updateChangesBadge();refreshScopeKeepCompare();}
     else{diffChangeCount=Math.max(0,diffChangeCount-1);updateDiffChangesBadge();}
   } else if(action.type==='deleteRowBoth'){
-    action.removedA.forEach(e=>diffDataA.entries.push(e));
-    action.removedB.forEach(e=>diffDataB.entries.push(e));
+    restoreKeepPos(diffDataA.entries,action.removedA,action.posA);
+    restoreKeepPos(diffDataB.entries,action.removedB,action.posB);
     diffChangeCount=Math.max(0,diffChangeCount-1);updateDiffChangesBadge();
   } else if(action.type==='deleteDiffSection'){
-    action.removedTlA.forEach(t=>diffDataA.textLists.push(t));
-    action.removedTlB.forEach(t=>diffDataB.textLists.push(t));
+    restoreKeepPos(diffDataA.textLists,action.removedTlA,action.posA);
+    restoreKeepPos(diffDataB.textLists,action.removedTlB,action.posB);
     const allNames=new Set([...diffDataA.textLists.map(t=>t.name),...diffDataB.textLists.map(t=>t.name)]);
     diffGroups=buildGroups([...allNames]);
     diffChangeCount=Math.max(0,diffChangeCount-1);updateDiffChangesBadge();
@@ -1841,10 +1867,31 @@ function renderSelectionList(){
     updateSelectionInfo(filtered.length);
   });
   updateSelectionInfo(filtered.length);
+  updateSelectAllLabels('selAllBtn','selNoneBtn',q,filtered.length);
 }
 
 function updateSelectionInfo(shown){document.getElementById('selectionInfo').textContent='Selezionati '+selectedListNames.length+' di '+allTextLists.length+' elenchi · mostrati '+shown;}
-function selectAllLists(yes){selectedListNames=yes?allTextLists.map(t=>t.name):[];renderSelectionList();}
+// Seleziona / Deseleziona tutto agiscono solo sugli elenchi VISIBILI: con un filtro scritto
+// nella casella di ricerca, quelli nascosti restano come sono. I pulsanti lo dicono nella scritta.
+function filterListNames(lists,inputId){
+  const q=(document.getElementById(inputId).value||'').toLowerCase();
+  return {q, names:lists.filter(t=>!q||t.name.toLowerCase().includes(q)).map(t=>t.name)};
+}
+function updateSelectAllLabels(allId,noneId,q,count){
+  [[allId,'Seleziona'],[noneId,'Deseleziona']].forEach(([id,verb])=>{
+    const b=document.getElementById(id); if(!b) return;
+    b.textContent=!q?b.dataset.label:(count===0?'Nessun elenco filtrato':(count===1?verb+' 1 filtrato':verb+' i '+count+' filtrati'));
+    b.disabled=!!q&&count===0;
+    b.title=q?'Agisce solo sugli elenchi che corrispondono al filtro "'+q+'": gli altri restano come sono':'';
+  });
+}
+function selectAllLists(yes){
+  const {q,names}=filterListNames(allTextLists,'selectionSearch');
+  if(!q) selectedListNames=yes?allTextLists.map(t=>t.name):[];
+  else if(yes){const add=names.filter(n=>!selectedListNames.includes(n)); selectedListNames=selectedListNames.concat(add);}
+  else{const vis=new Set(names); selectedListNames=selectedListNames.filter(n=>!vis.has(n));}
+  renderSelectionList();
+}
 function startEditingSelected(){if(!selectedListNames.length){showToast('Seleziona almeno un elenco');return;}applySelectedScope();showEditor();}
 
 function showCompareScreen(){
@@ -1859,21 +1906,41 @@ function renderCompareList(){
   const q=(document.getElementById('compareSearch').value||'').toLowerCase();
   const wrap=document.getElementById('compareList'); wrap.innerHTML='';
   const set=new Set(compareSelectedLists);
-  textLists.filter(t=>!q||t.name.toLowerCase().includes(q)).forEach(t=>{
-    const cnt=entries.filter(e=>e.parent===t.name).length;
+  const shown=textLists.filter(t=>!q||t.name.toLowerCase().includes(q));
+  shown.forEach(t=>{
     const row=document.createElement('div'); row.className='sel-item';
-    row.innerHTML='<label><input type="checkbox" data-name="'+t.name+'" '+(set.has(t.name)?'checked':'')+'><span>'+t.name+'</span></label><span class="sel-meta">'+cnt+' voci</span>';
+    row.innerHTML='<label><input type="checkbox" data-name="'+t.name+'" '+(set.has(t.name)?'checked':'')+'><span>'+t.name+'</span></label><span class="sel-meta" data-name="'+t.name+'"></span>';
     wrap.appendChild(row);
   });
   wrap.querySelectorAll('input[type="checkbox"]').forEach(cb=>cb.onchange=()=>{
     const n=cb.getAttribute('data-name');
     if(cb.checked&&!compareSelectedLists.includes(n)) compareSelectedLists.push(n);
     if(!cb.checked) compareSelectedLists=compareSelectedLists.filter(x=>x!==n);
-    renderCompareTable();
+    renderCompareTable(); refreshCompareListMeta(); // la lista non si ridisegna: la casella tiene il cursore
+  });
+  refreshCompareListMeta();
+  updateSelectAllLabels('cmpAllBtn','cmpNoneBtn',q,shown.length);
+}
+// Numero di voci di ogni elenco e, per gli spuntati, quante ne mancano rispetto ai valori mostrati in tabella.
+function refreshCompareListMeta(){
+  const set=new Set(compareSelectedLists);
+  const shownVals=new Set(entries.filter(e=>set.has(e.parent)).map(e=>e.value));
+  document.querySelectorAll('#compareList .sel-meta[data-name]').forEach(m=>{
+    const n=m.dataset.name;
+    const mine=entries.filter(e=>e.parent===n), own=new Set(mine.map(e=>e.value));
+    const miss=set.has(n)?[...shownVals].filter(v=>!own.has(v)).length:0;
+    m.innerHTML=mine.length+' voci'+(miss?'<br><span class="missing-count">mancano '+miss+'</span>':'');
   });
 }
 
-function selectAllCompareLists(yes){compareSelectedLists=yes?textLists.map(t=>t.name):[];renderCompareList();renderCompareTable();}
+function selectAllCompareLists(yes){
+  const {q,names}=filterListNames(textLists,'compareSearch');
+  if(!q) compareSelectedLists=yes?textLists.map(t=>t.name):[];
+  // gli elenchi aggiunti vanno in coda, nell'ordine della colonna di sinistra; quelli gia' spuntati non si spostano
+  else if(yes){const add=names.filter(n=>!compareSelectedLists.includes(n)); compareSelectedLists=compareSelectedLists.concat(add);}
+  else{const vis=new Set(names); compareSelectedLists=compareSelectedLists.filter(n=>!vis.has(n));}
+  renderCompareList();renderCompareTable();
+}
 
 function renderCompareTable(){
   const names=compareSelectedLists;
@@ -1881,7 +1948,8 @@ function renderCompareTable(){
   if(!names.length){info.textContent='Seleziona almeno un elenco dalla colonna sinistra.';wrap.innerHTML='';return;}
   const eMap={}; entries.forEach(e=>{if(names.includes(e.parent)) eMap[e.parent+'|'+e.value]=e;});
   const vals=[...new Set(entries.filter(e=>names.includes(e.parent)).map(e=>e.value))].sort((a,b)=>{const na=Number(a),nb=Number(b);if(!isNaN(na)&&!isNaN(nb)) return na-nb;return a.localeCompare(b);});
-  info.textContent='Visualizzazione insieme: '+names.length+' elenchi · '+vals.length+' valori';
+  const missingTot=vals.reduce((s,v)=>s+names.filter(n=>!eMap[n+'|'+v]).length,0);
+  info.innerHTML='Visualizzazione insieme: '+names.length+' elenchi · '+vals.length+' valori'+(missingTot?' · <span class="missing-count">'+missingTot+(missingTot===1?' voce mancante':' voci mancanti')+'</span> (celle rosse)':'');
   const table=document.createElement('table');
   const thead=document.createElement('thead');
   const tr1=document.createElement('tr');
@@ -1894,9 +1962,14 @@ function renderCompareTable(){
   const tbody=document.createElement('tbody');
   vals.forEach((val,rowIdx)=>{
     const tr=document.createElement('tr'); tr.dataset.val=val;
-    const tdVal=document.createElement('td'); tdVal.className='val-col'; tdVal.textContent=val; tr.appendChild(tdVal);
+    const tdVal=document.createElement('td'); tdVal.className='val-col'; tdVal.textContent=val;
+    // cestino: elimina la voce da tutti gli elenchi spuntati (chiede conferma)
+    const delBtn=document.createElement('button'); delBtn.className='row-del-btn row-del-right'; delBtn.textContent='🗑';
+    delBtn.title='Elimina la voce "'+val+'" dagli elenchi spuntati (Ctrl+Canc)'; delBtn.tabIndex=-1;
+    delBtn.onclick=e=>{e.stopPropagation(); askDeleteRowCompare(val);};
+    tdVal.appendChild(delBtn); tr.appendChild(tdVal);
     let colIdx=0;
-    names.forEach((n,li)=>activeLangs.forEach((lang,idx)=>{const td=document.createElement('td'); if(idx===0&&li>0) td.className='sep'; const e=eMap[n+'|'+val]; if(e) td.appendChild(mkCell(e,lang,rowIdx,colIdx++)); else{td.innerHTML='<span style="color:var(--text-muted);font-size:11px">—</span>';colIdx++;} tr.appendChild(td);}));
+    names.forEach((n,li)=>activeLangs.forEach((lang,idx)=>{const td=document.createElement('td'); if(idx===0&&li>0) td.className='sep'; const e=eMap[n+'|'+val]; if(e) td.appendChild(mkCell(e,lang,rowIdx,colIdx++)); else{td.appendChild(mkMissingCell(n,val,lang,'compare'));colIdx++;} tr.appendChild(td);}));
     tbody.appendChild(tr);
   });
   table.appendChild(tbody); wrap.innerHTML=''; wrap.appendChild(table);
@@ -2036,7 +2109,9 @@ function renderGroup(gk){
   const eMap={}; entries.forEach(e=>{if(names.includes(e.parent)) eMap[e.parent+'|'+e.value]=e;});
   const isMulti=names.length>1;
   const hdr=document.createElement('div'); hdr.className='content-header';
-  hdr.innerHTML='<div style="display:flex;align-items:center;gap:12px;margin-bottom:8px"><h2>'+gk.replace('Z2000_','')+'</h2><span class="info">'+(isMulti?names.length+' elenchi · ':'')+allVals.length+' valori</span></div><input type="text" class="content-search" placeholder="Cerca per valore o testo..." id="contentSearch">';
+  // voci che mancano: valori presenti in un elenco del gruppo ma non in un altro
+  const missingTot=isMulti?allVals.reduce((s,v)=>s+names.filter(n=>!eMap[n+'|'+v]).length,0):0;
+  hdr.innerHTML='<div style="display:flex;align-items:center;gap:12px;margin-bottom:8px"><h2>'+gk.replace('Z2000_','')+'</h2><span class="info">'+(isMulti?names.length+' elenchi · ':'')+allVals.length+' valori'+(missingTot?' · <span class="missing-count">'+missingTot+(missingTot===1?' voce mancante':' voci mancanti')+'</span>':'')+'</span></div><input type="text" class="content-search" placeholder="Cerca per valore o testo..." id="contentSearch">';
   wrap.appendChild(hdr);
   const tableWrap=document.createElement('div'); tableWrap.className='content-table-wrap';
   function buildTable(vals){
@@ -2066,7 +2141,7 @@ function renderGroup(gk){
       tdDel.appendChild(delBtn); tr.appendChild(tdDel);
       const tdVal=document.createElement('td'); tdVal.className='val-col'; tdVal.textContent=val; tr.appendChild(tdVal);
       let colIdx=0;
-      (isMulti?names:[names[0]]).forEach((n,li)=>activeLangs.forEach((lang,idx)=>{const td=document.createElement('td'); if(isMulti&&idx===0&&li>0) td.className='sep'; const e=eMap[n+'|'+val]; if(e) td.appendChild(mkCell(e,lang,rowIdx,colIdx++)); else td.innerHTML='<span style="color:var(--text-muted);font-size:11px">—</span>'; tr.appendChild(td);}));
+      (isMulti?names:[names[0]]).forEach((n,li)=>activeLangs.forEach((lang,idx)=>{const td=document.createElement('td'); if(isMulti&&idx===0&&li>0) td.className='sep'; const e=eMap[n+'|'+val]; if(e) td.appendChild(mkCell(e,lang,rowIdx,colIdx++)); else td.appendChild(mkMissingCell(n,val,lang,'editor')); tr.appendChild(td);}));
       tbody.appendChild(tr);
     });
     table.appendChild(tbody); return table;
@@ -2120,6 +2195,47 @@ function mkCell(entry,lang,rowIdx,colIdx){
     const box=openCellEditor(div,ta);
   };
   return div;
+}
+
+// Cella di una voce che NON esiste in quell'elenco (ma esiste in un altro affiancato).
+// Si vede rossa con la scritta "non esiste", diversa dal "—" di una voce che c'e' ma e'
+// senza testo. Il cursore ci puo' andare; doppio clic, Invio o F2 chiedono se crearla.
+function mkMissingCell(listName,val,lang,context){
+  const div=document.createElement('div');
+  div.className='cell missing'; div.tabIndex=-1;
+  div.textContent='non esiste';
+  div.dataset.list=listName; div.dataset.val=val;
+  div.title='La voce '+val+' non esiste nell\'elenco '+listName+'.\nDoppio clic o Invio per crearla (chiede conferma).';
+  div.ondblclick=ev=>{ev.preventDefault(); askCreateMissing(listName,val,context,div);};
+  return div;
+}
+function askCreateMissing(listName,val,context,cell){
+  const td=cell&&cell.closest('td');
+  const at=td?{row:td.parentNode.sectionRowIndex,col:td.cellIndex}:null;
+  const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  openConfirm({
+    title:'➕ Crea voce',
+    html:'<p>Creare la voce <strong>'+esc(val)+'</strong> nell\'elenco <strong>'+esc(listName)+'</strong>?</p>'+
+      '<p class="delrow-note">La voce nasce con il testo vuoto in tutte le lingue. Dopo la conferma la cella si apre per scriverlo.</p>'+
+      '<p class="delrow-note">Dopo, <span class="kbd">Ctrl+Z</span> la toglie di nuovo.</p>',
+    okLabel:'➕ Crea', okClass:'btn-export',
+    onOk:()=>createMissingEntry(listName,val,context,at)
+  });
+}
+function createMissingEntry(listName,val,context,at){
+  if(allEntries.some(e=>e.parent===listName&&e.value===val)) return; // nel frattempo esiste gia'
+  const texts={}; LANGS.forEach(l=>texts[l]='');
+  const ne={name:listName+'_'+val,parent:listName,defaultEntry:'False',value:val,texts,fieldInfos:''};
+  allEntries.push(ne);
+  pushUndo({type:'addRow',entries:[ne],entsArr:allEntries,context:'editor'});
+  refreshScopeKeepCompare(); changeCount++; updateChangesBadge();
+  if(context==='compare'){renderCompareList(); renderCompareTable();}
+  else if(selectedGroup) renderGroup(selectedGroup);
+  showToast('✅ Voce "'+val+'" creata in '+listName);
+  // il cursore va sulla cella appena nata e la apre: si scrive subito il testo
+  const wrap=navActiveWrap(), tb=wrap&&wrap.querySelector('tbody');
+  const tr=tb&&at?tb.rows[at.row]:null, cell=tr?navCellOf(tr.cells[at.col]):null;
+  if(cell&&!cell.classList.contains('missing')) navOpen(cell);
 }
 
 /* ========== ROW ADD / DELETE ========== */
@@ -2351,34 +2467,94 @@ function confirmAddRow(){
   }
 }
 
-function deleteRow(val, parentNames, context){
-  const isEditor=(context==='editor');
+// Toglie da un elenco gli elementi indicati ricordando la posizione di ciascuno, cosi'
+// l'annulla li rimette esattamente dov'erano: l'ordine delle righe nel file esportato
+// resta quello originale (prima tornavano in fondo al foglio).
+function removeKeepPos(arr,items){
+  const pos=items.map(it=>arr.indexOf(it)).filter(i=>i>=0).sort((a,b)=>a-b);
+  const removed=pos.map(i=>arr[i]);
+  for(let k=pos.length-1;k>=0;k--) arr.splice(pos[k],1);
+  return {removed,pos};
+}
+// Rimette gli elementi tolti da removeKeepPos (in ordine crescente di posizione).
+// Senza posizioni (azioni registrate in altro modo) li accoda come faceva prima.
+function restoreKeepPos(arr,removed,pos){
+  if(!pos){removed.forEach(e=>arr.push(e)); return;}
+  pos.forEach((p,k)=>arr.splice(Math.min(p,arr.length),0,removed[k]));
+}
+
+// context: 'editor' (Editor gruppi), 'compare' (Vista insieme), 'diffA' / 'diffB' (Confronta due file).
+// navPos: dove rimettere il cursore dopo il ridisegno (se manca, la posizione attuale).
+function deleteRow(val, parentNames, context, navPos){
+  const isEditor=(context==='editor'||context==='compare');
   const entsArr=isEditor?allEntries:(context==='diffA'?diffDataA.entries:diffDataB.entries);
-  const removed=[];
-  parentNames.forEach(pn=>{
-    const idx=entsArr.findIndex(e=>e.parent===pn&&e.value===val);
-    if(idx>=0) removed.push(...entsArr.splice(idx,1));
-  });
+  const targets=parentNames.map(pn=>entsArr.find(e=>e.parent===pn&&e.value===val)).filter(Boolean);
+  const {removed,pos}=removeKeepPos(entsArr,targets);
   if(!removed.length) return;
-  const navPos=navSavePos();
-  pushUndo({type:'deleteRow', entries:removed, entsArr, context:isEditor?'editor':'diff'});
+  if(navPos===undefined) navPos=navSavePos();
+  pushUndo({type:'deleteRow', entries:removed, pos, entsArr, context:isEditor?'editor':'diff'});
   if(isEditor){refreshScopeKeepCompare(); changeCount++; updateChangesBadge();}
   else{diffChangeCount++; updateDiffChangesBadge();}
-  if(isEditor&&selectedGroup) renderGroup(selectedGroup);
+  if(context==='compare'){renderCompareList(); renderCompareTable();}
+  else if(isEditor&&selectedGroup) renderGroup(selectedGroup);
   else if(!isEditor&&selectedDiffList) renderDiffTable(selectedDiffList);
   navRestorePos(navPos);
-  showToast('🗑 Voce "'+val+'" eliminata');
+  showToast('🗑 Voce "'+val+'" eliminata'+(context==='compare'&&removed.length>1?' da '+removed.length+' elenchi':''));
+}
+
+// ----- Vista insieme: eliminare una voce da tutti gli elenchi spuntati, con conferma -----
+function askDeleteRowCompare(val){
+  const names=compareSelectedLists.slice();
+  const hasIt=n=>allEntries.some(e=>e.parent===n&&e.value===val);
+  const present=names.filter(hasIt), missing=names.filter(n=>!hasIt(n));
+  if(!present.length) return;
+  const navPos=navSavePos();
+  const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  const n=present.length;
+  let html='<p>Eliminare la voce <strong>'+esc(val)+'</strong> da <strong>'+n+(n===1?' elenco':' elenchi')+'</strong>?</p>';
+  html+='<ul class="delrow-list">'+present.map(p=>'<li>'+esc(p)+'</li>').join('')+'</ul>';
+  if(missing.length) html+='<p class="delrow-note">Non c\'è in: '+missing.map(esc).join(', ')+'</p>';
+  html+='<p class="delrow-note">Dopo, <span class="kbd">Ctrl+Z</span> la rimette in tutti gli elenchi.</p>';
+  openConfirm({title:'🗑 Elimina voce',html,okLabel:'🗑 Elimina',okClass:'btn-danger',
+    onOk:()=>deleteRow(val,present,'compare',navPos)});
+}
+
+// ----- Finestra di conferma generica (Elimina voce, Crea voce) -----
+// Invio sul pulsante scelto lo preme (all'apertura e' su quello di conferma), Esc chiude.
+let _confirm=null;
+function openConfirm({title,html,okLabel,okClass,onOk}){
+  _confirm={onOk,back:document.activeElement};
+  document.getElementById('confirmTitle').textContent=title;
+  document.getElementById('confirmMsg').innerHTML=html;
+  const ok=document.getElementById('confirmOkBtn');
+  ok.textContent=okLabel; ok.className='btn '+(okClass||'btn-export');
+  document.getElementById('confirmOverlay').classList.add('open');
+  setTimeout(()=>ok.focus(),40);
+}
+function closeConfirm(){
+  document.getElementById('confirmOverlay').classList.remove('open');
+  const t=_confirm; _confirm=null;
+  if(t&&t.back&&t.back.isConnected) t.back.focus({preventScroll:true}); // il cursore torna dov'era
+}
+function confirmOk(){
+  const t=_confirm; if(!t) return;
+  _confirm=null;
+  document.getElementById('confirmOverlay').classList.remove('open');
+  t.onOk();
+}
+function confirmKey(ev){
+  if(ev.key==='Escape'){ev.preventDefault(); closeConfirm();}
+  else if(ev.key==='Enter'&&!(ev.target&&ev.target.tagName==='BUTTON')){ev.preventDefault(); confirmOk();}
 }
 
 function deleteRowBoth(val, listName){
   // Delete from both A and B simultaneously
-  const removedA=[],removedB=[];
-  const idxA=diffDataA.entries.findIndex(e=>e.parent===listName&&e.value===val);
-  if(idxA>=0) removedA.push(...diffDataA.entries.splice(idxA,1));
-  const idxB=diffDataB.entries.findIndex(e=>e.parent===listName&&e.value===val);
-  if(idxB>=0) removedB.push(...diffDataB.entries.splice(idxB,1));
+  const fA=diffDataA.entries.find(e=>e.parent===listName&&e.value===val);
+  const fB=diffDataB.entries.find(e=>e.parent===listName&&e.value===val);
+  const a=removeKeepPos(diffDataA.entries,fA?[fA]:[]), b=removeKeepPos(diffDataB.entries,fB?[fB]:[]);
+  const removedA=a.removed, removedB=b.removed;
   if(!removedA.length&&!removedB.length) return;
-  pushUndo({type:'deleteRowBoth',removedA,removedB,listName,context:'diff'});
+  pushUndo({type:'deleteRowBoth',removedA,removedB,posA:a.pos,posB:b.pos,listName,context:'diff'});
   diffChangeCount++; updateDiffChangesBadge();
   if(selectedDiffList) renderDiffTable(selectedDiffList);
   filterDiffSidebar();
@@ -2387,12 +2563,10 @@ function deleteRowBoth(val, listName){
 
 function deleteDiffSection(listName){
   // Remove the textList entry from both A and B (entries already 0)
-  const removedTlA=[], removedTlB=[];
-  const iA=diffDataA.textLists.findIndex(t=>t.name===listName);
-  if(iA>=0) removedTlA.push(...diffDataA.textLists.splice(iA,1));
-  const iB=diffDataB.textLists.findIndex(t=>t.name===listName);
-  if(iB>=0) removedTlB.push(...diffDataB.textLists.splice(iB,1));
-  pushUndo({type:'deleteDiffSection',removedTlA,removedTlB,listName,context:'diff'});
+  const tA=diffDataA.textLists.find(t=>t.name===listName), tB=diffDataB.textLists.find(t=>t.name===listName);
+  const a=removeKeepPos(diffDataA.textLists,tA?[tA]:[]), b=removeKeepPos(diffDataB.textLists,tB?[tB]:[]);
+  const removedTlA=a.removed, removedTlB=b.removed;
+  pushUndo({type:'deleteDiffSection',removedTlA,removedTlB,posA:a.pos,posB:b.pos,listName,context:'diff'});
   // Rebuild diff groups
   const allNames=new Set([...diffDataA.textLists.map(t=>t.name),...diffDataB.textLists.map(t=>t.name)]);
   diffGroups=buildGroups([...allNames]);
@@ -3101,9 +3275,20 @@ function exportMergedFile(data){
 }
 
 /* ========== HELP MODAL ========== */
-const APP_VERSION='5.21';
+const APP_VERSION='5.22';
 const CHANGELOG=[
-  {ver:'5.21',date:'2026-11-12',cur:true,items:[
+  {ver:'5.22',date:'2026-11-12',cur:true,items:[
+    'Vista insieme: nuovo cestino su ogni riga (o Ctrl+Canc) per eliminare la voce da tutti gli elenchi spuntati in un colpo solo',
+    'Prima di eliminare compare una finestra che elenca gli elenchi coinvolti e quelli dove la voce non c\'era: Invio elimina, Esc annulla',
+    'Ctrl+Z rimette la voce in tutti gli elenchi insieme',
+    'Vista insieme ed Editor gruppi: le voci che non esistono in un elenco ora si vedono rosse con la scritta non esiste, diverse dal trattino grigio delle voci senza testo',
+    'Sopra la tabella il totale delle voci mancanti, e a sinistra quante ne mancano in ogni elenco',
+    'Doppio clic o Invio su una cella rossa crea la voce solo in quell\'elenco, dopo una conferma; Ctrl+Z la toglie',
+    'Corretto: dopo Ctrl+Z una voce eliminata tornava in fondo al file esportato, ora torna esattamente al suo posto (Editor gruppi, Vista insieme e Confronta due file)',
+    'Seleziona tutto / Deseleziona tutto: con un filtro scritto agiscono solo sugli elenchi visibili (schermata Seleziona elenchi e Vista insieme), e la scritta del pulsante lo dice',
+    'Il file esportato non cambia: le righe rimaste escono nello stesso ordine e formato di prima',
+  ]},
+  {ver:'5.21',date:'2026-11-12',cur:false,items:[
     'Vista insieme: nuovo pulsante Aggiungi voce in fondo alla tabella, crea la riga in tutti gli elenchi spuntati in un colpo solo',
     'Se il valore esiste gia\' in qualche elenco, la riga viene aggiunta solo dove manca e un messaggio dice dove c\'era gia\'',
     'Ctrl+Z toglie la riga nuova da tutti gli elenchi insieme, e gli elenchi spuntati restano spuntati',
@@ -3361,7 +3546,7 @@ const CHANGELOG=[
 const KEY_GROUPS=[
   ['🧭 Muovere il cursore tra le celle',[
     ['Frecce','Sposta il cursore di una cella. Se nessuna cella ha il cursore, una freccia lo porta nella tabella.'],
-    ['Tab / Shift+Tab','Cella dopo / cella prima. A fine riga passa alla riga sotto (o a quella sopra).'],
+    ['Tab / Shift+Tab','Cella dopo / cella prima. A fine riga passa alla riga sotto (o a quella sopra). Salta le celle rosse <em>non esiste</em>; le frecce invece ci arrivano.'],
     ['Home / Fine','Prima / ultima cella della riga.'],
     ['Ctrl+Home / Ctrl+Fine','Prima / ultima cella della tabella.'],
     ['Pag↓ / Pag↑','Dieci righe più giù / più su.'],
@@ -3375,6 +3560,7 @@ const KEY_GROUPS=[
     ['Shift+Invio','Va a capo dentro il testo.','mentre scrivi'],
     ['Esc','Butta via quello che hai scritto. Il cursore resta sulla cella.','mentre scrivi'],
     ['Canc','Svuota la cella sotto il cursore.'],
+    ['Invio / F2','Su una cella rossa <em>non esiste</em>: chiede conferma e crea la voce in quell\'elenco, poi la apre per scrivere. Anche il doppio clic fa lo stesso.','cella rossa'],
   ]],
   ['☑️ Selezionare più celle',[
     ['Spazio','Seleziona o deseleziona la cella sotto il cursore.'],
@@ -3390,7 +3576,8 @@ const KEY_GROUPS=[
     ['Ins / Alt+A','Apre la finestra Aggiungi voce.'],
     ['Invio','Aggiunge la voce. Il cursore va sulla riga nuova, pronta da scrivere.','nella finestra'],
     ['Esc','Chiude senza aggiungere.','nella finestra'],
-    ['Ctrl+Canc','Elimina la voce (tutta la riga) sotto il cursore.','dove c\'è il cestino 🗑'],
+    ['Ctrl+Canc','Elimina la voce (tutta la riga) sotto il cursore. Nella Vista insieme chiede conferma e la toglie da tutti gli elenchi spuntati.','dove c\'è il cestino 🗑'],
+    ['Invio / Esc','Invio conferma, Esc annulla.','nelle finestre Elimina voce e Crea voce'],
   ]],
   ['🗂 Comandi',[
     ['Ctrl+Z','Annulla l\'ultima modifica.'],
@@ -3466,10 +3653,15 @@ const MANUAL_HTML=`
 <p><strong>Passo 1 — Caricamento.</strong> Clicca <em>📂 Carica Export.xlsx</em> e seleziona il file Excel esportato dal TIA Portal, oppure trascinalo nella schermata. Il file deve contenere i fogli <em>TextList</em> e <em>TextListEntry</em>.</p>
 
 <p style="margin-top:8px"><strong>Passo 2 — Selezione elenchi.</strong> Scegli quali elenchi aprire, filtra con la casella di ricerca, poi clicca <em>Apri editor gruppi</em>.</p>
+<ul>
+  <li><strong>Seleziona tutto / Deseleziona tutto senza filtro</strong> — spuntano o tolgono la spunta a <strong>tutti</strong> gli elenchi del file.</li>
+  <li><strong>Con un filtro scritto nella casella di ricerca</strong> — i due pulsanti cambiano scritta, per esempio <em>Seleziona i 3 filtrati</em> e <em>Deseleziona i 3 filtrati</em>, e agiscono <strong>solo sugli elenchi che vedi</strong>. Quelli nascosti dal filtro restano come erano: se erano spuntati restano spuntati, se non lo erano restano senza spunta. Se il filtro non trova niente, i pulsanti si spengono e dicono <em>Nessun elenco filtrato</em>.</li>
+  <li><strong>Esempio</strong> — scrivi <em>Action</em>, premi <em>Seleziona i 3 filtrati</em>, poi scrivi <em>Release</em> e premi di nuovo: alla fine sono spuntati gli elenchi Action e Release, e nessun altro è cambiato. La riga in basso (<em>Selezionati … di … elenchi</em>) dice quanti sono spuntati in tutto, anche quelli nascosti.</li>
+</ul>
 
 <p style="margin-top:8px"><strong>Passo 3 — Editor gruppi.</strong> L'interfaccia è divisa in:</p>
 <ul>
-  <li><strong>Barra laterale sinistra</strong> — elenca i gruppi. Clic su un gruppo per aprirlo. I gruppi con suffisso _1, _2… vengono affiancati nella stessa tabella.</li>
+  <li><strong>Barra laterale sinistra</strong> — elenca i gruppi. Clic su un gruppo per aprirlo. I gruppi con suffisso _1, _2… vengono affiancati nella stessa tabella. Se in uno degli elenchi affiancati manca una voce che negli altri c'è, la sua cella è <strong>rossa</strong> con la scritta <em>non esiste</em> (vedi più sotto, Vista insieme): doppio clic o <span class="kbd">Invio</span> la creano dopo una conferma.</li>
   <li><strong>Area centrale</strong> — tabella con tutte le voci e le traduzioni per ogni lingua attiva.</li>
 </ul>
 
@@ -3485,9 +3677,23 @@ const MANUAL_HTML=`
 
 <p style="margin-top:8px"><strong>📊 Vista insieme</strong> — mette più elenchi uno accanto all'altro nella stessa tabella, così li leggi e li modifichi tutti insieme senza aprirli uno alla volta. Si apre dall'Editor gruppi con il pulsante <em>📊 Vista insieme</em> in alto.</p>
 <ul>
-  <li><strong>Colonna di sinistra</strong> — c'è una riga per ogni elenco aperto, con una casella da spuntare e il numero delle sue voci (es. <em>37 voci</em>). Gli elenchi <strong>spuntati</strong> compaiono nella tabella. Togli la spunta per nasconderne uno, rimettila per farlo tornare. <em>Seleziona tutti</em> e <em>Deseleziona tutti</em> spuntano o svuotano tutto in un colpo. La casella <em>Filtra elenchi</em> cerca un elenco per nome.</li>
+  <li><strong>Colonna di sinistra</strong> — c'è una riga per ogni elenco aperto, con una casella da spuntare e il numero delle sue voci (es. <em>37 voci</em>). Gli elenchi <strong>spuntati</strong> compaiono nella tabella. Togli la spunta per nasconderne uno, rimettila per farlo tornare. <em>Seleziona tutti</em> e <em>Deseleziona tutti</em> spuntano o svuotano tutto in un colpo. La casella <em>Filtra elenchi</em> cerca un elenco per nome: <strong>con un filtro scritto</strong> i due pulsanti diventano <em>Seleziona i N filtrati</em> / <em>Deseleziona i N filtrati</em> e agiscono <strong>solo sugli elenchi visibili</strong>; quelli nascosti dal filtro restano come sono. Gli elenchi aggiunti così vanno in coda alla tabella, quelli già spuntati non si spostano.</li>
   <li><strong>Tabella</strong> — la prima colonna è il <em>Valore</em>. Poi, per ogni elenco spuntato, c'è una colonna per ogni lingua attiva. Ogni riga è un valore: sulla stessa riga leggi il testo di quel valore in tutti gli elenchi.</li>
-  <li><strong>Il trattino —</strong> vuol dire che lì non c'è testo. Se la voce esiste ma è vuota, fai doppio clic e scrivi. Se in quell'elenco la voce non esiste proprio, il doppio clic non fa niente: aggiungila con il pulsante <em>➕ Aggiungi voce</em> spiegato qui sotto.</li>
+  <li><strong>Il trattino — grigio</strong> vuol dire che la voce <strong>esiste</strong> in quell'elenco ma è <strong>senza testo</strong> in quella lingua. Fai doppio clic (o <span class="kbd">Invio</span>) e scrivi.</li>
+  <li><strong>La cella rossa <em>non esiste</em></strong> vuol dire che in quell'elenco la voce <strong>non c'è proprio</strong>, mentre negli altri elenchi della tabella c'è. Passando il mouse sopra, un messaggio dice quale voce manca e in quale elenco.</li>
+  <li><strong>Quante ne mancano</strong> — la riga sopra la tabella dice in rosso il totale (es. <em>28 voci mancanti</em>). Nella colonna di sinistra, sotto il numero di voci di ogni elenco spuntato, c'è scritto in rosso <em>mancano 28</em>: così vedi subito quale elenco è incompleto.</li>
+</ul>
+
+<p style="margin-top:8px"><strong>➕ Creare una voce mancante (dalla cella rossa)</strong> — per completare un elenco senza passare dalla finestra <em>Aggiungi voce</em>:</p>
+<ol style="font-size:13px;color:var(--text-mid);padding-left:20px;line-height:2">
+  <li>Fai <strong>doppio clic</strong> sulla cella rossa <em>non esiste</em>. Da tastiera: portaci il cursore con le <span class="kbd">Frecce</span> e premi <span class="kbd">Invio</span> (o <span class="kbd">F2</span>).</li>
+  <li>Si apre la finestra <em>➕ Crea voce</em>, che chiede: <em>Creare la voce 16 nell'elenco …?</em> Controlla valore ed elenco.</li>
+  <li>Clicca <em>➕ Crea</em> o premi <span class="kbd">Invio</span>. Per lasciar perdere clicca <em>Annulla</em> o premi <span class="kbd">Esc</span>: non succede niente.</li>
+  <li>La voce nasce <strong>solo in quell'elenco</strong>, con il testo vuoto in tutte le lingue. La cella smette di essere rossa e si apre subito per scrivere il testo: scrivi e premi <span class="kbd">Invio</span>, oppure <span class="kbd">Tab</span> per passare alla cella accanto.</li>
+  <li>Se hai sbagliato, <span class="kbd">Ctrl+Z</span> toglie la voce appena creata e la cella torna rossa.</li>
+</ol>
+<ul>
+  <li><strong>Tasti sulle celle rosse</strong> — le <span class="kbd">Frecce</span> ci arrivano, <span class="kbd">Tab</span> invece le salta, così mentre scrivi una riga non ti fermi sulle voci che non esistono. Scrivere una lettera su una cella rossa non fa niente: la voce si crea solo con conferma.</li>
   <li><strong>Modificare</strong> — doppio clic sulla cella, come nell'Editor gruppi. Valgono gli stessi tasti: <span class="kbd">Invio</span> conferma, <span class="kbd">Esc</span> annulla, <span class="kbd">Shift+Invio</span> va a capo.</li>
 </ul>
 
@@ -3518,13 +3724,27 @@ const MANUAL_HTML=`
 
 <div class="tip">Esempio: hai dieci elenchi di comandi manuali e ti serve il comando numero 83 in tutti. Spunti i dieci elenchi, aggiungi la voce 83 lasciando i testi vuoti, poi scrivi i dieci testi sulla stessa riga della tabella.</div>
 
+<p style="margin-top:8px"><strong>🗑 Eliminare una voce da più elenchi insieme (dalla Vista insieme)</strong> — è l'opposto dell'aggiunta: togli la stessa riga da tutti gli elenchi spuntati in un colpo solo, invece di eliminarla elenco per elenco.</p>
+<ol style="font-size:13px;color:var(--text-mid);padding-left:20px;line-height:2">
+  <li>Nella colonna di sinistra <strong>spunta</strong> gli elenchi da cui la riga deve sparire. Gli elenchi senza spunta non vengono toccati, anche se hanno quella voce.</li>
+  <li>Trova la riga nella tabella. Passa il mouse sulla riga: accanto al valore, nella prima colonna, compare il cestino <strong>🗑</strong>. Cliccalo. Da tastiera: metti il cursore su una cella della riga e premi <span class="kbd">Ctrl+Canc</span>.</li>
+  <li>Si apre la finestra <em>🗑 Elimina voce</em>. Ti dice quale valore stai eliminando, da quanti elenchi, li elenca uno per uno e dice in quali elenchi spuntati la voce non c'era.</li>
+  <li>Controlla l'elenco. Se è giusto clicca <em>🗑 Elimina</em> oppure premi <span class="kbd">Invio</span>. Se hai sbagliato riga clicca <em>Annulla</em> oppure premi <span class="kbd">Esc</span>: non succede niente.</li>
+  <li>La riga sparisce dalla tabella e a sinistra il numero di voci di ogni elenco scende di uno. Il cursore resta lì vicino, pronto per continuare.</li>
+</ol>
+<ul>
+  <li><strong>Per tornare indietro</strong> — <span class="kbd">Ctrl+Z</span> (o <em>↩ Annulla</em>) rimette la voce in tutti gli elenchi in un colpo solo, con i suoi testi, e <strong>esattamente al suo posto</strong> nel file: il file esportato torna identico a prima.</li>
+  <li><strong>Nel conteggio delle modifiche</strong> l'eliminazione vale come una modifica sola, anche se tocca dieci elenchi.</li>
+</ul>
+<div class="warn">L'eliminazione toglie la voce e tutti i suoi testi in tutte le lingue, in tutti gli elenchi indicati nella finestra. Leggi bene l'elenco prima di confermare.</div>
+
 <p style="margin-top:8px"><strong>📑 Seleziona elenchi</strong> — cambia la selezione degli elenchi visibili senza ricaricare il file.</p>
 
 <p style="margin-top:8px"><strong>📂 Carica altro</strong> — sostituisce il file corrente con uno nuovo, azzerando le modifiche non salvate.</p>
 
 <p style="margin-top:8px"><strong>➕ Aggiungere una voce</strong> — pulsante <em>➕ Aggiungi voce</em> in fondo alla tabella. Inserisci il valore e i testi per tutte le lingue, poi clicca <em>➕ Aggiungi</em> o premi <span class="kbd">Invio</span>. Mentre scrivi il valore, una riga colorata sotto il campo dice subito se va bene (vedi <em>🚦 Il controllo del valore mentre scrivi</em>). Annullabile con Ctrl+Z. Se il gruppo affianca più elenchi (suffissi _1, _2…), la voce viene aggiunta a tutti gli elenchi del gruppo in cui quel valore manca; quelli che l'avevano già non vengono toccati. Per aggiungere la stessa voce a elenchi di gruppi diversi usa la <em>📊 Vista insieme</em>.</p>
 
-<p style="margin-top:8px"><strong>🗑 Eliminare una voce</strong> — passa il mouse su una riga: appare il pulsante <strong>🗑</strong> a sinistra del valore. Cliccalo per eliminare la voce. Annullabile con Ctrl+Z.</p>
+<p style="margin-top:8px"><strong>🗑 Eliminare una voce</strong> — passa il mouse su una riga: appare il pulsante <strong>🗑</strong> a sinistra del valore. Cliccalo per eliminare la voce. Da tastiera: <span class="kbd">Ctrl+Canc</span> sulla riga dove sta il cursore. Annullabile con Ctrl+Z, che rimette la voce esattamente al suo posto nel file. Per togliere la stessa voce da elenchi di gruppi diversi usa la <em>📊 Vista insieme</em>.</p>
 
 <div class="warn">L'eliminazione rimuove la voce e tutti i suoi testi in tutte le lingue. Usa Ctrl+Z subito dopo per annullare.</div>
 <div class="tip">Il badge arancione in topbar (es. <em>3 modifiche</em>) conta le celle modificate nella sessione corrente. Si azzera solo con Ripristina tutto o ricaricando il file.</div>
@@ -3756,15 +3976,24 @@ function navIsVisible(id){const el=document.getElementById(id); return !!el&&el.
 function navNeighbourTd(td,dir){
   if(!td) return null;
   const tr=td.parentNode, rows=navRows(tr.parentNode), ri=rows.indexOf(tr), col=td.cellIndex;
-  const tds=r=>r?[...r.cells].filter(c=>navCellOf(c)):[];
+  // skipMissing: salta le celle rosse "non esiste" (Tab passa solo da una cella scrivibile all'altra)
+  const tds=(r,skipMissing)=>r?[...r.cells].filter(c=>{const x=navCellOf(c); return x&&!(skipMissing&&x.classList.contains('missing'));}):[];
   const here=tds(tr), ci=here.indexOf(td);
   // in verticale si resta nella stessa colonna, saltando le righe dove li' non c'e' la voce
   const vert=(step,count)=>{let found=null; for(let i=ri+step,n=0;i>=0&&i<rows.length&&n<count;i+=step){const c=rows[i].cells[col]; if(c&&navCellOf(c)){found=c;n++;}} return found;};
   switch(dir){
     case 'right': return here[ci+1]||null;
     case 'left': return here[ci-1]||null;
-    case 'next': return here[ci+1]||tds(rows[ri+1])[0]||null;
-    case 'prev': return here[ci-1]||tds(rows[ri-1]).pop()||null;
+    case 'next': {
+      const r=tds(tr,true).find(c=>c.cellIndex>col); if(r) return r;
+      for(let i=ri+1;i<rows.length;i++){const f=tds(rows[i],true)[0]; if(f) return f;}
+      return null;
+    }
+    case 'prev': {
+      const l=tds(tr,true).filter(c=>c.cellIndex<col).pop(); if(l) return l;
+      for(let i=ri-1;i>=0;i--){const f=tds(rows[i],true).pop(); if(f) return f;}
+      return null;
+    }
     case 'down': return vert(1,1);
     case 'up': return vert(-1,1);
     case 'pageDown': return vert(1,10);
@@ -3856,7 +4085,7 @@ document.addEventListener('keydown',ev=>{
   const t=ev.target, tag=t&&t.tagName, ctrl=ev.ctrlKey||ev.metaKey;
   const inField=tag==='INPUT'||tag==='TEXTAREA'||tag==='SELECT';
   const helpOpen=document.getElementById('helpOverlay').classList.contains('open');
-  const modalOpen=helpOpen||document.getElementById('addRowOverlay').classList.contains('open');
+  const modalOpen=helpOpen||document.getElementById('addRowOverlay').classList.contains('open')||document.getElementById('confirmOverlay').classList.contains('open');
   const onEditor=navIsVisible('editorScreen'), onCompare=navIsVisible('compareScreen'), onDiff=navIsVisible('diffScreen'), onSelection=navIsVisible('selectionScreen');
 
   // ----- F1: legenda dei tasti (si apre e si chiude) -----
@@ -3957,7 +4186,8 @@ document.addEventListener('keydown',ev=>{
   if(ctrl&&!ev.altKey&&!ev.shiftKey&&ev.key.toLowerCase()==='c'){ev.preventDefault(); navSelect(cell,true); selCopy(); clearSel(); return;}
   if(ctrl&&!ev.altKey&&!ev.shiftKey&&ev.key.toLowerCase()==='v'){ev.preventDefault(); navSelect(cell,true); selPaste(); clearSel(); return;}
   // un carattere digitato apre la cella e sostituisce il testo (AltGr = Ctrl+Alt insieme)
-  if(ev.key.length===1&&!ev.metaKey&&ev.ctrlKey===ev.altKey){ev.preventDefault(); navOpen(cell,{replace:ev.key});}
+  // (su una cella rossa "non esiste" scrivere non fa niente: per crearla si usa Invio o F2)
+  if(ev.key.length===1&&!ev.metaKey&&ev.ctrlKey===ev.altKey){ev.preventDefault(); if(!cell.classList.contains('missing')) navOpen(cell,{replace:ev.key});}
 });
 
 /* ========== AUTO-UPDATE CHECK (dist repo pubblica — no token needed) ========== */
