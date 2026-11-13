@@ -1,24 +1,9 @@
 {
-  "version": "5.23",
-  "filename": "TIA_TextList_Editor_MULTI_v5.23.html",
-  "date": "2026-11-12",
+  "version": "5.24",
+  "filename": "TIA_TextList_Editor_MULTI_v5.24.html",
+  "date": "2026-11-13",
   "notes": [
-    "Corretto: l'export dell'editor poteva perdere una lingua (o aggiungerne una vuota) dopo aver caricato file con lingue diverse nel Confronto o nell'Unione",
-    "Unisci file: le voci presenti in un solo file entrano nel file unito con il loro testo (prima uscivano vuote) e le righe restano nell'ordine del primo file",
-    "Ripristina tutto riporta davvero il file com'era: tornano le voci eliminate e spariscono quelle aggiunte",
-    "Incolla (Ctrl+V) funziona anche con celle copiate da Excel",
-    "Seleziona elenchi: togliendo e rimettendo la spunta l'elenco non resta piu' escluso",
-    "Vista insieme: svuotare o incollare su celle selezionate aggiorna sempre lo schermo",
-    "La selezione a intervallo (Ctrl+Shift+clic) non salta piu' la cella appena modificata",
-    "Confronto: A→B e B→A su tutte le righe sono immediati, copiano solo le righe diverse e si annullano con un solo Ctrl+Z",
-    "Confronto: il giallo segna solo le celle cambiate da te, il totale delle differenze si aggiorna a ogni modifica, annullare una copia toglie anche la riga creata",
-    "Ctrl+S mentre scrivi in una cella esporta anche quel testo",
-    "Avviso prima di perdere modifiche non scaricate (caricando un altro file, ricaricando o chiudendo la pagina)",
-    "Annulla separato tra editor e Confronto, azzerato quando carichi un altro file",
-    "Il filtro di ricerca dell'Editor gruppi resta attivo dopo le modifiche",
-    "Le voci nuove escono con la colonna DefaultEntry scritta come nel file di partenza (prima sempre False)",
-    "Avviso al caricamento se il file ha colonne sconosciute o due voci con lo stesso valore nello stesso elenco",
-    "L'app si apre subito anche dove internet e' filtrato",
-    "Tolto il cartellino della versione progetto, non piu' usato. Manuale aggiornato e date del registro versioni corrette"
+    "Nuovo pulsante 🖥️ in alto e collegamento \"⬇ Scarica l'app desktop\" nella schermata iniziale: scaricano sempre l'ultima versione di TiaTextEditor.exe. Dentro l'app desktop non compaiono",
+    "Manuale: nuovo capitolo 10 su come scaricare e aprire l'app desktop"
   ]
 }

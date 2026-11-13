@@ -2,7 +2,7 @@
 <html lang="it">
 <head>
 <meta charset="utf-8">
-<title>TIA Portal Text List Editor v5.23</title>
+<title>TIA Portal Text List Editor v5.24</title>
 <script>
 /* Tema chiaro/scuro. Questo pezzo sta qui in alto apposta: deve girare prima
    che il browser disegni la pagina, altrimenti aprendo con il tema scuro si
@@ -391,7 +391,7 @@ tr:focus-within .row-del-btn{opacity:1} /* visibile anche quando il cursore dell
     <div style="font-size:40px;margin-bottom:16px">⚙️</div>
     <h1>TIA Portal Text List Editor</h1>
     <p style="margin-bottom:6px">Carica il file Excel esportato dal TIA Portal.<br>Dopo il caricamento puoi scegliere quali elenchi aprire.</p>
-    <p style="font-size:12px;color:var(--text-3);margin-bottom:18px">versione app: <span style="font-family:'JetBrains Mono','Cascadia Mono',Consolas,monospace;color:var(--ver-fg-2)" id="appVerLabel">v5.23</span> &nbsp;·&nbsp; <button onclick="openHelp()" style="background:none;border:none;color:var(--ver-fg-2);cursor:pointer;font-size:12px;text-decoration:underline">❓ Manuale & Changelog</button> &nbsp;·&nbsp; <button class="btn-tema" onclick="toggleTema()" title="Tema chiaro / scuro" style="border:none;border-radius:6px;cursor:pointer;padding:3px 9px">☀️</button></p>
+    <p style="font-size:12px;color:var(--text-3);margin-bottom:18px">versione app: <span style="font-family:'JetBrains Mono','Cascadia Mono',Consolas,monospace;color:var(--ver-fg-2)" id="appVerLabel">v5.24</span> &nbsp;·&nbsp; <button onclick="openHelp()" style="background:none;border:none;color:var(--ver-fg-2);cursor:pointer;font-size:12px;text-decoration:underline">❓ Manuale & Changelog</button> &nbsp;·&nbsp; <button class="btn-tema" onclick="toggleTema()" title="Tema chiaro / scuro" style="border:none;border-radius:6px;cursor:pointer;padding:3px 9px">☀️</button><span class="desk-dl"> &nbsp;·&nbsp; <a class="desk-dl-link" href="#" target="_blank" rel="noopener" style="color:var(--ver-fg-2);font-size:12px;text-decoration:underline" title="Scarica l'app desktop per Windows (TiaTextEditor.exe), sempre l'ultima versione">⬇ Scarica l'app desktop</a></span></p>
     <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap">
       <label class="upload-btn">📂 Carica Export.xlsx<input type="file" accept=".xlsx,.xls" id="fileInput" style="display:none"></label>
       <button class="upload-btn" style="background:var(--cyan);box-shadow:0 4px 12px rgba(8,145,178,.35)" onclick="showDiffUploadScreen()">🔀 Confronta due file</button>
@@ -555,6 +555,7 @@ tr:focus-within .row-del-btn{opacity:1} /* visibile anche quando il cursore dell
       <button class="btn" style="background:var(--chip);color:var(--chip-fg-2)" onclick="openHelp()">❓ Aiuto</button>
       <button class="btn" style="background:var(--chip);color:var(--chip-fg-2)" onclick="openHelp('keys')" title="Legenda dei tasti (F1)">⌨️ Tasti</button>
       <button class="btn update-check-btn" style="background:var(--ver-bg);color:var(--ver-fg);border:1px solid var(--blue-br)" onclick="manualCheckForUpdate()" title="Controlla aggiornamenti">↑ Aggiornamenti</button>
+      <a class="btn desk-dl desk-dl-link" href="#" target="_blank" rel="noopener" style="background:var(--chip);color:var(--chip-fg-2);text-decoration:none" title="Scarica l'app desktop per Windows (TiaTextEditor.exe), sempre l'ultima versione">🖥️</a>
     </div>
   </div>
   <div class="compare-layout">
@@ -597,6 +598,7 @@ tr:focus-within .row-del-btn{opacity:1} /* visibile anche quando il cursore dell
       <button class="btn" style="background:var(--chip);color:var(--chip-fg-2)" onclick="openHelp()" title="Manuale, tasti e Changelog">❓ Aiuto</button>
       <button class="btn" style="background:var(--chip);color:var(--chip-fg-2)" onclick="openHelp('keys')" title="Legenda dei tasti (F1)">⌨️ Tasti</button>
       <button class="btn update-check-btn" style="background:var(--ver-bg);color:var(--ver-fg);border:1px solid var(--blue-br)" onclick="manualCheckForUpdate()" title="Controlla aggiornamenti">↑ Aggiornamenti</button>
+      <a class="btn desk-dl desk-dl-link" href="#" target="_blank" rel="noopener" style="background:var(--chip);color:var(--chip-fg-2);text-decoration:none" title="Scarica l'app desktop per Windows (TiaTextEditor.exe), sempre l'ultima versione">🖥️</a>
     </div>
   </div>
   <div class="main">
@@ -635,6 +637,7 @@ tr:focus-within .row-del-btn{opacity:1} /* visibile anche quando il cursore dell
       <button class="btn" style="background:var(--chip);color:var(--chip-fg-2)" onclick="openHelp()">❓ Aiuto</button>
       <button class="btn" style="background:var(--chip);color:var(--chip-fg-2)" onclick="openHelp('keys')" title="Legenda dei tasti (F1)">⌨️ Tasti</button>
       <button class="btn update-check-btn" style="background:var(--ver-bg);color:var(--ver-fg);border:1px solid var(--blue-br)" onclick="manualCheckForUpdate()" title="Controlla aggiornamenti">↑ Aggiornamenti</button>
+      <a class="btn desk-dl desk-dl-link" href="#" target="_blank" rel="noopener" style="background:var(--chip);color:var(--chip-fg-2);text-decoration:none" title="Scarica l'app desktop per Windows (TiaTextEditor.exe), sempre l'ultima versione">🖥️</a>
     </div>
   </div>
   <div class="diff-layout">
@@ -3420,9 +3423,13 @@ function exportMergedFile(data){
 }
 
 /* ========== HELP MODAL ========== */
-const APP_VERSION='5.23';
+const APP_VERSION='5.24';
 const CHANGELOG=[
-  {ver:'5.23',date:'2026-11-12',cur:true,items:[
+  {ver:'5.24',date:'2026-11-13',cur:true,items:[
+    'Nuovo pulsante 🖥️ in alto e collegamento "⬇ Scarica l\'app desktop" nella schermata iniziale: scaricano sempre l\'ultima versione di TiaTextEditor.exe. Dentro l\'app desktop non compaiono',
+    'Manuale: nuovo capitolo 10 su come scaricare e aprire l\'app desktop',
+  ]},
+  {ver:'5.23',date:'2026-11-12',cur:false,items:[
     'Corretto: l\'export dell\'editor poteva perdere una lingua (o aggiungerne una vuota) dopo aver caricato file con lingue diverse nel Confronto o nell\'Unione',
     'Unisci file: le voci presenti in un solo file entrano nel file unito con il loro testo (prima uscivano vuote) e le righe restano nell\'ordine del primo file',
     'Ripristina tutto riporta davvero il file com\'era: tornano le voci eliminate e spariscono quelle aggiunte',
@@ -3796,6 +3803,7 @@ const MANUAL_HTML=`
   <li><a href="#s7" onclick="document.getElementById('s7').scrollIntoView({behavior:'smooth'})" style="color:var(--blue-t);text-decoration:none">Esportazione file</a></li>
   <li><a href="#s8" onclick="document.getElementById('s8').scrollIntoView({behavior:'smooth'})" style="color:var(--blue-t);text-decoration:none">Lavorare senza mouse e riepilogo dei tasti</a></li>
   <li><a href="#s9" onclick="document.getElementById('s9').scrollIntoView({behavior:'smooth'})" style="color:var(--blue-t);text-decoration:none">Tema chiaro e tema scuro</a></li>
+  <li><a href="#s10" onclick="document.getElementById('s10').scrollIntoView({behavior:'smooth'})" style="color:var(--blue-t);text-decoration:none">App desktop (TiaTextEditor.exe)</a></li>
 </ol>
 
 <hr style="border:none;border-top:1px solid var(--border);margin:16px 0">
@@ -3807,6 +3815,7 @@ const MANUAL_HTML=`
   <li><strong>🔀 Confronta due file</strong> — carica due file Excel e mostra le differenze affiancate.</li>
   <li><strong>🔗 Unisci file</strong> — carica due o più file Excel e crea un unico file unificato.</li>
 </ul>
+<p style="margin-top:8px">Sotto il titolo, accanto al numero di versione, c'è anche il collegamento <strong>⬇ Scarica l'app desktop</strong>: scarica il programma da usare in una finestra sua, senza browser. Come si fa è spiegato nel <a href="#s10" onclick="document.getElementById('s10').scrollIntoView({behavior:'smooth'})" style="color:var(--blue-t)">capitolo 10</a>.</p>
 <p style="margin-top:8px"><strong>⚠️ Avvisi al caricamento.</strong> Appena letto un file, il programma apre una finestra di avviso se trova una di queste due cose. Leggi l'avviso e premi OK: puoi lavorare lo stesso.</p>
 <ul>
   <li><strong>Colonne che il programma non conosce</strong> — il file ha una colonna in più rispetto a quelle solite. Quella colonna <strong>non verrà scritta</strong> nel file esportato: prima di importare in TIA Portal controlla che non ti serva.</li>
@@ -4088,6 +4097,40 @@ lasciato. La memoria è di questo computer, quindi su un altro PC la scelta va r
       <strong>verde chiaro</strong> = voce presente solo in B, <strong>giallo</strong> = cella che hai modificato tu.
       Nel tema scuro sono più spenti, ma sono sempre quei colori lì.</li>
   <li>Ogni lingua mantiene il suo colore (IT blu, EN rosso, e così via).</li>
+</ul>
+
+<hr style="border:none;border-top:1px solid var(--border);margin:16px 0">
+
+<h3 id="s10">🖥️ 10 — App desktop (TiaTextEditor.exe)</h3>
+<p>Il programma esiste in due forme che fanno <strong>esattamente le stesse cose</strong> e danno lo stesso file Excel:</p>
+<ul>
+  <li><strong>la pagina</strong> che apri nel browser (un file che finisce con <em>.html</em>);</li>
+  <li><strong>l'app desktop</strong> <em>TiaTextEditor.exe</em>: si apre in una finestra sua, come un programma normale, senza browser.</li>
+</ul>
+
+<h3>Come si scarica l'app desktop</h3>
+<ol style="font-size:13px;color:var(--text-mid);padding-left:20px;line-height:2">
+  <li>Apri la pagina nel browser e premi il pulsante con lo schermo <span class="kbd">🖥️</span> in alto a destra, subito dopo <em>↑ Aggiornamenti</em>
+      (fermandoti sopra con il mouse compare la scritta <em>Scarica l'app desktop</em>).
+      Nella schermata iniziale c'è invece il collegamento <em>⬇ Scarica l'app desktop</em>, sotto il titolo.
+      Senza mouse: premi <span class="kbd">Tab</span> finché il pulsante non ha il contorno, poi <span class="kbd">Invio</span>.</li>
+  <li>Il browser scarica il file <strong>TiaTextEditor.exe</strong>, di solito nella cartella <em>Download</em>.
+      Può aprirsi per un attimo una scheda nuova che si chiude da sola: è normale.
+      La pagina su cui stavi lavorando resta com'è, con le tue modifiche.</li>
+  <li>Se il browser scrive che il file <em>"non viene scaricato di frequente"</em> o che <em>"potrebbe essere pericoloso"</em>,
+      apri il menu del download (i tre puntini <strong>…</strong> accanto al nome del file) e scegli <strong>Conserva</strong>
+      (in alcuni browser si chiama <strong>Mantieni</strong>). Succede perché l'exe non ha la firma di un'azienda: non vuol dire che sia rotto.</li>
+  <li>Sposta il file dove ti è comodo, per esempio sul Desktop, e aprilo con un <strong>doppio clic</strong>.</li>
+  <li>La prima volta Windows può mostrare una finestra blu <em>"PC protetto da Windows"</em>:
+      premi <strong>Ulteriori informazioni</strong> e poi <strong>Esegui comunque</strong>.</li>
+</ol>
+<div class="tip">Il pulsante scarica sempre <strong>l'ultima versione</strong> pubblicata. Serve internet: senza rete il pulsante non scarica niente.</div>
+
+<h3>Cosa c'è di diverso nell'app desktop</h3>
+<ul>
+  <li><strong>Si aggiorna da sola.</strong> A ogni avvio controlla se c'è una versione nuova e la prende. Non devi riscaricare l'exe.</li>
+  <li>Dentro l'app il pulsante <span class="kbd">🖥️</span> e il collegamento <em>⬇ Scarica l'app desktop</em> <strong>non ci sono</strong>, perché l'app ce l'hai già.</li>
+  <li>Chiudendo la finestra con la X non compare la domanda sul lavoro non scaricato (vedi il capitolo 1): scarica sempre il file prima di chiudere.</li>
 </ul>
 `
 
@@ -4381,11 +4424,15 @@ document.addEventListener('keydown',ev=>{
 /* ========== AUTO-UPDATE CHECK (dist repo pubblica — no token needed) ========== */
 (function(){
   if(window.__TIA_WRAPPER__){ // dentro l'app desktop l'aggiornamento lo gestisce il wrapper all'avvio
+    document.querySelectorAll('.desk-dl').forEach(el=>el.remove()); // l'app desktop c'e' gia': niente pulsante per scaricarla
     window.manualCheckForUpdate=function(){alert('L\'applicazione si aggiorna automaticamente ad ogni avvio.\nRiavviala per applicare eventuali aggiornamenti.');};
     return;
   }
   const REPO_OWNER='lucacalcabrini';
   const REPO_NAME='TiaTextEditor-dist';
+  // pulsanti "App desktop": puntano sempre all'ultimo exe pubblicato sulla dist (nuova scheda, la pagina non si chiude)
+  const DESKTOP_URL=`https://github.com/${REPO_OWNER}/${REPO_NAME}/releases/latest/download/TiaTextEditor.exe`;
+  document.querySelectorAll('a.desk-dl-link').forEach(a=>{a.href=DESKTOP_URL;});
   const VERSION_FILE='version.json';
   const CURRENT_VERSION=APP_VERSION;
 
